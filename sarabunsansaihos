@@ -1,0 +1,3646 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ระบบสารบรรณอิเล็กทรอนิกส์ โรงพยาบาลสันทราย</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   RESET & ROOT
+============================================================ */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --navy:    #0b2545;
+  --navy2:   #13395e;
+  --navy3:   #1a4d7c;
+  --accent:  #1e6fad;
+  --gold:    #b07c25;
+  --gold2:   #c99030;
+  --bg:      #f0f2f5;
+  --white:   #ffffff;
+  --gray50:  #f7f9fb;
+  --gray100: #eef1f5;
+  --gray200: #dde2ea;
+  --gray300: #c4ccd8;
+  --gray400: #8b98aa;
+  --gray500: #6b7890;
+  --gray600: #4a5568;
+  --gray700: #2d3748;
+  --gray900: #1a202c;
+  --green:   #1a6b45;
+  --green-bg:#edf7f2;
+  --red:     #b91c1c;
+  --red-bg:  #fef2f2;
+  --amber:   #92400e;
+  --amber-bg:#fffbeb;
+  --blue:    #1e40af;
+  --blue-bg: #eff6ff;
+  --purple:  #5b21b6;
+  --line:    1px solid var(--gray200);
+  --shadow-xs: 0 1px 2px rgba(0,0,0,.06);
+  --shadow-sm: 0 1px 4px rgba(0,0,0,.08), 0 1px 2px rgba(0,0,0,.05);
+  --shadow:    0 2px 8px rgba(0,0,0,.10), 0 1px 3px rgba(0,0,0,.06);
+  --shadow-md: 0 8px 24px rgba(0,0,0,.12), 0 2px 6px rgba(0,0,0,.06);
+  --shadow-lg: 0 20px 48px rgba(0,0,0,.18), 0 4px 12px rgba(0,0,0,.08);
+  --r: 4px;
+  --r-md: 6px;
+}
+
+html, body {
+  font-family: 'IBM Plex Sans Thai', 'Sarabun', 'Segoe UI', Tahoma, sans-serif;
+  font-size: 14px;
+  background: var(--bg);
+  color: var(--gray700);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================================
+   MODAL OVERLAY (Login)
+============================================================ */
+#login-overlay {
+  display: none;
+  position: fixed; inset: 0; z-index: 1000;
+  background: rgba(11,37,69,.65);
+  backdrop-filter: blur(4px);
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 70px 20px 20px;
+}
+#login-overlay.open { display: flex; }
+
+.login-modal {
+  background: var(--white);
+  border-radius: var(--r-md);
+  box-shadow: var(--shadow-lg);
+  width: 100%; max-width: 380px;
+  overflow: hidden;
+  animation: slideDown .22s ease;
+}
+@keyframes slideDown {
+  from { opacity:0; transform: translateY(-12px); }
+  to   { opacity:1; transform: translateY(0); }
+}
+.lm-head {
+  background: var(--navy);
+  padding: 20px 24px 16px;
+  border-bottom: 2px solid var(--gold);
+}
+.lm-head h2 { color: var(--white); font-size: 15px; font-weight: 700; letter-spacing: .3px; }
+.lm-head p  { color: rgba(255,255,255,.55); font-size: 12px; margin-top: 3px; }
+.lm-body { padding: 20px 24px 24px; }
+
+.login-alert {
+  background: var(--red-bg); color: var(--red);
+  border: 1px solid #fca5a5; border-radius: var(--r);
+  padding: 9px 12px; font-size: 12.5px;
+  margin-bottom: 14px; display: none;
+}
+
+.inp-group { margin-bottom: 14px; }
+.inp-label {
+  display: block; font-weight: 600; color: var(--gray600);
+  font-size: 12px; margin-bottom: 5px; letter-spacing: .3px;
+  text-transform: uppercase;
+}
+.inp-label span { color: var(--red); }
+.inp-field {
+  width: 100%; padding: 9px 12px;
+  border: 1px solid var(--gray300); border-radius: var(--r);
+  font-size: 14px; font-family: inherit;
+  transition: border-color .15s, box-shadow .15s;
+  background: var(--gray50); color: var(--gray900);
+  letter-spacing: .5px;
+}
+.inp-field:focus {
+  outline: none; border-color: var(--accent);
+  background: var(--white); box-shadow: 0 0 0 3px rgba(30,111,173,.12);
+}
+.inp-hint { font-size: 11px; color: var(--gray400); margin-top: 3px; }
+
+.btn-login {
+  width: 100%; padding: 11px;
+  background: var(--navy);
+  color: white; border: none; border-radius: var(--r);
+  font-size: 14px; font-weight: 700; cursor: pointer;
+  font-family: inherit; margin-top: 6px;
+  transition: background .15s;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  letter-spacing: .3px;
+}
+.btn-login:hover:not(:disabled) { background: var(--navy2); }
+.btn-login:disabled { opacity: .6; cursor: not-allowed; }
+
+.lm-foot {
+  padding: 10px 24px 14px;
+  border-top: var(--line);
+  font-size: 11px; color: var(--gray400); text-align: center;
+}
+
+/* ============================================================
+   TOP HEADER
+============================================================ */
+.top-header {
+  background: var(--navy);
+  border-bottom: 2px solid var(--gold);
+  padding: 0 24px;
+  position: sticky; top: 0; z-index: 200;
+  box-shadow: 0 2px 10px rgba(0,0,0,.25);
+}
+.top-header-inner {
+  max-width: 1440px; margin: 0 auto;
+  display: flex; align-items: center;
+  height: 60px; gap: 14px;
+}
+.header-logo {
+  width: 44px; height: 44px; border-radius: 50%;
+  background: var(--white); overflow: hidden; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  box-shadow: 0 1px 4px rgba(0,0,0,.2);
+}
+.header-logo img { width: 38px; height: 38px; object-fit: contain; }
+.header-logo-txt { font-size: 20px; line-height: 1; }
+.header-org { min-width: 0; }
+.header-org h1 {
+  color: var(--white); font-size: 15px; font-weight: 700;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  letter-spacing: .2px;
+}
+.header-org p { color: rgba(255,255,255,.5); font-size: 10.5px; margin-top: 1px; letter-spacing: .5px; text-transform: uppercase; }
+.h-sep { width: 1px; height: 32px; background: rgba(255,255,255,.15); flex-shrink: 0; }
+.header-clock {
+  color: rgba(255,255,255,.7); font-size: 11px;
+  text-align: right; white-space: nowrap;
+}
+.header-clock strong { color: var(--white); font-size: 13px; display: block; font-family: 'IBM Plex Mono', monospace; }
+.header-right { display: flex; align-items: center; gap: 8px; margin-left: auto; }
+.btn-hdr-login {
+  background: rgba(255,255,255,.12);
+  color: var(--white);
+  border: 1px solid rgba(255,255,255,.25);
+  border-radius: var(--r);
+  padding: 7px 16px; font-size: 13px; font-weight: 600;
+  cursor: pointer; font-family: inherit;
+  transition: background .15s;
+  display: flex; align-items: center; gap: 6px;
+  letter-spacing: .2px;
+}
+.btn-hdr-login:hover { background: rgba(255,255,255,.2); }
+.hdr-user-chip {
+  display: none;
+  align-items: center; gap: 9px;
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: var(--r);
+  padding: 5px 12px 5px 6px;
+}
+.hdr-avatar {
+  width: 30px; height: 30px; border-radius: 50%;
+  background: var(--gold2); color: var(--navy);
+  display: flex; align-items: center; justify-content: center;
+  font-weight: 700; font-size: 13px; flex-shrink: 0;
+}
+.hdr-user-info .uname { color: var(--white); font-weight: 600; font-size: 13px; line-height: 1.3; }
+.hdr-user-info .urole { color: rgba(255,255,255,.5); font-size: 11px; }
+.btn-logout {
+  background: rgba(185,28,28,.7); color: white;
+  border: none; border-radius: var(--r);
+  padding: 6px 13px; font-size: 12px; font-weight: 600;
+  cursor: pointer; font-family: inherit;
+  transition: background .15s; letter-spacing: .2px;
+}
+.btn-logout:hover { background: var(--red); }
+
+/* ============================================================
+   NAV BAR
+============================================================ */
+#nav-bar { background: var(--white); border-bottom: var(--line); box-shadow: var(--shadow-xs); display: none; }
+#nav-bar.visible { display: block; }
+.nav-inner { max-width: 1440px; margin: 0 auto; display: flex; overflow-x: auto; scrollbar-width: none; }
+.nav-inner::-webkit-scrollbar { display: none; }
+.nav-item {
+  padding: 11px 20px;
+  color: var(--gray500); font-weight: 500; font-size: 13px;
+  border-bottom: 2px solid transparent;
+  cursor: pointer; white-space: nowrap;
+  transition: all .15s; user-select: none;
+  display: flex; align-items: center; gap: 7px;
+  letter-spacing: .1px;
+}
+.nav-item:hover { color: var(--navy); border-bottom-color: var(--gray300); background: var(--gray50); }
+.nav-item.active { color: var(--navy); border-bottom-color: var(--navy); background: var(--blue-bg); font-weight: 700; }
+.nav-icon { font-size: 15px; }
+
+/* ============================================================
+   CONTENT
+============================================================ */
+.content { max-width: 1440px; margin: 0 auto; padding: 24px 24px 48px; }
+.content-md { max-width: 980px; }
+.page { display: none; }
+.page.active { display: block; }
+
+/* ============================================================
+   PAGE TITLE BAR
+============================================================ */
+.ptb { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 14px; border-bottom: 2px solid var(--gray200); }
+.ptb-icon { width: 36px; height: 36px; border-radius: var(--r); background: var(--navy); color: var(--white); display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+.ptb h2 { font-size: 17px; font-weight: 700; color: var(--navy); letter-spacing: .1px; }
+.ptb p  { font-size: 12px; color: var(--gray400); margin-top: 1px; }
+
+/* ============================================================
+   STAT GRID
+============================================================ */
+.stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 20px; }
+@media (max-width: 900px) { .stat-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 500px) { .stat-grid { grid-template-columns: 1fr; } }
+.stat-card { background: var(--white); border: var(--line); border-top: 3px solid; border-radius: var(--r-md); padding: 16px 18px; box-shadow: var(--shadow-sm); }
+.stat-card.c-blue   { border-top-color: #2563eb; }
+.stat-card.c-green  { border-top-color: #059669; }
+.stat-card.c-amber  { border-top-color: #d97706; }
+.stat-card.c-red    { border-top-color: var(--red); }
+.stat-label { font-size: 11px; color: var(--gray400); font-weight: 600; text-transform: uppercase; letter-spacing: .6px; margin-bottom: 10px; }
+.stat-num   { font-size: 34px; font-weight: 700; color: var(--gray900); line-height: 1; font-family: 'IBM Plex Mono', monospace; }
+.stat-unit  { font-size: 12px; font-weight: 400; color: var(--gray400); margin-left: 4px; font-family: inherit; }
+.stat-sub   { font-size: 11px; color: var(--gray400); margin-top: 6px; }
+
+/* ============================================================
+   CARDS
+============================================================ */
+.card { background: var(--white); border: var(--line); border-radius: var(--r-md); box-shadow: var(--shadow-sm); margin-bottom: 18px; overflow: hidden; }
+.card-head { padding: 13px 20px; border-bottom: var(--line); background: var(--gray50); display: flex; align-items: center; gap: 9px; }
+.card-head h3 { font-size: 13px; font-weight: 700; color: var(--gray700); letter-spacing: .2px; }
+.card-head-icon { font-size: 15px; }
+.card-body { padding: 20px; }
+
+.action-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px,1fr)); gap: 10px; }
+.action-card { border: var(--line); border-radius: var(--r-md); padding: 16px 10px; text-align: center; cursor: pointer; transition: all .15s; background: var(--white); color: var(--gray600); }
+.action-card:hover { background: var(--navy); color: var(--white); border-color: var(--navy); box-shadow: var(--shadow); }
+.a-icon  { font-size: 22px; margin-bottom: 8px; }
+.a-label { font-size: 12.5px; font-weight: 600; letter-spacing: .1px; }
+
+/* ============================================================
+   FORMS
+============================================================ */
+.form-grid   { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+@media (max-width:600px) { .form-grid, .form-grid-3 { grid-template-columns: 1fr; } }
+.f-group { margin-bottom: 14px; }
+.f-label { display: block; font-weight: 600; color: var(--gray600); font-size: 12px; margin-bottom: 5px; letter-spacing: .3px; text-transform: uppercase; }
+.f-label .req { color: var(--red); }
+.f-input, .f-select, .f-textarea {
+  width: 100%; padding: 9px 12px;
+  border: 1px solid var(--gray300); border-radius: var(--r);
+  font-size: 14px; font-family: inherit; background: var(--white);
+  transition: border-color .15s, box-shadow .15s; color: var(--gray900);
+}
+.f-input:focus, .f-select:focus, .f-textarea:focus {
+  outline: none; border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(30,111,173,.10);
+}
+.f-textarea { resize: vertical; min-height: 80px; }
+.f-hint    { font-size: 11px; color: var(--gray400); margin-top: 3px; }
+.f-counter { font-size: 11px; color: var(--gray400); margin-top: 3px; text-align: right; }
+.btn-row { display: flex; gap: 9px; margin-top: 18px; padding-top: 16px; border-top: var(--line); justify-content: flex-end; }
+
+/* ============================================================
+   BUTTONS
+============================================================ */
+.btn { padding: 9px 20px; border: none; border-radius: var(--r); font-size: 13px; font-weight: 700; cursor: pointer; font-family: inherit; transition: all .15s; display: inline-flex; align-items: center; gap: 6px; letter-spacing: .2px; }
+.btn-primary { background: var(--navy); color: white; }
+.btn-primary:hover:not(:disabled) { background: var(--navy2); box-shadow: var(--shadow); }
+.btn-secondary { background: var(--white); color: var(--gray600); border: 1px solid var(--gray300); }
+.btn-secondary:hover:not(:disabled) { background: var(--gray50); }
+.btn-search { background: var(--navy); color: white; align-self: flex-end; padding: 9px 22px; }
+.btn-search:hover:not(:disabled) { background: var(--navy2); }
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ============================================================
+   ALERTS & BADGES
+============================================================ */
+.alert { padding: 10px 14px; border-radius: var(--r); margin-bottom: 14px; font-size: 13px; display: none; border-left: 3px solid; }
+.alert.a-error   { background: var(--red-bg);   color: #991b1b;  border-left-color: var(--red); }
+.alert.a-success { background: var(--green-bg); color: #166534; border-left-color: var(--green); }
+.alert.a-info    { background: var(--blue-bg);  color: #1e40af; border-left-color: #2563eb; }
+.alert ul { margin: 6px 0 0 16px; }
+.alert li { margin: 2px 0; font-size: 12px; }
+.badge { display: inline-block; padding: 2px 9px; border-radius: 3px; font-size: 11px; font-weight: 700; letter-spacing: .3px; white-space: nowrap; }
+.b-pending   { background: var(--amber-bg); color: var(--amber); border: 1px solid #fde68a; }
+.b-progress  { background: var(--blue-bg);  color: var(--blue);  border: 1px solid #bfdbfe; }
+.b-completed { background: var(--green-bg); color: var(--green); border: 1px solid #bbf7d0; }
+.b-cancelled { background: var(--gray100);  color: var(--gray500); border: 1px solid var(--gray200); }
+.b-urgent    { background: var(--red-bg);   color: var(--red);   border: 1px solid #fca5a5; }
+.b-normal    { background: var(--green-bg); color: var(--green); border: 1px solid #bbf7d0; }
+.b-in        { background: var(--blue-bg);  color: var(--blue);  border: 1px solid #bfdbfe; }
+.b-out       { background: #faf5ff; color: var(--purple); border: 1px solid #e9d5ff; }
+
+/* ============================================================
+   TABLE
+============================================================ */
+.tbl-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead tr { border-bottom: 2px solid var(--gray200); }
+th { padding: 10px 13px; text-align: left; font-weight: 700; color: var(--gray500); font-size: 11px; text-transform: uppercase; letter-spacing: .6px; background: var(--gray50); white-space: nowrap; }
+td { padding: 11px 13px; border-bottom: var(--line); color: var(--gray600); }
+tbody tr:hover td { background: #f4f7fc; }
+.tbl-empty td { text-align: center; color: var(--gray400); padding: 32px; font-size: 13px; }
+
+/* ============================================================
+   SPINNER
+============================================================ */
+@keyframes spin { to { transform: rotate(360deg); } }
+.spinner { display: inline-block; width: 14px; height: 14px; border: 2px solid rgba(255,255,255,.3); border-top-color: white; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; }
+.spinner-dark { border-color: var(--gray200); border-top-color: var(--navy); }
+
+/* ============================================================
+   SEARCH BAR
+============================================================ */
+.search-bar { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+
+/* ============================================================
+   EMPTY STATE
+============================================================ */
+.empty-state { text-align: center; padding: 48px 24px; color: var(--gray400); }
+.empty-state .ei { font-size: 40px; margin-bottom: 12px; opacity: .5; }
+.empty-state h3  { font-size: 15px; color: var(--gray500); font-weight: 600; margin-bottom: 6px; }
+.empty-state p   { font-size: 13px; }
+
+/* ============================================================
+   TIMELINE
+============================================================ */
+.timeline { padding: 4px 0; }
+.t-item { display: flex; margin-bottom: 18px; position: relative; }
+.t-item:not(:last-child)::after { content: ''; position: absolute; left: 17px; top: 38px; width: 2px; height: calc(100% - 4px); background: var(--gray200); }
+.t-dot { width: 36px; height: 36px; border-radius: 50%; background: var(--accent); color: white; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; font-weight: 700; box-shadow: var(--shadow-sm); position: relative; z-index: 1; }
+.t-body { padding-left: 12px; flex: 1; padding-top: 4px; }
+.t-time   { font-size: 11px; color: var(--gray400); margin-bottom: 3px; }
+.t-action { font-size: 14px; font-weight: 600; color: var(--gray700); margin-bottom: 4px; }
+.t-flow   { font-size: 12px; color: var(--gray500); margin-bottom: 5px; }
+.t-note   { font-size: 12px; color: var(--gray500); margin-top: 4px; background: var(--gray50); border-radius: var(--r); padding: 6px 10px; }
+.dur-box  { background: var(--blue-bg); border-radius: var(--r); padding: 12px 16px; margin-top: 16px; display: flex; align-items: center; justify-content: space-between; }
+.dur-label { font-size: 12px; color: var(--blue); font-weight: 600; }
+.dur-value { font-size: 15px; font-weight: 700; color: var(--blue); font-family: 'IBM Plex Mono', monospace; }
+
+/* ============================================================
+   FILE BOX
+============================================================ */
+.file-box { background: var(--gray50); border: var(--line); border-radius: var(--r); padding: 12px 16px; margin-top: 8px; display: none; }
+.fb-row { font-size: 13px; color: var(--gray600); margin-bottom: 2px; }
+
+/* ============================================================
+   REPORT
+============================================================ */
+.rpt-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 18px; }
+@media (max-width: 700px) { .rpt-grid { grid-template-columns: repeat(2, 1fr); } }
+.rpt-card { background: var(--white); border: var(--line); border-top: 3px solid; border-radius: var(--r-md); padding: 14px 16px; text-align: center; }
+.rpt-card.c-blue   { border-top-color: #2563eb; }
+.rpt-card.c-green  { border-top-color: #059669; }
+.rpt-card.c-yellow { border-top-color: #d97706; }
+.rpt-card.c-red    { border-top-color: var(--red); }
+.rpt-card.c-purple { border-top-color: var(--purple); }
+.rpt-label { font-size: 11px; color: var(--gray400); font-weight: 600; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 6px; }
+.rpt-val   { font-size: 28px; font-weight: 700; color: var(--gray900); font-family: 'IBM Plex Mono', monospace; }
+
+/* ============================================================
+   FOOTER
+============================================================ */
+.footer { text-align: center; padding: 16px; border-top: var(--line); background: var(--white); font-size: 11px; color: var(--gray400); margin-top: 20px; letter-spacing: .2px; }
+
+/* ============================================================
+   TOAST NOTIFICATION
+============================================================ */
+#toast-wrap {
+  position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%);
+  z-index: 9999; display: flex; flex-direction: column; align-items: center; gap: 8px;
+  pointer-events: none;
+}
+.toast {
+  background: var(--gray900); color: white;
+  padding: 12px 22px; border-radius: 8px;
+  font-size: 14px; font-weight: 500;
+  box-shadow: 0 4px 20px rgba(0,0,0,.3);
+  opacity: 0; transform: translateY(16px);
+  transition: opacity .25s, transform .25s;
+  pointer-events: none; white-space: nowrap;
+}
+.toast.show { opacity: 1; transform: translateY(0); }
+.toast.t-ok   { background: #14532d; border-left: 4px solid #22c55e; }
+.toast.t-err  { background: #7f1d1d; border-left: 4px solid #ef4444; }
+.toast.t-info { background: #1e3a5f; border-left: 4px solid #60a5fa; }
+
+/* ============================================================
+   PUBLIC NOTICE
+============================================================ */
+.public-notice { background: var(--blue-bg); border-bottom: var(--line); padding: 10px 24px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+.public-notice-inner { max-width: 1440px; width: 100%; margin: 0 auto; display: flex; align-items: center; gap: 8px; }
+.public-notice p { font-size: 12.5px; color: var(--blue); }
+.public-notice strong { font-weight: 700; }
+
+/* ============================================================
+   RECEIVE — 2-COLUMN LAYOUT
+============================================================ */
+.recv-layout {
+  display: grid;
+  grid-template-columns: minmax(0,1.1fr) minmax(0,.9fr);
+  gap: 14px;
+  align-items: start;
+}
+@media (max-width: 960px) { .recv-layout { grid-template-columns: 1fr; } }
+
+/* เลขรับที่ bar */
+.recv-no-bar {
+  display: flex; align-items: center; gap: 8px;
+  background: linear-gradient(135deg,var(--navy) 0%,var(--navy3) 100%);
+  border-radius: var(--r-md); padding: 10px 16px; margin-bottom: 12px;
+}
+.recv-no-bar .rnb-label {
+  color: rgba(255,255,255,.75); font-size: 11px; font-weight: 700;
+  letter-spacing: .5px; text-transform: uppercase; white-space: nowrap; flex-shrink: 0;
+}
+.recv-no-bar input {
+  background: rgba(255,255,255,.13); border: 1px solid rgba(255,255,255,.25);
+  color: white; border-radius: var(--r); padding: 5px 10px;
+  font-size: 14px; font-family: 'IBM Plex Mono', monospace; font-weight: 500;
+  transition: border-color .15s; flex: 1; min-width: 0;
+}
+.recv-no-bar input::placeholder { color: rgba(255,255,255,.35); }
+.recv-no-bar input:focus { outline: none; border-color: var(--gold2); box-shadow: 0 0 0 3px rgba(201,144,48,.2); }
+.recv-no-bar .rnb-sep { color: rgba(255,255,255,.35); font-size: 16px; }
+.recv-no-bar .rnb-badge {
+  font-size: 10px; font-weight: 700; letter-spacing: .4px;
+  background: var(--gold2); color: var(--navy);
+  border-radius: 3px; padding: 2px 9px; white-space: nowrap; flex-shrink: 0;
+}
+
+/* กล่องรูปภาพ */
+.img-dropzone {
+  border: 2px dashed var(--gray300); border-radius: var(--r-md);
+  background: var(--gray50); min-height: 130px;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  cursor: pointer; transition: all .15s; position: relative; overflow: hidden;
+  margin-bottom: 10px;
+}
+.img-dropzone:hover { border-color: var(--accent); background: var(--blue-bg); }
+.img-dropzone .idz-icon { font-size: 26px; opacity: .45; }
+.img-dropzone .idz-label { font-size: 11.5px; color: var(--gray400); font-weight: 600; letter-spacing: .3px; margin-top: 7px; text-align: center; }
+.img-dropzone img { max-width: 100%; max-height: 150px; object-fit: contain; border-radius: var(--r); }
+.img-dropzone .idz-remove {
+  position: absolute; top: 5px; right: 5px;
+  background: var(--red-bg); color: var(--red); border: 1px solid #fca5a5;
+  border-radius: 3px; padding: 2px 8px; font-size: 11px; cursor: pointer; display: none;
+}
+.img-dropzone:hover .idz-remove { display: block; }
+
+/* ตารางกลุ่มงาน */
+.grp-tbl { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+.grp-tbl th {
+  background: var(--navy); color: white;
+  padding: 6px 10px; text-align: left; font-size: 11px;
+  letter-spacing: .3px; font-weight: 700;
+}
+.grp-tbl td { padding: 5px 10px; border-bottom: var(--line); vertical-align: middle; }
+.grp-tbl tr:last-child td { border-bottom: none; }
+.grp-tbl tbody tr:hover td { background: var(--gray50); }
+.grp-tbl .grp-name { font-weight: 500; color: var(--gray700); }
+.grp-tbl .grp-chk { text-align: center; width: 44px; }
+.grp-tbl .grp-st  { text-align: right; min-width: 105px; }
+.grp-tbl .grp-other-row td { padding: 6px 10px; }
+.grp-tbl .grp-other-input {
+  width: 100%; border: 1px solid var(--gray300); border-radius: var(--r);
+  padding: 5px 9px; font-size: 13px; font-family: inherit;
+  background: white; color: var(--gray900);
+}
+.grp-tbl .grp-other-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(30,111,173,.10); }
+
+/* สถานะ badge */
+.st-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 12px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+.st-pending { background: #fff3cd; color: #856404; border: 1px solid #ffc107; }
+.st-ok      { background: var(--green-bg); color: var(--green); border: 1px solid #86efac; }
+.st-na      { background: var(--gray100); color: var(--gray500); border: 1px solid var(--gray200); }
+
+/* กล่อง checkbox ผ่านรอง — 2×2 grid */
+.dir-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+@media (max-width: 600px) { .dir-grid { grid-template-columns: 1fr; } }
+.dir-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 9px 12px; border-radius: var(--r); border: 1px solid var(--gray200); background: var(--gray50);
+}
+.dir-row label { display: flex; align-items: center; gap: 6px; font-weight: 600; font-size: 12.5px; cursor: pointer; white-space: nowrap; flex-shrink: 0; min-width: 95px; }
+.dir-row label input[type=checkbox] { width: 15px; height: 15px; cursor: pointer; }
+.dir-row .dir-date { flex: 1; border: 1px solid var(--gray300); border-radius: var(--r); padding: 5px 8px; font-size: 12.5px; font-family: inherit; background: white; min-width: 0; }
+.dir-row .dir-date:focus { outline: none; border-color: var(--accent); }
+.dir-row .dir-date:disabled { background: var(--gray100); color: var(--gray400); }
+.dir-row-full { grid-column: 1 / -1; }
+.dir-row.c-dir { border-color: var(--gray300); background: var(--gray50); }
+.dir-row.c-dir label { color: var(--navy); }
+.dir-row.c-med { border-color: #bfdbfe; background: var(--blue-bg); }
+.dir-row.c-med label { color: var(--blue); }
+.dir-row.c-prs { border-color: #bbf7d0; background: var(--green-bg); }
+.dir-row.c-prs label { color: var(--green); }
+.dir-row.c-adm { border-color: #fde68a; background: var(--amber-bg); }
+.dir-row.c-adm label { color: var(--amber); }
+.dir-row.c-ret  { border-color: var(--gray200); background: var(--gray100); }
+.dir-row.c-ret label  { color: var(--gray600); min-width: 130px; }
+.dir-row.c-dig  { border-color: #e9d5ff; background: #faf5ff; }
+.dir-row.c-dig label  { color: var(--purple); }
+.dir-row.c-pri  { border-color: #fed7aa; background: #fff7ed; }
+.dir-row.c-pri label  { color: #c2410c; }
+.dir-row.c-qa   { border-color: #a7f3d0; background: #ecfdf5; }
+.dir-row.c-qa label   { color: #065f46; }
+.dir-row.c-mr   { border-color: #fecaca; background: #fff1f2; }
+.dir-row.c-mr label   { color: #991b1b; }
+.dir-row.c-cfo  { border-color: #fde68a; background: #fefce8; }
+.dir-row.c-cfo label  { color: #713f12; }
+.dir-row.c-nur  { border-color: #fbcfe8; background: #fdf2f8; }
+.dir-row.c-nur label  { color: #9d174d; }
+
+/* autocomplete dropdown */
+.autocomplete-wrap { position: relative; }
+.autocomplete-list {
+  position: absolute; top: 100%; left: 0; right: 0; z-index: 500;
+  background: white; border: 1px solid var(--accent);
+  border-top: none; border-radius: 0 0 var(--r) var(--r);
+  box-shadow: 0 4px 12px rgba(0,0,0,.12);
+  max-height: 200px; overflow-y: auto;
+}
+.autocomplete-item {
+  padding: 8px 12px; cursor: pointer; font-size: 13px; color: var(--gray700);
+  border-bottom: 1px solid var(--gray100);
+}
+.autocomplete-item:last-child { border-bottom: none; }
+.autocomplete-item:hover, .autocomplete-item.active { background: var(--blue-bg); color: var(--navy); }
+.autocomplete-item mark { background: #fef08a; color: var(--gray900); border-radius: 2px; font-style: normal; }
+
+/* pagination bar ภาพ */
+.img-pager { display: flex; align-items: center; justify-content: center; gap: 5px; font-size: 12px; color: var(--gray500); margin-top: 5px; }
+.img-pager button { border: var(--line); background: white; border-radius: 3px; padding: 2px 8px; cursor: pointer; font-size: 11px; }
+.img-pager button:hover { background: var(--gray100); }
+
+/* notify bar */
+.notify-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.notify-bar .nb-label { font-size: 11.5px; font-weight: 700; color: #856404; white-space: nowrap; flex-shrink: 0; }
+</style>
+</head>
+<body>
+
+<!-- Toast -->
+<div id="toast-wrap"></div>
+
+<!-- ============================================================
+     TOP HEADER
+============================================================ -->
+<div class="top-header">
+  <div class="top-header-inner">
+    <div class="header-logo">
+      <img src="https://drive.google.com/uc?export=view&id=1qIREbhnqt9n4xWbdqe5V8lnypb4DKtVS"
+           alt="Logo" onerror="this.parentElement.innerHTML='<span class=\'header-logo-txt\'>🏥</span>'">
+    </div>
+    <div class="header-org">
+      <h1>ระบบสารบรรณอิเล็กทรอนิกส์</h1>
+      <p>โรงพยาบาลสันทราย · Sansai Hospital, Chiang Mai</p>
+    </div>
+    <div class="h-sep"></div>
+    <div class="header-clock">
+      <strong id="hdr-time">00:00:00</strong>
+      <span id="hdr-date">—</span>
+    </div>
+    <div class="header-right">
+      <div class="hdr-user-chip" id="hdr-user-chip">
+        <div class="hdr-avatar" id="hdr-avatar">?</div>
+        <div class="hdr-user-info">
+          <div class="uname" id="hdr-uname">ผู้ใช้งาน</div>
+          <div class="urole" id="hdr-urole">บทบาท</div>
+        </div>
+      </div>
+      <button class="btn-hdr-login" id="btn-open-login" onclick="openLogin()"><span>🔐</span> เข้าสู่ระบบ</button>
+      <button class="btn-logout" id="btn-logout" style="display:none;" onclick="doLogout()">ออกจากระบบ</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     NAV BAR
+============================================================ -->
+<div id="nav-bar">
+  <div class="nav-inner">
+    <div class="nav-item active" data-page="home"    onclick="gotoPage('home')"><span class="nav-icon">⊞</span> หน้าหลัก</div>
+    <div class="nav-item"        data-page="receive" onclick="gotoPage('receive')"><span class="nav-icon">↓</span> รับหนังสือเข้า</div>
+    <div class="nav-item"        data-page="send"    onclick="gotoPage('send')"><span class="nav-icon">↑</span> ส่งหนังสือออก</div>
+    <div class="nav-item"        data-page="search"  onclick="gotoPage('search')"><span class="nav-icon">⊕</span> ค้นหาหนังสือ</div>
+    <div class="nav-item"        data-page="report"  onclick="gotoPage('report')"><span class="nav-icon">≡</span> รายงาน</div>
+    <div class="nav-item"        data-page="history" onclick="gotoPage('history')"><span class="nav-icon">🗂</span> ประวัติทะเบียน</div>
+    <div class="nav-item"        data-page="import"  onclick="gotoPage('import')"><span class="nav-icon">↧</span> นำเข้าข้อมูล</div>
+    <div class="nav-item"        data-page="attach"  onclick="gotoPage('attach')"><span class="nav-icon">📎</span> แนบเอกสาร</div>
+  </div>
+</div>
+
+<!-- PUBLIC NOTICE -->
+<div class="public-notice" id="public-notice">
+  <div class="public-notice-inner">
+    <span>ℹ️</span>
+    <p>คุณกำลังดูข้อมูลสาธารณะ &mdash; <strong>กรุณาเข้าสู่ระบบ</strong> เพื่อลงทะเบียนรับ/ส่งหนังสือ</p>
+  </div>
+</div>
+
+<!-- ============================================================
+     LOGIN MODAL
+============================================================ -->
+<div id="login-overlay" onclick="overlayClose(event)">
+  <div class="login-modal" onclick="event.stopPropagation()">
+    <div class="lm-head">
+      <h2>เข้าสู่ระบบ</h2>
+      <p>ระบบสารบรรณอิเล็กทรอนิกส์ โรงพยาบาลสันทราย</p>
+    </div>
+    <div class="lm-body">
+      <div id="login-alert" class="login-alert"></div>
+      <div class="inp-group">
+        <label class="inp-label">เลขบัตรประชาชน <span>*</span></label>
+        <input type="text" id="inp-nid" class="inp-field" placeholder="เลข 13 หลัก ไม่ต้องใส่ขีด"
+          maxlength="13" inputmode="numeric" onkeypress="onlyDigit(event)"
+          onkeyup="if(event.key==='Enter')doLogin()">
+        <div class="inp-hint">ตัวเลข 13 หลัก</div>
+      </div>
+      <div class="inp-group">
+        <label class="inp-label">รหัสผ่าน <span>*</span></label>
+        <input type="password" id="inp-pin" class="inp-field" placeholder="รหัสผ่าน 6 หลัก"
+          maxlength="6" inputmode="numeric" onkeypress="onlyDigit(event)"
+          onkeyup="if(event.key==='Enter')doLogin()">
+        <div class="inp-hint">ตัวเลข 6 หลัก</div>
+      </div>
+      <button class="btn-login" id="login-btn" onclick="doLogin()">
+        <span id="login-btn-text">เข้าสู่ระบบ</span>
+      </button>
+    </div>
+    <div class="lm-foot">ติดต่อผู้ดูแลระบบ: งานธุรการ โทร. 053-xxxxxx</div>
+  </div>
+</div>
+
+<!-- ============================================================
+     MAIN CONTENT
+============================================================ -->
+<div id="main-content">
+
+  <!-- ===== PUBLIC DASHBOARD ===== -->
+  <div id="page-public" class="page active">
+    <div class="content">
+      <div class="stat-grid">
+        <div class="stat-card c-blue">
+          <div class="stat-label">รับเข้าวันนี้</div>
+          <div class="stat-num" id="s-in"><span class="spinner spinner-dark"></span></div>
+          <div class="stat-sub">หนังสือรับเข้า</div>
+        </div>
+        <div class="stat-card c-green">
+          <div class="stat-label">ส่งออกวันนี้</div>
+          <div class="stat-num" id="s-out"><span class="spinner spinner-dark"></span></div>
+          <div class="stat-sub">หนังสือส่งออก</div>
+        </div>
+        <div class="stat-card c-amber">
+          <div class="stat-label">ด่วน / ด่วนมาก</div>
+          <div class="stat-num" id="s-urgent2"><span class="spinner spinner-dark"></span></div>
+          <div class="stat-sub">หนังสือความเร่งด่วนสูง</div>
+        </div>
+        <div class="stat-card c-red">
+          <div class="stat-label">ด่วนที่สุด</div>
+          <div class="stat-num" id="s-urgent1"><span class="spinner spinner-dark"></span></div>
+          <div class="stat-sub">ต้องดำเนินการทันที</div>
+        </div>
+      </div>
+      <div class="card" id="quick-actions-card" style="display:none;">
+        <div class="card-head"><span class="card-head-icon">▶</span><h3>เมนูด่วน</h3></div>
+        <div class="card-body">
+          <div class="action-grid">
+            <div class="action-card" onclick="gotoPage('receive')"><div class="a-icon">↓</div><div class="a-label">รับหนังสือเข้า</div></div>
+            <div class="action-card" onclick="gotoPage('send')"><div class="a-icon">↑</div><div class="a-label">ส่งหนังสือออก</div></div>
+            <div class="action-card" onclick="gotoPage('search')"><div class="a-icon">⊕</div><div class="a-label">ค้นหาหนังสือ</div></div>
+            <div class="action-card" onclick="gotoPage('report')"><div class="a-icon">≡</div><div class="a-label">รายงานสรุป</div></div>
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-head-icon">📄</span><h3>เอกสารล่าสุด</h3></div>
+        <div class="card-body" style="padding:0;">
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>เลขที่รับ</th><th>วันที่รับ</th><th>จาก / หน่วยงาน</th>
+                  <th>เรื่อง</th><th>มอบหมาย</th><th></th>
+                </tr>
+              </thead>
+              <tbody id="recent-tbody">
+                <tr><td colspan="6" style="text-align:center;padding:28px;color:#94a3b8;">
+                  <span class="spinner spinner-dark"></span> กำลังโหลดข้อมูล...
+                </td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ตารางเอกสารด่วน -->
+      <div class="card" id="urgent-card" style="display:none;">
+        <div class="card-head" style="background:linear-gradient(135deg,#7f1d1d,#b91c1c);">
+          <span class="card-head-icon">🚨</span>
+          <h3 style="color:white;">เอกสารที่ต้องดำเนินการด่วน</h3>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>เลขที่</th><th>วันที่</th><th>จากหน่วยงาน</th>
+                  <th>เรื่อง</th><th>ความเร่งด่วน</th><th>มอบหมาย</th>
+                </tr>
+              </thead>
+              <tbody id="urgent-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: RECEIVE ===== -->
+  <div id="page-receive" class="page">
+    <div class="content" style="max-width:1380px;">
+      <div class="ptb">
+        <div class="ptb-icon">↓</div>
+        <div><h2>บันทึกหนังสือรับเข้า</h2><p>กรอกข้อมูลหนังสือที่รับเข้าจากหน่วยงานภายนอก</p></div>
+      </div>
+      <div id="r-alert-err"  class="alert a-error"></div>
+      <div id="r-alert-ok"   class="alert a-success"></div>
+      <div id="r-alert-info" class="alert a-info"></div>
+
+      <!-- ── แถบเลขรับที่ (ซ่อน — ระบบกำหนดเลขอัตโนมัติ เริ่มที่ 1874) ── -->
+      <div class="recv-no-bar" style="display:none;">
+        <span class="rnb-label">เลขรับที่</span>
+        <input type="text" id="r-recvno" placeholder="(ใหม่)" style="max-width:110px;">
+        <span class="rnb-sep">/</span>
+        <input type="text" id="r-recvno-year" placeholder="2569" style="max-width:76px;">
+        <span class="rnb-badge">ใหม่</span>
+      </div>
+
+      <!-- ── MAIN 2-COLUMN LAYOUT ── -->
+      <div class="recv-layout">
+
+        <!-- ════ LEFT COLUMN ════ -->
+        <div>
+
+          <!-- ข้อมูลหนังสือ -->
+          <div class="card">
+            <div class="card-head"><span class="card-head-icon">📋</span><h3>ข้อมูลหนังสือรับเข้า</h3></div>
+            <div class="card-body">
+
+              <!-- แถว 1: ความเร่งด่วน (ก่อนเลย) + เลขที่รับ -->
+              <div class="form-grid" style="grid-template-columns:1fr 1fr;">
+                <div class="f-group">
+                  <label class="f-label" style="color:var(--red);font-size:12px;">⚡ ความเร่งด่วน <span class="req">*</span></label>
+                  <select id="r-urgency" class="f-select" style="border-color:var(--gray300);font-weight:600;">
+                    <option value="ปกติ" selected>ปกติ</option>
+                    <option value="ด่วน">ด่วน</option>
+                    <option value="ด่วนมาก">ด่วนมาก</option>
+                    <option value="ด่วนที่สุด">ด่วนที่สุด</option>
+                  </select>
+                </div>
+                <div class="f-group">
+                  <label class="f-label">เลขที่รับ <span class="req">*</span></label>
+                  <input type="text" id="r-recvno-main" class="f-input"
+                    placeholder="เลขที่รับจากหนังสือ"
+                    style="font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:14px;">
+                </div>
+              </div>
+
+              <!-- แถว 2: วันที่รับ + เวลาลงรับ -->
+              <div class="form-grid" style="grid-template-columns:1fr 1fr;">
+                <div class="f-group">
+                  <label class="f-label">วันที่รับ</label>
+                  <input type="text" id="r-date" class="f-input" placeholder="DD/MM/YYYY">
+                </div>
+                <div class="f-group">
+                  <label class="f-label">เวลาลงรับ</label>
+                  <input type="text" id="r-recv-time" class="f-input"
+                    placeholder="เช่น 09:30"
+                    style="font-family:'IBM Plex Mono',monospace;"
+                    maxlength="5"
+                    oninput="formatTimeInput(this)">
+                  <div class="f-hint">รูปแบบ HH:MM (24 ชม.)</div>
+                </div>
+              </div>
+
+              <!-- แถว 3: จากหน่วยงาน (autocomplete) + เลขที่หนังสือ -->
+              <div class="form-grid" style="grid-template-columns:1fr 1fr;">
+                <div class="f-group">
+                  <label class="f-label">จากหน่วยงาน <span class="req">*</span></label>
+                  <div class="autocomplete-wrap">
+                    <input type="text" id="r-from" class="f-input" placeholder="พิมพ์ชื่อหน่วยงาน..."
+                      autocomplete="off"
+                      oninput="acSearch('r-from','r-from-list',_ORG_LIST)"
+                      onblur="setTimeout(function(){acHide('r-from-list')},180)"
+                      onfocus="acSearch('r-from','r-from-list',_ORG_LIST)">
+                    <div id="r-from-list" class="autocomplete-list" style="display:none;"></div>
+                  </div>
+                </div>
+                <div class="f-group">
+                  <label class="f-label">เลขที่หนังสือ (อ้างอิง)</label>
+                  <input type="text" id="r-ref" class="f-input" placeholder="เลขที่อ้างอิงจากต้นเรื่อง">
+                </div>
+              </div>
+
+              <!-- แถว 4: ผู้รับ + วันที่หนังสือ -->
+              <div class="form-grid" style="grid-template-columns:1fr 1fr;">
+                <div class="f-group">
+                  <label class="f-label">ผู้รับ</label>
+                  <select id="r-by" class="f-select">
+                    <option value="">-- เลือกผู้รับ --</option>
+                    <option value="นางสาวสุกัลยา ศิริวรรณ">นางสาวสุกัลยา ศิริวรรณ</option>
+                    <option value="นางสาวรัตติยากร มะที">นางสาวรัตติยากร มะที</option>
+                    <option value="นางสาวเดือนเพ็ญ เมืองมูล">นางสาวเดือนเพ็ญ เมืองมูล</option>
+                    <option value="นางสาวกัลญาณี สุทะ">นางสาวกัลญาณี สุทะ</option>
+                    <option value="นางสาวอัจฉรา ชัยมูล">นางสาวอัจฉรา ชัยมูล</option>
+                  </select>
+                </div>
+                <div class="f-group">
+                  <label class="f-label">วันที่หนังสือ</label>
+                  <input type="text" id="r-docrefdate" class="f-input" placeholder="DD/MM/YYYY">
+                </div>
+              </div>
+
+              <div class="f-group">
+                <label class="f-label">เรื่อง <span class="req">*</span></label>
+                <input type="text" id="r-subj" class="f-input" placeholder="ระบุหัวข้อ/เรื่องของหนังสือ" maxlength="200"
+                  oninput="cnt('r-subj','r-subj-cnt')">
+                <div class="f-counter"><span id="r-subj-cnt">0</span> / 200</div>
+              </div>
+
+              <div class="f-group">
+                <label class="f-label">รายละเอียด</label>
+                <textarea id="r-detail" class="f-textarea" placeholder="สรุปเนื้อหาโดยย่อ..." maxlength="500"
+                  oninput="cnt('r-detail','r-detail-cnt')"></textarea>
+                <div class="f-counter"><span id="r-detail-cnt">0</span> / 500</div>
+              </div>
+
+              <div class="form-grid">
+                <div class="f-group">
+                  <label class="f-label">ประเภท <span class="req">*</span></label>
+                  <select id="r-cat" class="f-select">
+                    <option value="">-- เลือกประเภท --</option>
+                    <option>หนังสือราชการ</option><option>บันทึกข้อความ</option>
+                    <option>คำสั่ง</option><option>ประกาศ</option><option>อื่น</option>
+                  </select>
+                </div>
+                <div class="f-group">
+                  <label class="f-label" style="color:var(--gray500);">ชั้นความลับ</label>
+                  <select id="r-conf" class="f-select">
+                    <option value="ไม่มีชั้น" selected>ไม่มีชั้น</option>
+                    <option>ปกติ</option><option>ลับ</option><option>ลับมาก</option><option>ลับที่สุด</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="f-group">
+                <label class="f-label">มอบหมายให้ <span class="req">*</span></label>
+                <select id="r-assign" class="f-select"><option value="">-- เลือกหน่วยงาน --</option></select>
+              </div>
+
+              <div class="form-grid">
+                <div class="f-group">
+                  <label class="f-label">การปฏิบัติ</label>
+                  <input type="text" id="r-action" class="f-input" placeholder="การปฏิบัติที่ต้องดำเนินการ" maxlength="200">
+                </div>
+                <div class="f-group">
+                  <label class="f-label">งานที่เก็บ</label>
+                  <input type="text" id="r-taskstored" class="f-input" placeholder="ชื่องาน/แฟ้มที่เก็บ" maxlength="200">
+                </div>
+              </div>
+
+              <div class="form-grid">
+                <div class="f-group">
+                  <label class="f-label">หนังสืออ้างอิง</label>
+                  <input type="text" id="r-docref" class="f-input" placeholder="เลขที่หนังสืออ้างอิง" maxlength="200">
+                </div>
+                <div class="f-group">
+                  <label class="f-label">หมายเหตุ</label>
+                  <input type="text" id="r-note" class="f-input" placeholder="ข้อมูลเพิ่มเติม..." maxlength="200">
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- ผ่านรองผู้อำนวยการ -->
+          <div class="card">
+            <div class="card-head"><span class="card-head-icon">✅</span><h3>การผ่านรองผู้อำนวยการ</h3></div>
+            <div class="card-body">
+              <p style="font-size:12px;color:var(--gray500);margin-bottom:10px;">เลือกได้หลายรองฯ พร้อมระบุ ว/ด/ป ที่ผ่าน</p>
+              <div class="dir-grid" style="grid-template-columns:1fr 1fr;">
+                <div class="dir-row c-dir">
+                  <label><input type="checkbox" id="r-chk-dir"> ผ่าน ผอก.</label>
+                  <input type="text" id="r-date-dir" class="dir-date" placeholder="ว/ด/ป" disabled>
+                </div>
+                <div class="dir-row c-med">
+                  <label><input type="checkbox" id="r-chk-med"> รองแพทย์</label>
+                  <input type="text" id="r-date-med" class="dir-date" placeholder="ว/ด/ป" disabled>
+                </div>
+                <div class="dir-row c-prs">
+                  <label><input type="checkbox" id="r-chk-prs"> รองพรส.</label>
+                  <input type="text" id="r-date-prs" class="dir-date" placeholder="ว/ด/ป" disabled>
+                </div>
+                <div class="dir-row c-adm">
+                  <label><input type="checkbox" id="r-chk-adm"> รองบริหาร</label>
+                  <input type="text" id="r-date-adm" class="dir-date" placeholder="ว/ด/ป" disabled>
+                </div>
+                <div class="dir-row c-dig">
+                  <label><input type="checkbox" id="r-chk-dig"> รองดิจิทัล</label>
+                  <input type="text" id="r-date-dig" class="dir-date" placeholder="ว/ด/ป" disabled>
+                </div>
+                <div class="dir-row c-pri">
+                  <label><input type="checkbox" id="r-chk-pri"> รองปฐมภูมิ</label>
+                  <input type="text" id="r-date-pri" class="dir-date" placeholder="ว/ด/ป" disabled>
+                </div>
+                <div class="dir-row c-qa">
+                  <label><input type="checkbox" id="r-chk-qa"> ผช.พัฒนาคุณภาพ</label>
+                  <input type="text" id="r-date-qa" class="dir-date" placeholder="ว/ด/ป" disabled>
+                </div>
+                <div class="dir-row c-cfo">
+                  <label><input type="checkbox" id="r-chk-cfo"> ผช.CFO</label>
+                  <input type="text" id="r-date-cfo" class="dir-date" placeholder="ว/ด/ป" disabled>
+                </div>
+                <div class="dir-row c-nur">
+                  <label><input type="checkbox" id="r-chk-nur"> รองการพยาบาล</label>
+                  <input type="text" id="r-date-nur" class="dir-date" placeholder="ว/ด/ป" disabled>
+                </div>
+                <div class="dir-row c-ret">
+                  <label style="min-width:120px;cursor:default;">ว/ด/ป คืนธุรการ</label>
+                  <input type="text" id="r-date-return" class="dir-date" placeholder="ว/ด/ป">
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- ไฟล์แนบ -->
+          <div class="card">
+            <div class="card-head"><span class="card-head-icon">📎</span><h3>ไฟล์แนบเอกสาร</h3></div>
+            <div class="card-body">
+              <div class="f-group" style="margin-bottom:0;">
+                <label class="f-label">อัพโหลดไฟล์</label>
+                <input type="file" id="r-file" class="f-input"
+                  accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.png,.gif,.txt,.ppt,.pptx"
+                  onchange="handleRecvFile(this)">
+                <div class="f-hint">PDF, Word, Excel, PowerPoint, JPG, PNG — ขนาดสูงสุด 20 MB</div>
+              </div>
+              <div class="file-box" id="r-file-box" style="display:none;margin-top:10px;">
+                <div class="fb-row" style="display:flex;justify-content:space-between;align-items:center;">
+                  <span>📄 <strong id="r-fname"></strong> &nbsp; <span id="r-fsize" style="color:var(--gray500);font-size:12px;"></span></span>
+                  <button onclick="removeRecvFile()" style="background:var(--red-bg);color:var(--red);border:1px solid #fca5a5;border-radius:4px;padding:3px 10px;cursor:pointer;font-size:12px;">✕ ลบ</button>
+                </div>
+                <div style="margin-top:6px;">
+                  <a id="r-furl" href="#" target="_blank" style="font-size:12px;color:var(--accent);display:none;">🔗 ดูไฟล์ใน Drive</a>
+                </div>
+                <input type="hidden" id="r-fileid">
+              </div>
+            </div>
+          </div>
+
+          <div class="btn-row" style="margin-top:4px;">
+            <button class="btn btn-secondary" onclick="resetRecv()">🔄 ล้างข้อมูล</button>
+            <button class="btn btn-primary" id="r-btn" onclick="submitRecv()">💾 บันทึกหนังสือเข้า</button>
+          </div>
+
+        </div><!-- /left col -->
+
+        <!-- ════ RIGHT COLUMN ════ -->
+        <div>
+
+          <!-- อัปโหลดรูปภาพเอกสาร -->
+          <div class="card">
+            <div class="card-head" style="background:linear-gradient(90deg,var(--navy) 0%,var(--navy3) 100%);border-bottom:none;">
+              <span class="card-head-icon" style="color:white;">🖼</span>
+              <h3 style="color:white;">อัปโหลดเอกสาร (ภาพ/สแกน)</h3>
+            </div>
+            <div class="card-body" style="padding:12px;">
+              <div class="img-dropzone" id="r-img-dropzone" onclick="document.getElementById('r-img-file').click()">
+                <div id="r-img-preview-wrap" style="display:none;width:100%;text-align:center;">
+                  <img id="r-img-preview" src="" alt="preview" style="max-width:100%;max-height:150px;object-fit:contain;border-radius:4px;">
+                </div>
+                <div id="r-img-placeholder">
+                  <div class="idz-icon">🖼</div>
+                  <div class="idz-label">คลิกเพื่อถ่ายภาพ / เลือกไฟล์<br><span style="font-size:10px;font-weight:400;">📷 เปิดกล้องถ่ายทันที หรือ JPG, PNG, PDF</span></div>
+                </div>
+                <button class="idz-remove" id="r-img-remove-btn" onclick="removeRecvImg(event)">✕ ลบ</button>
+              </div>
+              <input type="file" id="r-img-file" accept="image/*,application/pdf" capture="environment" style="display:none" onchange="previewRecvImg(this)">
+              <div class="img-pager">
+                <button onclick="">⟨⟨</button><button onclick="">⟨</button>
+                <span>ระเบียน: หน้า <strong>1</strong> จาก <strong>1</strong></span>
+                <button onclick="">⟩</button><button onclick="">⟩⟩</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- กลุ่มงาน / สถานะการรับทราบ -->
+          <div class="card">
+            <div class="card-head"><span class="card-head-icon">🏢</span><h3>กลุ่มงานที่ส่งถึง / สถานะรับทราบ</h3></div>
+            <div class="card-body" style="padding:0;">
+              <table class="grp-tbl">
+                <thead>
+                  <tr>
+                    <th>กลุ่มงาน / ภารกิจ</th>
+                    <th class="grp-chk">✔</th>
+                    <th class="grp-chk">✘</th>
+                    <th class="grp-st">สถานะ</th>
+                  </tr>
+                </thead>
+                <tbody id="r-grp-tbody">
+                  <!-- สร้างโดย JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- แจ้งเวียน -->
+          <div class="card">
+            <div class="card-head" style="background:#fff3cd;border-bottom:1px solid #ffc107;">
+              <span class="card-head-icon">📢</span>
+              <h3 style="color:#856404;">แจ้งเวียน / วันที่รับทราบครบ</h3>
+            </div>
+            <div class="card-body">
+              <div class="notify-bar">
+                <span class="nb-label">วันที่แจ้งเวียนผู้เกี่ยวข้องครบ</span>
+                <div style="flex:1;min-width:120px;">
+                  <input type="text" id="r-notify-date" class="f-input" placeholder="ว/ด/ป" style="margin:0;">
+                </div>
+                <span id="r-notify-status" class="st-badge st-pending">⏳ ยังไม่รับทราบ</span>
+              </div>
+              <div style="margin-top:10px;font-size:11.5px;color:var(--gray500);">
+                กด ✔ ที่กลุ่มงานด้านบนเมื่อรับทราบครบ ระบบจะอัปเดตสถานะอัตโนมัติ
+              </div>
+            </div>
+          </div>
+
+        </div><!-- /right col -->
+
+      </div><!-- /recv-layout -->
+    </div>
+  </div>
+
+  <!-- ===== PAGE: SEND ===== -->
+  <div id="page-send" class="page">
+    <div class="content content-md">
+      <div class="ptb">
+        <div class="ptb-icon">↑</div>
+        <div><h2>บันทึกหนังสือส่งออก</h2><p>กรอกข้อมูลหนังสือที่ส่งออกไปยังหน่วยงานภายนอก</p></div>
+      </div>
+      <div id="s-alert-err"  class="alert a-error"></div>
+      <div id="s-alert-ok"   class="alert a-success"></div>
+      <div id="s-alert-info" class="alert a-info"></div>
+      <div class="card">
+        <div class="card-head"><span class="card-head-icon">📋</span><h3>ข้อมูลหนังสือส่งออก</h3></div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="f-group">
+              <label class="f-label">วันที่ส่ง</label>
+              <input type="text" id="s-date" class="f-input" placeholder="DD/MM/YYYY">
+            </div>
+            <div class="f-group">
+              <label class="f-label">ถึงหน่วยงาน <span class="req">*</span></label>
+              <input type="text" id="s-to" class="f-input" placeholder="ชื่อหน่วยงานผู้รับ">
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="f-group">
+              <label class="f-label">เลขที่อ้างอิง</label>
+              <input type="text" id="s-ref" class="f-input" placeholder="เลขที่อ้างอิง">
+            </div>
+            <div class="f-group">
+              <label class="f-label">ผู้ส่ง / หน่วยงาน</label>
+              <select id="s-sentby" class="f-select"><option value="">-- เลือกหน่วยงาน --</option></select>
+            </div>
+          </div>
+          <div class="f-group">
+            <label class="f-label">เรื่อง <span class="req">*</span></label>
+            <input type="text" id="s-subj" class="f-input" placeholder="ระบุหัวข้อ/เรื่องของหนังสือ" maxlength="200"
+              oninput="cnt('s-subj','s-subj-cnt')">
+            <div class="f-counter"><span id="s-subj-cnt">0</span> / 200</div>
+          </div>
+          <div class="f-group">
+            <label class="f-label">รายละเอียด</label>
+            <textarea id="s-detail" class="f-textarea" placeholder="สรุปเนื้อหาโดยย่อ..." maxlength="500"
+              oninput="cnt('s-detail','s-detail-cnt')"></textarea>
+            <div class="f-counter"><span id="s-detail-cnt">0</span> / 500</div>
+          </div>
+          <div class="form-grid">
+            <div class="f-group">
+              <label class="f-label">ประเภท <span class="req">*</span></label>
+              <select id="s-cat" class="f-select">
+                <option value="">-- เลือกประเภท --</option>
+                <option>หนังสือราชการ</option><option>บันทึกข้อความ</option>
+                <option>คำสั่ง</option><option>ประกาศ</option><option>อื่น</option>
+              </select>
+            </div>
+            <div class="f-group">
+              <label class="f-label">ความเร่งด่วน</label>
+              <select id="s-urgency" class="f-select">
+                <option value="ปกติ" selected>ปกติ</option>
+                <option value="ด่วน">ด่วน</option>
+                <option value="ด่วนมาก">ด่วนมาก</option>
+                <option value="ด่วนที่สุด">ด่วนที่สุด</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="f-group">
+              <label class="f-label">หมายเหตุ</label>
+              <input type="text" id="s-note" class="f-input" placeholder="ข้อมูลเพิ่มเติม..." maxlength="200">
+            </div>
+            <div class="f-group">
+              <label class="f-label">ไฟล์แนบ</label>
+              <input type="file" id="s-file" class="f-input"
+                accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.png"
+                onchange="handleFile(this)">
+              <div class="f-hint">PDF, Word, Excel, JPG, PNG — ขนาดสูงสุด 20 MB</div>
+            </div>
+          </div>
+          <div class="file-box" id="s-file-box">
+            <div class="fb-row">📄 <strong id="s-fname"></strong></div>
+            <div class="fb-row">ขนาด: <strong id="s-fsize"></strong></div>
+            <input type="hidden" id="s-fileid">
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-secondary" onclick="resetSend()">ล้างข้อมูล</button>
+            <button class="btn btn-primary" id="s-btn" onclick="submitSend()">💾 บันทึกหนังสือส่งออก</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: SEARCH ===== -->
+  <div id="page-search" class="page">
+    <div class="content" style="max-width:1100px;">
+      <div class="ptb">
+        <div class="ptb-icon">⊕</div>
+        <div><h2>ค้นหาหนังสือ</h2><p>ค้นหาตามเลขที่หนังสือ เรื่อง หรือหน่วยงาน</p></div>
+      </div>
+      <div class="card">
+        <div class="card-body">
+          <div class="search-bar">
+            <div class="f-group" style="flex:2;min-width:220px;margin-bottom:0;">
+              <label class="f-label">คำค้นหา</label>
+              <input type="text" id="q-term" class="f-input" placeholder="เลขที่หนังสือ, เรื่อง, หน่วยงาน..."
+                onkeypress="if(event.key==='Enter')doSearch()">
+            </div>
+            <div class="f-group" style="flex:1;min-width:140px;margin-bottom:0;">
+              <label class="f-label">ประเภท</label>
+              <select id="q-type" class="f-select">
+                <option value="">ทั้งหมด</option>
+                <option value="incoming">รับเข้า</option>
+                <option value="outgoing">ส่งออก</option>
+              </select>
+            </div>
+            <button class="btn btn-search" id="q-btn" onclick="doSearch()">ค้นหา</button>
+          </div>
+        </div>
+      </div>
+      <div id="q-alert" class="alert a-error"></div>
+      <div class="card" id="q-result-card" style="display:none;">
+        <div class="card-head"><span class="card-head-icon">📋</span><h3>ผลการค้นหา: <span id="q-count">0</span> รายการ</h3></div>
+        <div class="card-body" style="padding:0;">
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr><th>เลขที่หนังสือ</th><th>วันที่</th><th>จาก/ถึง</th><th>เรื่อง</th><th>ประเภท</th><th>ความเร่งด่วน</th><th>ไฟล์แนบ</th></tr></thead>
+              <tbody id="q-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <div id="q-empty" class="empty-state">
+        <div class="ei">🔍</div><h3>ค้นหาเอกสาร</h3><p>กรุณากรอกคำค้นหาแล้วกด Enter หรือคลิก "ค้นหา"</p>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ===== PAGE: REPORT ===== -->
+  <div id="page-report" class="page">
+    <div class="content" style="max-width:1100px;">
+      <div class="ptb">
+        <div class="ptb-icon">≡</div>
+        <div><h2>รายงานสรุป</h2><p>สถิติการรับ-ส่งหนังสือ — เลือกดูรายวันหรือรายเดือน</p></div>
+      </div>
+
+      <!-- ตัวเลือก mode -->
+      <div class="card" style="margin-bottom:12px;">
+        <div class="card-body" style="padding:14px 16px;">
+          <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
+
+            <!-- mode toggle -->
+            <div class="f-group" style="margin:0;">
+              <label class="f-label">ดูแบบ</label>
+              <div style="display:flex;gap:0;border:1px solid var(--gray200);border-radius:var(--r);overflow:hidden;">
+                <button id="rp-mode-day" onclick="rpSetMode('day')"
+                  style="padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;border:none;background:var(--navy);color:white;">
+                  📅 รายวัน
+                </button>
+                <button id="rp-mode-month" onclick="rpSetMode('month')"
+                  style="padding:8px 18px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;border:none;background:var(--gray100);color:var(--gray600);">
+                  📆 รายเดือน
+                </button>
+              </div>
+            </div>
+
+            <!-- DAY picker -->
+            <div id="rp-day-picker" class="f-group" style="margin:0;min-width:160px;">
+              <label class="f-label">วันที่</label>
+              <input id="rp-day" class="f-input" placeholder="DD/MM/YYYY" style="font-family:'IBM Plex Mono',monospace;">
+            </div>
+
+            <!-- MONTH picker -->
+            <div id="rp-month-picker" class="f-group" style="margin:0;min-width:160px;display:none;">
+              <label class="f-label">เดือน / ปี (พ.ศ.)</label>
+              <div style="display:flex;gap:6px;">
+                <select id="rp-month" class="f-select" style="flex:1;">
+                  <option value="01">มกราคม</option><option value="02">กุมภาพันธ์</option>
+                  <option value="03">มีนาคม</option><option value="04">เมษายน</option>
+                  <option value="05">พฤษภาคม</option><option value="06">มิถุนายน</option>
+                  <option value="07">กรกฎาคม</option><option value="08">สิงหาคม</option>
+                  <option value="09">กันยายน</option><option value="10">ตุลาคม</option>
+                  <option value="11">พฤศจิกายน</option><option value="12">ธันวาคม</option>
+                </select>
+                <input id="rp-year" class="f-input" placeholder="2569" maxlength="4"
+                  style="width:80px;font-family:'IBM Plex Mono',monospace;">
+              </div>
+            </div>
+
+            <!-- ประเภท -->
+            <div class="f-group" style="margin:0;min-width:155px;">
+              <label class="f-label">ประเภท</label>
+              <select id="rp-type" class="f-select">
+                <option value="both">ทั้งรับและส่ง</option>
+                <option value="incoming">รับเข้า</option>
+                <option value="outgoing">ส่งออก</option>
+              </select>
+            </div>
+
+            <button class="btn btn-primary" id="rp-btn" onclick="doReport()" style="margin-bottom:1px;">
+              📊 ดึงข้อมูล
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div id="rp-alert" class="alert a-error"></div>
+
+      <!-- ผลลัพธ์ -->
+      <div id="rp-results" style="display:none;">
+
+        <!-- header + export -->
+        <div style="background:var(--navy);color:white;border-radius:6px;padding:12px 18px;margin-bottom:14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <span style="font-size:18px;" id="rp-mode-icon">📅</span>
+          <div>
+            <div id="rp-period-txt" style="color:var(--gold);font-weight:700;font-family:'IBM Plex Mono',monospace;font-size:15px;"></div>
+            <div id="rp-type-txt" style="font-size:11px;color:rgba(255,255,255,.6);margin-top:2px;"></div>
+          </div>
+          <div style="margin-left:auto;">
+            <button id="rp-export-btn" onclick="doExportReport()"
+              style="background:#c99030;color:var(--navy);border:none;border-radius:4px;padding:8px 16px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">
+              📥 Export Excel
+            </button>
+          </div>
+        </div>
+
+        <div id="rp-export-ok" style="display:none;background:#dcfce7;border:1px solid #86efac;border-radius:6px;padding:10px 16px;margin-bottom:12px;font-size:13px;">
+          ✅ Export สำเร็จ — <span id="rp-export-links"></span>
+        </div>
+        <div id="rp-export-err" class="alert a-error" style="display:none;margin-bottom:12px;"></div>
+
+        <!-- stat cards -->
+        <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px;">
+          <div class="rpt-card c-blue">  <div class="rpt-label">รวม</div><div class="rpt-val" id="rp-total">0</div><div style="font-size:10px;color:var(--gray400);">ฉบับ</div></div>
+          <div class="rpt-card" style="border-top-color:#0891b2;"><div class="rpt-label">รับเข้า</div><div class="rpt-val" id="rp-in" style="color:#0891b2;">0</div><div style="font-size:10px;color:var(--gray400);">ฉบับ</div></div>
+          <div class="rpt-card" style="border-top-color:#7c3aed;"><div class="rpt-label">ส่งออก</div><div class="rpt-val" id="rp-out" style="color:#7c3aed;">0</div><div style="font-size:10px;color:var(--gray400);">ฉบับ</div></div>
+          <div class="rpt-card c-red">   <div class="rpt-label">ด่วนที่สุด</div><div class="rpt-val" id="rp-urg1">0</div><div style="font-size:10px;color:var(--gray400);">ฉบับ</div></div>
+          <div class="rpt-card c-yellow"><div class="rpt-label">ด่วน+ด่วนมาก</div><div class="rpt-val" id="rp-urg2">0</div><div style="font-size:10px;color:var(--gray400);">ฉบับ</div></div>
+          <div class="rpt-card c-green"> <div class="rpt-label">ปกติ</div><div class="rpt-val" id="rp-norm">0</div><div style="font-size:10px;color:var(--gray400);">ฉบับ</div></div>
+        </div>
+
+        <!-- 3 column stats -->
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:14px;">
+          <div class="card">
+            <div class="card-head"><span class="card-head-icon">🏢</span><h3>จากหน่วยงาน</h3></div>
+            <div class="card-body" style="padding:0;"><div class="tbl-wrap" style="max-height:200px;overflow-y:auto;">
+              <table><thead><tr><th>หน่วยงาน</th><th style="text-align:right;width:50px;">จำนวน</th><th style="width:44px;text-align:right;">%</th></tr></thead>
+              <tbody id="rp-dept"></tbody></table>
+            </div></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><span class="card-head-icon">📋</span><h3>ตามประเภท</h3></div>
+            <div class="card-body" style="padding:0;"><div class="tbl-wrap">
+              <table><thead><tr><th>ประเภท</th><th style="text-align:right;width:50px;">จำนวน</th><th style="width:44px;text-align:right;">%</th></tr></thead>
+              <tbody id="rp-cat"></tbody></table>
+            </div></div>
+          </div>
+          <div class="card">
+            <div class="card-head"><span class="card-head-icon">👤</span><h3>มอบหมายให้</h3></div>
+            <div class="card-body" style="padding:0;"><div class="tbl-wrap" style="max-height:200px;overflow-y:auto;">
+              <table><thead><tr><th>มอบหมาย</th><th style="text-align:right;width:50px;">จำนวน</th><th style="width:44px;text-align:right;">%</th></tr></thead>
+              <tbody id="rp-assign"></tbody></table>
+            </div></div>
+          </div>
+        </div>
+
+        <!-- รายการทั้งหมด -->
+        <div class="card">
+          <div class="card-head">
+            <span class="card-head-icon">📄</span>
+            <h3>รายการทั้งหมด: <span id="rp-rows-count" style="color:var(--accent);">0</span> รายการ</h3>
+          </div>
+          <div class="card-body" style="padding:0;">
+            <div class="tbl-wrap" style="max-height:600px;overflow-y:auto;">
+              <table>
+                <thead><tr>
+                  <th style="width:70px;">เลขที่</th>
+                  <th style="width:90px;">วันที่</th>
+                  <th style="width:130px;">จาก/ถึง</th>
+                  <th>เรื่อง</th>
+                  <th style="width:85px;">ความเร่งด่วน</th>
+                  <th style="width:60px;">ชนิด</th>
+                  <th style="width:45px;">ไฟล์</th>
+                </tr></thead>
+                <tbody id="rp-rows-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /rp-results -->
+    </div>
+  </div>
+
+  <!-- ===== PAGE: HISTORY ===== -->
+  <div id="page-history" class="page">
+    <div class="content">
+      <div class="ptb">
+        <div class="ptb-icon">🗂</div>
+        <div><h2>ค้นประวัติทะเบียนรับหนังสือ</h2><p>ค้นหาย้อนหลังจากทะเบียนรับทุกปีงบประมาณ</p></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-head-icon">🔍</span><h3>เงื่อนไขการค้นหา</h3></div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="f-group">
+              <label class="f-label">คำค้นหา</label>
+              <input type="text" id="h-term" class="f-input" placeholder="เรื่อง, หน่วยงาน, เลขที่รับ..."
+                onkeypress="if(event.key==='Enter')doHistorySearch()">
+            </div>
+            <div class="f-group">
+              <label class="f-label">ปีงบประมาณ</label>
+              <select id="h-year" class="f-select"><option value="">— ทุกปี —</option></select>
+            </div>
+          </div>
+          <div class="form-grid">
+            <div class="f-group">
+              <label class="f-label">ความเร่งด่วน</label>
+              <select id="h-urgency" class="f-select">
+                <option value="">— ทั้งหมด —</option>
+                <option>ปกติ</option><option>ด่วน</option><option>ด่วนมาก</option><option>ด่วนที่สุด</option>
+              </select>
+            </div>
+            <div class="f-group">
+              <label class="f-label">เสนอ / มอบหมาย</label>
+              <input type="text" id="h-assign" class="f-input" placeholder="เช่น รองแพทย์, ผอก.">
+            </div>
+          </div>
+          <div style="text-align:right;margin-top:4px;">
+            <button class="btn btn-secondary" onclick="resetHistorySearch()" style="margin-right:8px;">ล้าง</button>
+            <button class="btn btn-primary" id="h-btn" onclick="doHistorySearch()">🔍 ค้นหา</button>
+          </div>
+        </div>
+      </div>
+      <div id="h-alert" class="alert a-error"></div>
+      <div id="h-stats-row" style="display:none;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:18px;">
+        <div class="stat-card c-blue">
+          <div class="stat-label">ผลลัพธ์ที่พบ</div>
+          <div class="stat-num" id="h-count-num">0</div>
+          <div class="stat-sub">รายการ</div>
+        </div>
+        <div class="stat-card c-red">
+          <div class="stat-label">เอกสารด่วน</div>
+          <div class="stat-num" id="h-urg-num">0</div>
+          <div class="stat-sub">รายการ</div>
+        </div>
+        <div class="stat-card c-green">
+          <div class="stat-label">ค้นจาก Sheet</div>
+          <div class="stat-num" id="h-sheet-num" style="font-size:16px;padding-top:6px;">—</div>
+        </div>
+      </div>
+      <div class="card" id="h-result-card" style="display:none;">
+        <div class="card-head" style="justify-content:space-between;">
+          <div style="display:flex;align-items:center;gap:9px;">
+            <span class="card-head-icon">📋</span>
+            <h3>ผลการค้นหา: <span id="h-count">0</span> รายการ</h3>
+          </div>
+          <div style="font-size:12px;color:var(--gray400)" id="h-sheet-label"></div>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <div class="tbl-wrap">
+            <table id="h-table">
+              <thead>
+                <tr>
+                  <th style="width:80px">เลขรับ</th>
+                  <th>วันที่ลงรับ</th><th>รับจาก</th>
+                  <th style="min-width:260px">เรื่อง</th>
+                  <th>ความเร่งด่วน</th><th>เสนอ</th>
+                  <th>ผ่าน ผอก.</th><th>ผ่านรอง</th><th>ปีงบ</th>
+                </tr>
+              </thead>
+              <tbody id="h-tbody"></tbody>
+            </table>
+          </div>
+          <div id="h-pagination" style="display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-top:var(--line);font-size:13px;">
+            <span id="h-page-info" style="color:var(--gray500);">หน้า 1</span>
+            <div style="display:flex;gap:6px;">
+              <button class="btn btn-secondary" id="h-prev" onclick="historyPrevPage()" style="padding:6px 14px;">◀ ก่อน</button>
+              <button class="btn btn-secondary" id="h-next" onclick="historyNextPage()" style="padding:6px 14px;">ถัดไป ▶</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- History Detail Modal -->
+      <div id="h-detail-overlay" style="display:none;position:fixed;inset:0;z-index:500;background:rgba(11,37,69,.5);backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:20px;">
+        <div style="background:white;border-radius:6px;box-shadow:0 20px 48px rgba(0,0,0,.2);width:100%;max-width:680px;max-height:90vh;overflow-y:auto;">
+          <div style="background:var(--navy);padding:16px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--gold);">
+            <h3 style="color:white;font-size:15px;font-weight:700;">รายละเอียดหนังสือ</h3>
+            <button onclick="closeHistoryDetail()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:20px;cursor:pointer;line-height:1;">✕</button>
+          </div>
+          <div id="h-detail-body" style="padding:20px;"></div>
+        </div>
+      </div>
+      <div id="h-empty" class="empty-state">
+        <div class="ei">🗂</div><h3>ค้นประวัติทะเบียน</h3><p>กรอกคำค้นหาหรือเลือกปีงบประมาณ แล้วกดค้นหา</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: IMPORT ===== -->
+  <div id="page-import" class="page">
+    <div class="content content-md">
+      <div class="ptb">
+        <div class="ptb-icon">↧</div>
+        <div><h2>นำเข้าข้อมูลประวัติ</h2><p>นำข้อมูลจากทะเบียนรับ (Sheet ประวัติ) เข้าระบบ เพื่อให้ค้นหาได้จากหน้าหลัก</p></div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-head-icon">ℹ</span><h3>ขั้นตอนการนำเข้า</h3></div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:4px;">
+            <div style="background:var(--gray50);border:var(--line);border-radius:var(--r);padding:14px;">
+              <div style="font-size:22px;margin-bottom:8px;">1️⃣</div>
+              <div style="font-weight:700;color:var(--navy);margin-bottom:4px;font-size:13px;">ไม่ต้องสร้าง Sheet ใหม่</div>
+              <div style="font-size:12px;color:var(--gray500);">ระบบจะอ่านจาก Sheet <strong>"หนังสือรับ 2568"</strong> และ <strong>"หนังสือรับ 2569"</strong> ที่มีอยู่แล้วในไฟล์ Google Sheets เดิมของคุณโดยตรง</div>
+            </div>
+            <div style="background:var(--gray50);border:var(--line);border-radius:var(--r);padding:14px;">
+              <div style="font-size:22px;margin-bottom:8px;">2️⃣</div>
+              <div style="font-weight:700;color:var(--navy);margin-bottom:4px;font-size:13px;">เลือก Sheet ที่ต้องการ</div>
+              <div style="font-size:12px;color:var(--gray500);">เลือกว่าจะนำเข้าปี 2568, 2569 หรือทั้งหมด ระบบจะข้ามรายการซ้ำอัตโนมัติ</div>
+            </div>
+            <div style="background:var(--gray50);border:var(--line);border-radius:var(--r);padding:14px;">
+              <div style="font-size:22px;margin-bottom:8px;">3️⃣</div>
+              <div style="font-weight:700;color:var(--navy);margin-bottom:4px;font-size:13px;">กดนำเข้า</div>
+              <div style="font-size:12px;color:var(--gray500);">ข้อมูลจะถูก copy ไปยัง Sheet "รับเข้า" พร้อม tag ว่า "นำเข้าจาก..." สถานะจะเป็น "เสร็จสิ้น" ทั้งหมด</div>
+            </div>
+          </div>
+          <div class="alert a-info" style="display:block;margin-top:14px;margin-bottom:0;">
+            <strong>หมายเหตุ:</strong> ถ้าต้องการค้นหาโดยตรงจาก Sheet ประวัติโดยไม่ต้องนำเข้า → ใช้เมนู <strong>"ประวัติทะเบียน"</strong> แทน (เร็วกว่าและไม่ใช้พื้นที่เพิ่ม)
+          </div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-head"><span class="card-head-icon">⚙</span><h3>ตั้งค่าการนำเข้า</h3></div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="f-group">
+              <label class="f-label">เลือก Sheet ที่ต้องการนำเข้า</label>
+              <select id="imp-sheet" class="f-select">
+                <option value="">— ทุก Sheet (นำเข้าทั้งหมด) —</option>
+              </select>
+              <div class="f-hint">ระบบจะตรวจหา Sheet "หนังสือรับ YYYY" อัตโนมัติ</div>
+            </div>
+            <div class="f-group">
+              <label class="f-label">กรณีข้อมูลซ้ำ</label>
+              <select id="imp-overwrite" class="f-select">
+                <option value="false">ข้าม (ไม่เขียนทับ) — แนะนำ</option>
+                <option value="true">เขียนทับ</option>
+              </select>
+            </div>
+          </div>
+          <div id="imp-alert-err" class="alert a-error"></div>
+          <div id="imp-alert-ok"  class="alert a-success"></div>
+          <div class="btn-row">
+            <button class="btn btn-primary" id="imp-btn" onclick="doImport()">↧ เริ่มนำเข้าข้อมูล</button>
+          </div>
+        </div>
+      </div>
+      <div class="card" id="imp-result-card" style="display:none;">
+        <div class="card-head"><span class="card-head-icon">✓</span><h3>ผลการนำเข้า</h3></div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;">
+            <div style="text-align:center;padding:14px;background:var(--green-bg);border-radius:var(--r);border:1px solid #bbf7d0;">
+              <div style="font-size:28px;font-weight:700;color:var(--green);font-family:'IBM Plex Mono',monospace;" id="imp-r-imported">0</div>
+              <div style="font-size:12px;color:var(--green);font-weight:600;margin-top:4px;">นำเข้าสำเร็จ</div>
+            </div>
+            <div style="text-align:center;padding:14px;background:var(--amber-bg);border-radius:var(--r);border:1px solid #fde68a;">
+              <div style="font-size:28px;font-weight:700;color:var(--amber);font-family:'IBM Plex Mono',monospace;" id="imp-r-skipped">0</div>
+              <div style="font-size:12px;color:var(--amber);font-weight:600;margin-top:4px;">ข้าม (ซ้ำ)</div>
+            </div>
+            <div style="text-align:center;padding:14px;background:var(--red-bg);border-radius:var(--r);border:1px solid #fca5a5;">
+              <div style="font-size:28px;font-weight:700;color:var(--red);font-family:'IBM Plex Mono',monospace;" id="imp-r-errors">0</div>
+              <div style="font-size:12px;color:var(--red);font-weight:600;margin-top:4px;">ผิดพลาด</div>
+            </div>
+          </div>
+          <div id="imp-r-errmsg" style="display:none;margin-top:12px;background:var(--gray50);border:var(--line);border-radius:var(--r);padding:12px;font-size:12px;color:var(--gray600);"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== PAGE: ATTACH ===== -->
+  <div id="page-attach" class="page">
+    <div class="content content-md">
+      <div class="ptb">
+        <div class="ptb-icon">📎</div>
+        <div>
+          <h2>แนบไฟล์ย้อนหลัง</h2>
+          <p>ค้นหาหนังสือที่ลืมแนบไฟล์ แล้วอัพโหลดไฟล์จากเครื่องเพื่อแนบเพิ่มเติม</p>
+        </div>
+      </div>
+
+      <!-- Alerts -->
+      <div id="att-alert-err" class="alert a-error"></div>
+      <div id="att-alert-ok"  class="alert a-success"></div>
+
+      <!-- ขั้นที่ 1: เลือกไฟล์ -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-head-icon">📂</span>
+          <h3>ขั้นที่ 1 — เลือกไฟล์ที่ต้องการแนบ</h3>
+        </div>
+        <div class="card-body">
+          <div class="f-group" style="margin-bottom:0;">
+            <label class="f-label">เลือกไฟล์จากเครื่อง <span class="req">*</span></label>
+            <input type="file" id="att-file-input" class="f-input"
+              accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.txt,.ppt,.pptx"
+              onchange="attHandleFile(this)">
+            <div class="f-hint">PDF, Word, Excel, PowerPoint, JPG, PNG — ขนาดสูงสุด 20 MB</div>
+          </div>
+          <div id="att-file-box" style="display:none;margin-top:12px;background:var(--green-bg);border:1px solid #bbf7d0;border-radius:var(--r);padding:12px 16px;">
+            <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;">
+              <div>
+                <span style="font-size:15px;">📄</span>
+                <strong id="att-file-name" style="color:var(--green);font-size:13px;margin-left:6px;"></strong>
+                <span id="att-file-size" style="color:var(--gray500);font-size:12px;margin-left:8px;"></span>
+              </div>
+              <button onclick="attRemoveFile()" style="background:var(--red-bg);color:var(--red);border:1px solid #fca5a5;border-radius:4px;padding:3px 10px;cursor:pointer;font-size:12px;white-space:nowrap;">✕ ลบ</button>
+            </div>
+            <div style="font-size:12px;color:var(--green);margin-top:6px;">✅ พร้อมอัพโหลด — กรุณาค้นหาและเลือกหนังสือด้านล่าง</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ขั้นที่ 2: ค้นหาหนังสือ -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-head-icon">🔍</span>
+          <h3>ขั้นที่ 2 — ค้นหาหนังสือที่ต้องการแนบ</h3>
+        </div>
+        <div class="card-body">
+          <div class="search-bar">
+            <div class="f-group" style="flex:2;min-width:200px;margin-bottom:0;">
+              <label class="f-label">เลขที่รับ หรือ ชื่อเรื่อง (พิมพ์บางส่วนก็ได้)</label>
+              <input type="text" id="att-search" class="f-input"
+                placeholder="เช่น 1874 หรือ ขอความอนุเคราะห์..."
+                onkeypress="if(event.key==='Enter')searchDocForAttach()">
+            </div>
+            <div class="f-group" style="flex:1;min-width:120px;margin-bottom:0;">
+              <label class="f-label">ประเภท</label>
+              <select id="att-type" class="f-select">
+                <option value="">ทั้งหมด</option>
+                <option value="incoming">รับเข้า</option>
+                <option value="outgoing">ส่งออก</option>
+              </select>
+            </div>
+            <button class="btn btn-search" id="att-search-btn" onclick="searchDocForAttach()">🔍 ค้นหา</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ผลการค้นหา -->
+      <div id="att-results" class="card" style="display:none;">
+        <div class="card-head">
+          <span class="card-head-icon">📋</span>
+          <h3>พบ <span id="att-result-count">0</span> รายการ — คลิกเลือกหนังสือที่ต้องการ</h3>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <div id="att-list" style="max-height:420px;overflow-y:auto;"></div>
+        </div>
+      </div>
+
+      <!-- ขั้นที่ 3: ยืนยัน -->
+      <div id="att-form" class="card" style="display:none;">
+        <div class="card-head" style="background:linear-gradient(135deg,var(--navy),var(--navy2));border-bottom:2px solid var(--gold);">
+          <span class="card-head-icon" style="color:var(--gold);">📎</span>
+          <div>
+            <h3 style="color:white;">ขั้นที่ 3 — ยืนยันการแนบไฟล์</h3>
+            <div style="font-size:12px;color:rgba(255,255,255,.6);margin-top:2px;">
+              หนังสือเลขที่ <strong id="att-doc-no" style="color:var(--gold);font-family:'IBM Plex Mono',monospace;"></strong>
+            </div>
+          </div>
+          <button onclick="cancelAttach()" style="margin-left:auto;background:rgba(255,255,255,.15);color:white;border:1px solid rgba(255,255,255,.3);border-radius:4px;padding:5px 12px;cursor:pointer;font-size:12px;font-family:inherit;">← เลือกใหม่</button>
+        </div>
+        <div class="card-body">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px;">
+            <div style="background:var(--gray50);border:var(--line);border-radius:var(--r);padding:12px 16px;">
+              <div style="font-size:11px;font-weight:700;color:var(--gray400);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;">ไฟล์ที่จะแนบ</div>
+              <div style="font-size:13px;color:var(--gray700);">📄 <strong id="att-confirm-fname"></strong></div>
+              <div id="att-confirm-fsize" style="font-size:12px;color:var(--gray400);margin-top:3px;"></div>
+            </div>
+            <div style="background:var(--gray50);border:var(--line);border-radius:var(--r);padding:12px 16px;">
+              <div style="font-size:11px;font-weight:700;color:var(--gray400);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px;">แนบกับหนังสือ</div>
+              <div style="font-size:13px;color:var(--navy);font-weight:700;font-family:'IBM Plex Mono',monospace;" id="att-confirm-docno"></div>
+              <div id="att-confirm-subj" style="font-size:12px;color:var(--gray500);margin-top:3px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;"></div>
+            </div>
+          </div>
+          <div id="att-existing-box" style="display:none;background:var(--amber-bg);border:1px solid #fde68a;border-radius:var(--r);padding:10px 14px;margin-bottom:14px;">
+            <div style="font-size:12px;font-weight:700;color:var(--amber);margin-bottom:4px;">⚠️ หนังสือนี้มีไฟล์แนบอยู่แล้ว — การแนบใหม่จะแทนที่ไฟล์เดิม</div>
+            <a id="att-existing-link" href="#" target="_blank" style="font-size:12px;color:var(--accent);">🔗 ดูไฟล์เดิม</a>
+          </div>
+          <div class="btn-row">
+            <button class="btn btn-secondary" onclick="cancelAttach()">← เลือกหนังสือใหม่</button>
+            <button class="btn btn-primary" id="att-save-btn" onclick="attachFileUpload()">📎 แนบไฟล์</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div><!-- #main-content -->
+
+<!-- ===== SEARCH DETAIL MODAL ===== -->
+<div id="q-detail-overlay" onclick="closeSearchDetail(event)" style="display:none;position:fixed;inset:0;z-index:700;background:rgba(11,37,69,.55);backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:20px;">
+  <div onclick="event.stopPropagation()" style="background:white;border-radius:6px;box-shadow:0 20px 48px rgba(0,0,0,.22);width:100%;max-width:660px;max-height:90vh;overflow-y:auto;">
+    <div id="q-detail-head" style="background:var(--navy);padding:16px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid var(--gold);border-radius:6px 6px 0 0;">
+      <div>
+        <div id="q-detail-num" style="color:var(--gold);font-family:'IBM Plex Mono',monospace;font-size:14px;font-weight:700;"></div>
+        <div id="q-detail-urg" style="margin-top:4px;"></div>
+      </div>
+      <button onclick="closeSearchDetail()" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:22px;cursor:pointer;line-height:1;padding:0 4px;">✕</button>
+    </div>
+    <div id="q-detail-body" style="padding:0;"></div>
+    <div style="padding:12px 20px;border-top:1px solid var(--gray100);text-align:right;">
+      <button onclick="closeSearchDetail()" class="btn btn-secondary" style="font-size:12px;padding:7px 16px;">ปิด</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ===== DASHBOARD DETAIL MODAL ===== -->
+<div id="dash-detail-overlay" style="display:none;position:fixed;inset:0;z-index:600;background:rgba(11,37,69,.55);backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:20px;" onclick="closeDashDetail(event)">
+  <div style="background:white;border-radius:6px;box-shadow:0 20px 48px rgba(0,0,0,.22);width:100%;max-width:620px;max-height:88vh;overflow-y:auto;" onclick="event.stopPropagation()">
+    <div id="dash-detail-head" style="background:var(--navy);padding:16px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:3px solid var(--gold);border-radius:6px 6px 0 0;">
+      <div>
+        <div id="dash-detail-num" style="color:var(--gold);font-family:'IBM Plex Mono',monospace;font-size:13px;font-weight:700;"></div>
+        <div id="dash-detail-urg" style="margin-top:4px;"></div>
+      </div>
+      <button onclick="document.getElementById('dash-detail-overlay').style.display='none'" style="background:none;border:none;color:rgba(255,255,255,.7);font-size:22px;cursor:pointer;line-height:1;padding:0 4px;">✕</button>
+    </div>
+    <div id="dash-detail-body" style="padding:0;"></div>
+  </div>
+</div>
+
+<div class="footer">
+  ระบบสารบรรณอิเล็กทรอนิกส์ โรงพยาบาลสันทราย จังหวัดเชียงใหม่ &nbsp;|&nbsp;
+  © พ.ศ. 2568 &nbsp;|&nbsp; พัฒนาโดยงานธุรการ
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+// ============================================================
+// GAS WEB API CONFIG
+// ============================================================
+// *** ตั้งค่า URL ของ Google Apps Script Web App ที่ deploy แล้ว ***
+// วิธีหา: ใน Apps Script Editor > Deploy > Manage deployments > Web app URL
+// รูปแบบ: https://script.google.com/macros/s/XXXXXXXXXXXXXXXX/exec
+var GAS_API_URL = 'https://script.google.com/macros/s/AKfycb.../exec';
+
+/**
+ * gasCall(fnName, args) — เรียกฟังก์ชันบน Google Apps Script ผ่าน Web API (doPost)
+ * คืนค่าเป็น Promise ที่ resolve เป็น object ผลลัพธ์จาก backend
+ */
+function gasCall(fnName, args) {
+  return fetch(GAS_API_URL, {
+    method: 'POST',
+    // ใช้ text/plain เพื่อหลีกเลี่ยง CORS preflight (OPTIONS) ซึ่ง Apps Script ไม่รองรับ
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify({ fn: fnName, args: args || [] })
+  })
+  .then(function(res) {
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    return res.json();
+  });
+}
+
+/**
+ * gasRun(fnName) — wrapper ให้ใช้งานแบบ chain คล้าย google.script.run เดิม
+ *   gasRun('login')
+ *     .withSuccessHandler(function(r){...})
+ *     .withFailureHandler(function(e){...})
+ *     .call(nid, pin);
+ */
+function gasRun(fnName) {
+  return {
+    _success: function(){},
+    _failure: function(e){ console.error('GAS error ['+fnName+']:', e); },
+    withSuccessHandler: function(fn) { this._success = fn; return this; },
+    withFailureHandler: function(fn) { this._failure = fn; return this; },
+    call: function() {
+      var args = Array.prototype.slice.call(arguments);
+      var self = this;
+      gasCall(fnName, args)
+        .then(function(r) { self._success(r); })
+        .catch(function(e) { self._failure(e && e.message ? e.message : String(e)); });
+    }
+  };
+}
+
+// ============================================================
+// STATE
+// ============================================================
+var _user    = null;
+var _depts   = [];
+var _deptsOk = false;
+var _dashRecent = [];
+var _dashUrgent = [];
+
+// ============================================================
+// DASHBOARD DETAIL POPUP
+// ============================================================
+function showDashDetail(src, idx) {
+  var d = (src === 'urgent' ? _dashUrgent : _dashRecent)[idx];
+  if (!d) return;
+
+  var urgColors = {'ด่วนที่สุด':'#ef4444','ด่วนมาก':'#f97316','ด่วน':'#eab308'};
+  var urgColor  = urgColors[d.urgency] || 'var(--gold)';
+
+  // header
+  document.getElementById('dash-detail-num').textContent = 'เลขที่รับ: ' + (d.docNumber||'—');
+  var urgEl = document.getElementById('dash-detail-urg');
+  urgEl.innerHTML = d.urgency && d.urgency!=='ปกติ'
+    ? '<span style="background:'+urgColor+';color:white;padding:2px 10px;border-radius:4px;font-size:12px;font-weight:700;">'+esc(d.urgency)+'</span>'
+    : '';
+
+  // หัว color bar ตามความด่วน
+  var head = document.getElementById('dash-detail-head');
+  head.style.borderBottomColor = urgColor;
+
+  // rows
+  var dashTime = d.recvTime || extractTime(d.recordTime || '');
+  var dashDateDisplay = fmtDate(d.date) + (dashTime
+    ? ' &nbsp;<span style="background:var(--gray100);color:var(--navy);font-family:\'IBM Plex Mono\',monospace;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:4px;border:1px solid var(--gray200);">🕐 ' + esc(dashTime) + ' น.</span>'
+    : '');
+
+  var rows = [
+    ['วันที่ / เวลารับ', dashDateDisplay],
+    ['จากหน่วยงาน',   esc(d.from   ||'—')],
+    ['เลขที่อ้างอิง', esc(d.refNo  ||'—')],
+    ['เรื่อง',        '<strong>'+esc(d.subject||'—')+'</strong>'],
+    ['รายละเอียด',    esc(d.detail ||'—')],
+    ['มอบหมายให้',    esc(d.assignTo||'—')],
+    ['การปฏิบัติ',    esc(d.action ||'—')],
+    ['ความเร่งด่วน',  d.urgency||'ปกติ'],
+    ['ไฟล์แนบ',       d.fileId
+        ? '<a href="https://drive.google.com/file/d/'+esc(d.fileId)+'/view" target="_blank" style="color:var(--accent);">📎 ดูไฟล์</a>'
+        : '—']
+  ];
+
+  var html = '<table style="width:100%;font-size:13px;border-collapse:collapse;">' +
+    rows.map(function(r){
+      return '<tr style="border-bottom:1px solid var(--gray100);">'+
+        '<td style="padding:9px 16px;font-weight:600;color:var(--gray500);font-size:11px;text-transform:uppercase;white-space:nowrap;width:130px;">'+r[0]+'</td>'+
+        '<td style="padding:9px 16px;color:var(--gray700);">'+r[1]+'</td>'+
+        '</tr>';
+    }).join('') +
+    buildGroupPanel(d.groupData) +
+    '</table>';
+
+  document.getElementById('dash-detail-body').innerHTML = html;
+  document.getElementById('dash-detail-overlay').style.display = 'flex';
+}
+
+function closeDashDetail(e) {
+  if (!e || e.target === document.getElementById('dash-detail-overlay'))
+    document.getElementById('dash-detail-overlay').style.display = 'none';
+}
+
+// ============================================================
+// CLOCK
+// ============================================================
+function tickClock() {
+  var now  = new Date();
+  var time = now.toLocaleTimeString('th-TH');
+  var date = now.toLocaleDateString('th-TH', { year:'numeric', month:'short', day:'numeric', weekday:'short' });
+  var el1  = document.getElementById('hdr-time');
+  var el2  = document.getElementById('hdr-date');
+  if (el1) el1.textContent = time;
+  if (el2) el2.textContent = date;
+}
+setInterval(tickClock, 1000);
+tickClock();
+
+function toThaiDate(d) {
+  var dd = ('0'+d.getDate()).slice(-2);
+  var mm = ('0'+(d.getMonth()+1)).slice(-2);
+  var yy = d.getFullYear()+543;
+  return dd+'/'+mm+'/'+yy;
+}
+
+// แปลงค่าวันที่จาก GAS (Date object หรือ string ใดๆ) → dd/mm/yyyy พ.ศ.
+function fmtDate(val) {
+  if (!val) return '—';
+  var s = String(val).trim();
+
+  // ถ้าเป็นรูปแบบ dd/mm/yyyy อยู่แล้ว (ทั้งกับและไม่มีเวลา)
+  if (/^\d{1,2}\/\d{1,2}\/\d{4}/.test(s)) return s.split(' ')[0];
+
+  // รูปแบบที่ GAS/Sheets ส่งมา: "Sun Mar 19 2569 00:00:00 GMT+0700 (เวลาอินโดจีน)"
+  // ปีในนี้เป็น พ.ศ. แล้ว — ต้องแยก day/month/year โดยไม่ให้ new Date() แปลงซ้ำ
+  var months = {Jan:1,Feb:2,Mar:3,Apr:4,May:5,Jun:6,Jul:7,Aug:8,Sep:9,Oct:10,Nov:11,Dec:12};
+  var m = s.match(/\w{3}\s+(\w{3})\s+(\d{1,2})\s+(\d{4})/);
+  if (m && months[m[1]]) {
+    var day  = ('0' + m[2]).slice(-2);
+    var mon  = ('0' + months[m[1]]).slice(-2);
+    var year = parseInt(m[3], 10);
+    // ปี > 2500 = พ.ศ. อยู่แล้ว, ปี < 2500 = ค.ศ. ต้องบวก 543
+    if (year < 2500) year += 543;
+    return day + '/' + mon + '/' + year;
+  }
+
+  // ISO string หรือ timestamp (ปีเป็น ค.ศ.) → new Date() แล้วบวก 543
+  try {
+    var d = new Date(val);
+    if (!isNaN(d.getTime())) {
+      // ใช้ UTC offset ของไทย (+7) เพื่อหลีกเลี่ยง timezone shift
+      var offset = 7 * 60; // นาที
+      var local  = new Date(d.getTime() + (offset - (-d.getTimezoneOffset())) * 60000);
+      var dd2 = ('0' + local.getDate()).slice(-2);
+      var mm2 = ('0' + (local.getMonth() + 1)).slice(-2);
+      var yy2 = local.getFullYear() + 543;
+      return dd2 + '/' + mm2 + '/' + yy2;
+    }
+  } catch(e) {}
+
+  // fallback: คืน string เดิมตัดส่วนเวลาออก
+  return s.split(' ')[0] || s;
+}
+
+// ดึงเฉพาะเวลา HH:mm จาก recordTime string เช่น "19/03/2569 08:55" → "08:55"
+// หรือจาก Date string "Sun Mar 19 2569 08:55:00 GMT+0700..."
+function extractTime(val) {
+  if (!val) return '';
+  var s = String(val).trim();
+
+  // ตัด GMT timezone และส่วน (เวลาอินโดจีน) ออกก่อน เพื่อกัน regex จับเวลาผิด
+  // เช่น "GMT+0700" หรือ "GMT+0642" ต้องไม่ถูก match เป็นเวลา
+  var clean = s.replace(/GMT[+-]\d{2,4}[^)]*(\([^)]*\))?/gi, '').trim();
+
+  // รูปแบบ dd/mm/yyyy HH:mm
+  var m1 = clean.match(/\d{1,2}\/\d{1,2}\/\d{4}\s+(\d{1,2}:\d{2})/);
+  if (m1) return m1[1];
+
+  // รูปแบบ "Sun Mar 19 2569 HH:mm:ss" — เวลาหลังปี
+  var m2 = clean.match(/\d{4}\s+(\d{2}:\d{2}):\d{2}/);
+  if (m2) {
+    // ไม่เอาเวลา 00:00 (วันที่ไม่มีเวลาจริง)
+    return m2[1] === '00:00' ? '' : m2[1];
+  }
+
+  // รูปแบบ HH:mm:ss ทั่วไป (หลังตัด GMT แล้ว)
+  var m3 = clean.match(/\b(\d{2}:\d{2}):\d{2}\b/);
+  if (m3) return m3[1] === '00:00' ? '' : m3[1];
+
+  // รูปแบบ HH:mm ล้วนๆ (ไม่มี :ss)
+  var m4 = clean.match(/\b(\d{1,2}:\d{2})\b/);
+  if (m4) return m4[1] === '00:00' ? '' : m4[1];
+
+  return '';
+}
+
+// ============================================================
+// LOGIN MODAL
+// ============================================================
+function openLogin() {
+  document.getElementById('login-overlay').classList.add('open');
+  setTimeout(function(){ document.getElementById('inp-nid').focus(); }, 100);
+}
+function closeLogin() {
+  document.getElementById('login-overlay').classList.remove('open');
+}
+function overlayClose(e) {
+  if (e.target === document.getElementById('login-overlay')) closeLogin();
+}
+function onlyDigit(e) {
+  if (!/\d/.test(e.key) && e.key !== 'Backspace' && e.key !== 'Tab') e.preventDefault();
+}
+
+function doLogin() {
+  var nid = v('inp-nid');
+  var pin = v('inp-pin');
+  document.getElementById('login-alert').style.display = 'none';
+  if (!nid || nid.length !== 13) { showLoginAlert('กรุณากรอกเลขบัตรประชาชน 13 หลัก'); return; }
+  if (!pin || pin.length !== 6)  { showLoginAlert('กรุณากรอกรหัสผ่าน 6 หลัก'); return; }
+  setBtnLoad('login-btn', true, '<span class="spinner"></span> กำลังตรวจสอบ...');
+  gasRun('login')
+    .withSuccessHandler(function(r) {
+      setBtnLoad('login-btn', false, 'เข้าสู่ระบบ');
+      if (r && r.success) {
+        _user = r.user;
+        try { localStorage.setItem('_uid', nid); } catch(e) {}
+        closeLogin();
+        showAuthUI();
+        gotoPage('home');
+      } else {
+        showLoginAlert((r && r.message) || 'เข้าสู่ระบบล้มเหลว');
+      }
+    })
+    .withFailureHandler(function(e) {
+      setBtnLoad('login-btn', false, 'เข้าสู่ระบบ');
+      showLoginAlert('ไม่สามารถเชื่อมต่อระบบได้: ' + e);
+    })
+    .call(nid, pin);
+}
+
+function showLoginAlert(msg) {
+  var el = document.getElementById('login-alert');
+  el.textContent = '⚠ ' + msg;
+  el.style.display = 'block';
+}
+
+function showAuthUI() {
+  document.getElementById('btn-open-login').style.display  = 'none';
+  document.getElementById('btn-logout').style.display      = 'flex';
+  document.getElementById('hdr-user-chip').style.display   = 'flex';
+  document.getElementById('hdr-avatar').textContent        = _user.name ? _user.name.charAt(0) : '?';
+  document.getElementById('hdr-uname').textContent         = _user.name;
+  document.getElementById('hdr-urole').textContent         = _user.role + ' · ' + _user.department;
+  document.getElementById('nav-bar').classList.add('visible');
+  document.getElementById('public-notice').style.display   = 'none';
+  document.getElementById('quick-actions-card').style.display = 'block';
+}
+
+function doLogout() {
+  if (!confirm('ต้องการออกจากระบบใช่หรือไม่?')) return;
+  gasCall('logout', [_user ? _user.nationalId : '']).catch(function(){});
+  try { localStorage.removeItem('_uid'); } catch(e) {}
+  _user = null;
+  document.getElementById('btn-open-login').style.display  = '';
+  document.getElementById('btn-logout').style.display      = 'none';
+  document.getElementById('hdr-user-chip').style.display   = 'none';
+  document.getElementById('nav-bar').classList.remove('visible');
+  document.getElementById('public-notice').style.display   = '';
+  document.getElementById('quick-actions-card').style.display = 'none';
+  showOnlyPage('page-public');
+  document.getElementById('inp-nid').value = '';
+  document.getElementById('inp-pin').value = '';
+  document.getElementById('login-alert').style.display = 'none';
+}
+
+// ============================================================
+// NAVIGATION
+// ============================================================
+function showOnlyPage(pageId) {
+  document.querySelectorAll('.page').forEach(function(el){ el.classList.remove('active'); });
+  var el = document.getElementById(pageId);
+  if (el) el.classList.add('active');
+}
+
+function gotoPage(page) {
+  if (!_user && page !== 'home') { openLogin(); return; }
+  document.querySelectorAll('.page').forEach(function(el){ el.classList.remove('active'); });
+  document.querySelectorAll('.nav-item').forEach(function(el){ el.classList.remove('active'); });
+  var pEl = document.getElementById('page-' + (page === 'home' ? 'public' : page));
+  if (pEl) pEl.classList.add('active');
+  var nEl = document.querySelector('[data-page="'+page+'"]');
+  if (nEl) nEl.classList.add('active');
+  window.scrollTo(0, 0);
+  if (page === 'home')    loadDashboard();
+  if (page === 'receive') {
+    loadDepts('r-assign');
+    setDefaultDate('r-date');
+    loadNextRecvSeq();
+  }
+  if (page === 'send')    { loadDepts('s-sentby'); setDefaultDate('s-date'); }
+  if (page === 'report')  setReportDates();
+  if (page === 'history') loadHistoryYears();
+  if (page === 'import')  loadHistoryYears();
+}
+
+// ============================================================
+// DASHBOARD
+// ============================================================
+function loadDashboard() {
+  ['s-in','s-out','s-urgent1','s-urgent2'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(el) el.innerHTML='<span class="spinner spinner-dark"></span>';
+  });
+  document.getElementById('recent-tbody').innerHTML=
+    '<tr><td colspan="6" style="text-align:center;padding:28px;color:#94a3b8;"><span class="spinner spinner-dark"></span> กำลังโหลด...</td></tr>';
+
+  gasRun('getDashboardStats')
+    .withSuccessHandler(function(r) {
+      if (!r) r = {success:true,inToday:0,outToday:0,urgentCount:0,urgentList:[],recent:[]};
+      document.getElementById('s-in').innerHTML  = (r.inToday  ||0)+'<span class="stat-unit">ฉบับ</span>';
+      document.getElementById('s-out').innerHTML = (r.outToday ||0)+'<span class="stat-unit">ฉบับ</span>';
+
+      // นับ ด่วนที่สุด และ ด่วน/ด่วนมาก แยกกัน
+      var ul = r.urgentList || [];
+      var cnt1 = ul.filter(function(x){return x.urgency==='ด่วนที่สุด';}).length;
+      var cnt2 = ul.filter(function(x){return x.urgency==='ด่วน'||x.urgency==='ด่วนมาก';}).length;
+      document.getElementById('s-urgent1').innerHTML = cnt1+'<span class="stat-unit">ฉบับ</span>';
+      document.getElementById('s-urgent2').innerHTML = cnt2+'<span class="stat-unit">ฉบับ</span>';
+
+      // ตาราง recent
+      var tb = document.getElementById('recent-tbody');
+      if (!r.recent || r.recent.length===0) {
+        tb.innerHTML='<tr class="tbl-empty"><td colspan="6">ยังไม่มีเอกสารในระบบ</td></tr>';
+      } else {
+        _dashRecent = r.recent || [];
+        tb.innerHTML = _dashRecent.map(function(d, i) {
+          var urgHtml = d.urgency && d.urgency!=='ปกติ'
+            ? ' '+urgBadge(d.urgency) : '';
+          var fileLink = d.fileId
+            ? '<a href="https://drive.google.com/file/d/'+esc(d.fileId)+'/view" target="_blank" onclick="event.stopPropagation()" style="color:var(--accent);font-size:13px;text-decoration:none;">📎</a>'
+            : '';
+          return '<tr style="cursor:pointer;" onclick="showDashDetail(\'recent\','+i+')">'+
+            '<td><strong style="font-family:\'IBM Plex Mono\',monospace;font-size:12px;">'+esc(d.docNumber)+'</strong> '+fileLink+urgHtml+'</td>'+
+            '<td style="white-space:nowrap;">'+fmtDate(d.date)+'</td>'+
+            '<td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(d.from)+'</td>'+
+            '<td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(d.subject)+'</td>'+
+            '<td style="font-size:12px;">'+esc(d.assignTo)+'</td>'+
+            '<td></td>'+
+            '</tr>';
+        }).join('');
+      }
+
+      // ตารางเอกสารด่วน
+      var uc = document.getElementById('urgent-card');
+      var utb = document.getElementById('urgent-tbody');
+      if (ul.length > 0) {
+        if(uc) uc.style.display='';
+        // sort ใน frontend: ด่วนที่สุด(0) → ด่วนมาก(1) → ด่วน(2) แล้วเลขที่มาก→น้อย
+        // normalize urgency ก่อน sort (กัน whitespace / variant)
+        function normUrg(u) {
+          var s = (u||'').trim();
+          if (s.indexOf('ที่สุด') !== -1) return 'ด่วนที่สุด';
+          if (s.indexOf('มาก')   !== -1) return 'ด่วนมาก';
+          if (s.indexOf('ด่วน')  !== -1) return 'ด่วน';
+          return s;
+        }
+        var _urgOrd = {'ด่วนที่สุด':0,'ด่วนมาก':1,'ด่วน':2};
+        ul.forEach(function(x){ x.urgency = normUrg(x.urgency); });
+        ul.sort(function(a,b){
+          var oa = (_urgOrd[a.urgency] !== undefined) ? _urgOrd[a.urgency] : 9;
+          var ob = (_urgOrd[b.urgency] !== undefined) ? _urgOrd[b.urgency] : 9;
+          if (oa !== ob) return oa - ob;
+          return parseInt(b.docNumber,10) - parseInt(a.docNumber,10);
+        });
+        _dashUrgent = ul;
+        utb.innerHTML = ul.map(function(d, i) {
+          var fileLink = d.fileId
+            ? '<a href="https://drive.google.com/file/d/'+esc(d.fileId)+'/view" target="_blank" onclick="event.stopPropagation()" style="color:var(--accent);font-size:13px;text-decoration:none;">📎</a>'
+            : '';
+          return '<tr style="cursor:pointer;" onclick="showDashDetail(\'urgent\','+i+')">'+
+            '<td><strong style="font-family:\'IBM Plex Mono\',monospace;font-size:12px;">'+esc(d.docNumber)+'</strong> '+fileLink+'</td>'+
+            '<td style="white-space:nowrap;">'+fmtDate(d.date)+'</td>'+
+            '<td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(d.from)+'</td>'+
+            '<td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(d.subject)+'</td>'+
+            '<td>'+urgBadge(d.urgency)+'</td>'+
+            '<td style="font-size:12px;">'+esc(d.assignTo)+'</td>'+
+            '</tr>';
+        }).join('');
+      } else {
+        if(uc) uc.style.display='none';
+      }
+    })
+    .withFailureHandler(function(e){
+      ['s-in','s-out','s-urgent1','s-urgent2'].forEach(function(id){setText(id,'0');});
+      document.getElementById('recent-tbody').innerHTML=
+        '<tr class="tbl-empty"><td colspan="6">⚠ เชื่อมต่อล้มเหลว — กรุณารีโหลดหน้า</td></tr>';
+    })
+    .call();
+}
+
+
+// ============================================================
+// DEPARTMENTS
+// ============================================================
+function loadDepts(selId) {
+  var sel = document.getElementById(selId);
+  if (!sel) return;
+  if (_deptsOk && _depts.length > 0) { fillSel(sel); return; }
+  gasRun('getDepartments')
+    .withSuccessHandler(function(r) {
+      if (r && r.success && r.departments) {
+        _depts = r.departments; _deptsOk = true;
+        ['r-assign','s-sentby'].forEach(function(id) {
+          var el = document.getElementById(id); if (el) fillSel(el);
+        });
+      }
+    })
+    .withFailureHandler(function(){})
+    .call();
+}
+function fillSel(sel) {
+  while (sel.options.length > 1) sel.remove(1);
+  _depts.forEach(function(d) {
+    var o = document.createElement('option');
+    o.value = d.name; o.textContent = d.name; sel.appendChild(o);
+  });
+}
+
+// ============================================================
+// RECEIVE — โหลดเลขที่รับถัดไปอัตโนมัติ (เริ่มที่ 1874)
+// ============================================================
+function loadNextRecvSeq() {
+  var noEl  = document.getElementById('r-recvno');
+  var yrEl  = document.getElementById('r-recvno-year');
+  // ตั้งปี พ.ศ. เสมอ
+  if (yrEl) yrEl.value = String(new Date().getFullYear() + 543);
+  // แสดง placeholder รอก่อน
+  if (noEl) { noEl.value = ''; noEl.placeholder = 'กำลังโหลด...'; }
+  gasRun('getNextIncomingSeq')
+    .withSuccessHandler(function(r) {
+      if (noEl) {
+        noEl.placeholder = '(ใหม่)';
+        if (r && r.success && r.nextSeq) {
+          noEl.value = String(r.nextSeq);
+        }
+      }
+    })
+    .withFailureHandler(function() {
+      if (noEl) { noEl.value = '1874'; noEl.placeholder = '(ใหม่)'; }
+    })
+    .call();
+}
+
+// ============================================================
+// RECEIVE — FILE UPLOAD (เก็บไฟล์ไว้ก่อน อัพโหลดพร้อมบันทึก)
+// ============================================================
+var _recvPendingFile = null; // เก็บ {file, b64} ไว้รอบันทึก
+
+function handleRecvFile(input) {
+  var file = input.files[0];
+  if (!file) return;
+  if (file.size > 20*1024*1024) {
+    showA('r-alert-err','❌ ไฟล์ใหญ่เกิน 20 MB'); input.value=''; return;
+  }
+  var allowed=['application/pdf','application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'image/jpeg','image/png','image/gif','text/plain',
+    'application/vnd.ms-powerpoint',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation'];
+  if (!allowed.includes(file.type)) {
+    showA('r-alert-err','❌ ประเภทไฟล์ไม่รองรับ'); input.value=''; return;
+  }
+  // อ่านไฟล์เป็น base64 เพื่อเตรียมไว้ แต่ยังไม่อัพโหลด
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    _recvPendingFile = { b64: e.target.result.split(',')[1], name: file.name, type: file.type };
+    var sizeKB = Math.round(file.size / 1024);
+    setText('r-fname', file.name);
+    setText('r-fsize', sizeKB + ' KB');
+    var urlEl = document.getElementById('r-furl');
+    if (urlEl) { urlEl.href = '#'; urlEl.style.display = 'none'; }
+    document.getElementById('r-file-box').style.display = 'block';
+    showA('r-alert-info', '📎 เลือกไฟล์แล้ว: ' + file.name + ' (' + sizeKB + ' KB) — จะอัพโหลดเมื่อกดบันทึก');
+    hide('r-alert-err');
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeRecvFile() {
+  _recvPendingFile = null;
+  setVal('r-fileid','');
+  setText('r-fname',''); setText('r-fsize','');
+  document.getElementById('r-file-box').style.display='none';
+  document.getElementById('r-file').value='';
+  var urlEl=document.getElementById('r-furl');
+  if(urlEl){ urlEl.href='#'; urlEl.style.display='none'; }
+  hide('r-alert-ok'); hide('r-alert-info');
+}
+
+// ── checkbox: enable/disable date field when checked ──
+document.addEventListener('DOMContentLoaded',function(){
+  [['r-chk-dir','r-date-dir'],['r-chk-med','r-date-med'],
+   ['r-chk-prs','r-date-prs'],['r-chk-adm','r-date-adm'],
+   ['r-chk-dig','r-date-dig'],['r-chk-pri','r-date-pri'],
+   ['r-chk-qa','r-date-qa'],
+   ['r-chk-cfo','r-date-cfo'],['r-chk-nur','r-date-nur']].forEach(function(pair){
+    var chk=document.getElementById(pair[0]);
+    var inp=document.getElementById(pair[1]);
+    if(!chk||!inp) return;
+    chk.addEventListener('change',function(){
+      inp.disabled=!chk.checked;
+      if(chk.checked && !inp.value) inp.value=toThaiDate(new Date());
+      else if(!chk.checked) inp.value='';
+    });
+  });
+  // สร้างตารางกลุ่มงาน
+  buildGroupTable();
+});
+
+// ============================================================
+// RECEIVE — ORG AUTOCOMPLETE
+// ============================================================
+// รายชื่อหน่วยงานที่พบบ่อย (จากการวิเคราะห์เอกสารในระบบ)
+var _ORG_LIST = [
+  // กระทรวง / กรม / สำนักงาน ส่วนกลาง
+  'กระทรวงสาธารณสุข','กรมการแพทย์','กรมอนามัย','กรมควบคุมโรค','กรมสุขภาพจิต',
+  'กรมสนับสนุนบริการสุขภาพ','กรมวิทยาศาสตร์การแพทย์','สำนักงานปลัดกระทรวงสาธารณสุข',
+  'สำนักงานคณะกรรมการอาหารและยา','สถาบันรับรองคุณภาพสถานพยาบาล (สรพ.)',
+  // สสจ. / นิยามจังหวัด
+  'สำนักงานสาธารณสุขจังหวัดเชียงใหม่','สสจ.เชียงใหม่',
+  'สำนักงานสาธารณสุขอำเภอสันทราย','สสอ.สันทราย',
+  // โรงพยาบาลในจังหวัด
+  'โรงพยาบาลนครพิงค์','โรงพยาบาลสันทราย','โรงพยาบาลส่งเสริมสุขภาพตำบล',
+  'โรงพยาบาลมหาราชนครเชียงใหม่','โรงพยาบาลเชียงใหม่ราม',
+  'โรงพยาบาลแมคคอร์มิค','โรงพยาบาลประสาทเชียงใหม่',
+  'โรงพยาบาลสันกำแพง','โรงพยาบาลดอยสะเก็ด','โรงพยาบาลสาธุประชาสรรค์',
+  'โรงพยาบาลฝาง','โรงพยาบาลเวียงแหง','โรงพยาบาลแม่อาย',
+  // หน่วยงานราชการทั่วไป
+  'กรมบัญชีกลาง','สำนักงานตรวจเงินแผ่นดิน','สำนักงบประมาณ',
+  'กระทรวงการคลัง','กระทรวงมหาดไทย','กระทรวงศึกษาธิการ',
+  'สำนักงานคณะกรรมการข้าราชการพลเรือน (กพ.)',
+  'สำนักงานหลักประกันสุขภาพแห่งชาติ (สปสช.)',
+  'สำนักงานประกันสังคม','สำนักงานส่งเสริมสวัสดิภาพและพิทักษ์เด็ก',
+  // มหาวิทยาลัย
+  'มหาวิทยาลัยเชียงใหม่','คณะแพทยศาสตร์ มช.','คณะพยาบาลศาสตร์ มช.',
+  'มหาวิทยาลัยราชภัฏเชียงใหม่','มหาวิทยาลัยแม่โจ้',
+  // อำเภอ / องค์กรปกครองส่วนท้องถิ่น
+  'อำเภอสันทราย','เทศบาลตำบลสันทราย','องค์การบริหารส่วนตำบล',
+  'อำเภอดอยสะเก็ด','อำเภอสันกำแพง',
+  // ภายในโรงพยาบาลสันทราย
+  'งานธุรการ','กลุ่มงานอำนวยการ','กลุ่มงานการพยาบาล',
+  'กลุ่มงานเวชกรรมสังคม','กลุ่มงานเวชกรรมฟื้นฟู',
+  'กลุ่มงานเภสัชกรรม','กลุ่มงานรังสีวิทยา','กลุ่มงานพยาธิวิทยา',
+  'กลุ่มงานทันตกรรม','กลุ่มงานโภชนาการ','กลุ่มงานสุขศึกษา',
+  'ห้องผู้ป่วยนอก','ห้องผ่าตัด','ห้องฉุกเฉิน','ห้องคลอด','ไอซียู',
+  'ประกันสุขภาพ','งานการเงิน','งานพัสดุ','งานบุคคล',
+  'งานเวชระเบียน','ศูนย์สุขภาพชุมชน'
+];
+
+function acSearch(inputId, listId, sourceList) {
+  var inp  = document.getElementById(inputId);
+  var list = document.getElementById(listId);
+  if (!inp || !list) return;
+  var q = inp.value.trim().toLowerCase();
+  // กรอง + เรียง: ขึ้นต้นก่อน แล้วค่อยตามด้วยมีใน string
+  var matches = sourceList.filter(function(s){
+    return s.toLowerCase().indexOf(q) !== -1;
+  }).sort(function(a, b) {
+    var ai = a.toLowerCase().indexOf(q);
+    var bi = b.toLowerCase().indexOf(q);
+    return ai - bi; // ตำแหน่งที่พบน้อยกว่า (ขึ้นต้น) อยู่ก่อน
+  }).slice(0, 12);
+
+  if (!matches.length || !q) { list.style.display = 'none'; return; }
+  list.innerHTML = matches.map(function(s) {
+    var hl = s.replace(new RegExp('(' + q.replace(/[.*+?^${}()|[\]\\]/g,'\\$&') + ')', 'gi'),
+                       '<mark>$1</mark>');
+    return '<div class="autocomplete-item" onmousedown="acSelect(\''+inputId+'\',\''+listId+'\',this)">' + hl + '</div>';
+  }).join('');
+  list.style.display = 'block';
+}
+
+function acSelect(inputId, listId, el) {
+  var inp = document.getElementById(inputId);
+  if (inp) inp.value = el ? el.textContent : '';
+  acHide(listId);
+}
+
+function acHide(listId) {
+  var list = document.getElementById(listId);
+  if (list) list.style.display = 'none';
+}
+
+// format เวลา HH:MM อัตโนมัติ เมื่อพิมพ์ตัวเลข
+function formatTimeInput(el) {
+  var v = el.value.replace(/[^0-9]/g, '');
+  if (v.length >= 3) v = v.slice(0,2) + ':' + v.slice(2,4);
+  el.value = v;
+}
+
+// ============================================================
+// RECEIVE — GROUP TABLE (กลุ่มงาน/การรับทราบ)
+// ============================================================
+// ── รายการภารกิจ (แสดงเป็น row ตรงๆ ไม่มีกลุ่มงานย่อย) ──
+// isOther=true → แถวกรอกข้อความได้
+var _MISSIONS = [
+  { name: 'ภารกิจด้านอำนวยการ',                                   isOther: false },
+  { name: 'ภารกิจด้านบริการปฐมภูมิ',                              isOther: false },
+  { name: 'ภารกิจด้านพัฒนาระบบบริการและสนับสนุนบริการสุขภาพ',   isOther: false },
+  { name: 'ภารกิจด้านสุขภาพดิจิทัล',                              isOther: false },
+  { name: 'ภารกิจด้านบริการทุติยภูมิและตติยภูมิ',                isOther: false },
+  { name: 'ภารกิจด้านการพยาบาล',                                   isOther: false },
+  { name: 'ด้านพัฒนาคุณภาพ (HA)',                                  isOther: false },
+  { name: 'อื่นๆ',                                                  isOther: true  }
+];
+
+function buildGroupTable() {
+  var tbody = document.getElementById('r-grp-tbody');
+  if (!tbody) return;
+  tbody.innerHTML = '';
+
+  _MISSIONS.forEach(function(m, i) {
+    var p  = 'rgrp' + i;
+    var tr = document.createElement('tr');
+
+    if (m.isOther) {
+      // แถวอื่นๆ — ชื่อคอลัมน์เป็น input กรอกได้
+      tr.innerHTML =
+        '<td class="grp-name">' +
+          '<input type="text" id="' + p + '_othertxt" class="grp-other-input" ' +
+            'placeholder="อื่นๆ — ระบุภารกิจ/กลุ่มงาน..." ' +
+            'oninput="updateGroupStatus(' + i + ')">' +
+        '</td>' +
+        '<td class="grp-chk">' +
+          '<input type="radio" name="' + p + '" id="' + p + '_ok" value="ok" ' +
+            'style="accent-color:var(--green);width:15px;height:15px;cursor:pointer;" ' +
+            'onchange="updateGroupStatus(' + i + ')">' +
+          '<label for="' + p + '_ok" style="cursor:pointer;font-size:11px;color:var(--green);font-weight:700;margin-left:2px;">✔</label>' +
+        '</td>' +
+        '<td class="grp-chk">' +
+          '<input type="radio" name="' + p + '" id="' + p + '_no" value="no" ' +
+            'style="accent-color:#856404;width:15px;height:15px;cursor:pointer;" ' +
+            'onchange="updateGroupStatus(' + i + ')">' +
+          '<label for="' + p + '_no" style="cursor:pointer;font-size:11px;color:#856404;font-weight:700;margin-left:2px;">✘</label>' +
+        '</td>' +
+        '<td class="grp-st">' +
+          '<span id="' + p + '_badge" class="st-badge st-na" style="font-size:10.5px;">—</span>' +
+        '</td>';
+    } else {
+      // แถวภารกิจปกติ
+      tr.innerHTML =
+        '<td class="grp-name">' + m.name + '</td>' +
+        '<td class="grp-chk">' +
+          '<input type="radio" name="' + p + '" id="' + p + '_ok" value="ok" ' +
+            'style="accent-color:var(--green);width:15px;height:15px;cursor:pointer;" ' +
+            'onchange="updateGroupStatus(' + i + ')">' +
+          '<label for="' + p + '_ok" style="cursor:pointer;font-size:11px;color:var(--green);font-weight:700;margin-left:2px;">✔</label>' +
+        '</td>' +
+        '<td class="grp-chk">' +
+          '<input type="radio" name="' + p + '" id="' + p + '_no" value="no" ' +
+            'style="accent-color:#856404;width:15px;height:15px;cursor:pointer;" ' +
+            'onchange="updateGroupStatus(' + i + ')">' +
+          '<label for="' + p + '_no" style="cursor:pointer;font-size:11px;color:#856404;font-weight:700;margin-left:2px;">✘</label>' +
+        '</td>' +
+        '<td class="grp-st">' +
+          '<span id="' + p + '_badge" class="st-badge st-pending" style="font-size:10.5px;">ยังไม่รับทราบ</span>' +
+        '</td>';
+    }
+    tbody.appendChild(tr);
+  });
+}
+
+function updateGroupStatus(i) {
+  var m     = _MISSIONS[i];
+  if (!m) return;
+  var p     = 'rgrp' + i;
+  var badge = document.getElementById(p + '_badge');
+  var okEl  = document.getElementById(p + '_ok');
+  var noEl  = document.getElementById(p + '_no');
+  if (!badge) return;
+
+  if (m.isOther) {
+    var txtEl = document.getElementById(p + '_othertxt');
+    var txt   = txtEl ? txtEl.value.trim() : '';
+    if (okEl && okEl.checked && txt) {
+      badge.className = 'st-badge st-ok';
+      badge.textContent = '✔ ' + txt;
+    } else if (okEl && okEl.checked && !txt) {
+      badge.className = 'st-badge st-pending';
+      badge.textContent = '⏳ ระบุภารกิจ';
+    } else if (noEl && noEl.checked) {
+      badge.className = 'st-badge st-pending';
+      badge.textContent = '⏳ ยังไม่รับทราบ';
+    } else {
+      badge.className = 'st-badge st-na';
+      badge.textContent = '—';
+    }
+  } else {
+    if (okEl && okEl.checked) {
+      badge.className = 'st-badge st-ok';
+      badge.textContent = '✔ รับทราบแล้ว';
+    } else if (noEl && noEl.checked) {
+      badge.className = 'st-badge st-pending';
+      badge.textContent = '⏳ ยังไม่รับทราบ';
+    }
+  }
+
+  // อัปเดต notify bar — ถือว่าครบเมื่อทุกแถวที่ถูกแตะแล้วกด ✔ ทั้งหมด
+  var totalAnswered = _MISSIONS.filter(function(_, j) {
+    var ok = document.getElementById('rgrp' + j + '_ok');
+    var no = document.getElementById('rgrp' + j + '_no');
+    return (ok && ok.checked) || (no && no.checked);
+  }).length;
+  var totalOk = _MISSIONS.filter(function(_, j) {
+    var ok = document.getElementById('rgrp' + j + '_ok');
+    return ok && ok.checked;
+  }).length;
+  var ns = document.getElementById('r-notify-status');
+  if (ns) {
+    if (totalAnswered === _MISSIONS.length && totalOk === _MISSIONS.length) {
+      ns.className = 'st-badge st-ok';
+      ns.textContent = '✅ รับทราบครบแล้ว';
+    } else if (totalOk > 0) {
+      ns.className = 'st-badge st-pending';
+      ns.textContent = '⏳ รับทราบ ' + totalOk + '/' + _MISSIONS.length;
+    } else {
+      ns.className = 'st-badge st-pending';
+      ns.textContent = '⏳ ยังไม่รับทราบ';
+    }
+  }
+}
+
+// ============================================================
+// RECEIVE — รวบรวมข้อมูลกลุ่มงานเพื่อบันทึกลงชีท
+// ============================================================
+function collectGroupData() {
+  // คืน array ของ { name, status } สำหรับแต่ละแถว
+  return _MISSIONS.map(function(m, i) {
+    var p    = 'rgrp' + i;
+    var okEl = document.getElementById(p + '_ok');
+    var noEl = document.getElementById(p + '_no');
+    var name = m.isOther
+      ? (function(){ var el = document.getElementById(p + '_othertxt'); return el ? el.value.trim() : 'อื่นๆ'; })()
+      : m.name;
+    var status = '';
+    if (okEl && okEl.checked)      status = 'รับทราบแล้ว';
+    else if (noEl && noEl.checked) status = 'ยังไม่รับทราบ';
+    else                           status = '';
+    return { name: name, status: status };
+  });
+}
+
+// ============================================================
+// RECEIVE — IMAGE PREVIEW (ภาพสแกนเอกสาร)
+// ============================================================
+function previewRecvImg(input) {
+  if (!input.files || !input.files[0]) return;
+  var file = input.files[0];
+  var wrap        = document.getElementById('r-img-preview-wrap');
+  var placeholder = document.getElementById('r-img-placeholder');
+  var imgEl       = document.getElementById('r-img-preview');
+  var pdfEl       = document.getElementById('r-img-preview-pdf');
+
+  if (file.type === 'application/pdf') {
+    // แสดง PDF preview ด้วย <object> หรือ icon
+    var url = URL.createObjectURL(file);
+    if (!pdfEl) {
+      // สร้าง element ครั้งแรก
+      pdfEl = document.createElement('div');
+      pdfEl.id = 'r-img-preview-pdf';
+      pdfEl.style.cssText = 'width:100%;text-align:center;padding:10px 0;';
+      pdfEl.innerHTML =
+        '<div style="font-size:32px;">📄</div>' +
+        '<div id="r-img-preview-pdf-name" style="font-size:12px;color:var(--navy);font-weight:600;margin-top:6px;word-break:break-all;padding:0 8px;"></div>' +
+        '<a id="r-img-preview-pdf-link" href="#" target="_blank" ' +
+           'style="font-size:11px;color:var(--accent);margin-top:4px;display:inline-block;">🔗 เปิดดู PDF</a>';
+      if (wrap) wrap.appendChild(pdfEl);
+    }
+    pdfEl.style.display = 'block';
+    document.getElementById('r-img-preview-pdf-name').textContent = file.name;
+    document.getElementById('r-img-preview-pdf-link').href = url;
+    if (imgEl) imgEl.style.display = 'none';
+    if (wrap) wrap.style.display = 'block';
+    if (placeholder) placeholder.style.display = 'none';
+  } else {
+    // รูปภาพปกติ
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      if (imgEl) { imgEl.src = e.target.result; imgEl.style.display = ''; }
+      if (pdfEl) pdfEl.style.display = 'none';
+      if (wrap) wrap.style.display = 'block';
+      if (placeholder) placeholder.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+  }
+}
+
+function removeRecvImg(e) {
+  if (e) e.stopPropagation();
+  var img         = document.getElementById('r-img-preview');
+  var wrap        = document.getElementById('r-img-preview-wrap');
+  var placeholder = document.getElementById('r-img-placeholder');
+  var fileInput   = document.getElementById('r-img-file');
+  var pdfEl       = document.getElementById('r-img-preview-pdf');
+  if (img)  { img.src = ''; img.style.display = ''; }
+  if (pdfEl) pdfEl.style.display = 'none';
+  if (wrap) wrap.style.display = 'none';
+  if (placeholder) placeholder.style.display = '';
+  if (fileInput) fileInput.value = '';
+}
+
+// ============================================================
+// RECEIVE — SUBMIT
+// ============================================================
+function submitRecv() {
+  hideAlerts(['r-alert-err','r-alert-ok','r-alert-info']);
+
+  // ตรวจ checkbox + วันที่ผ่านรอง
+  var chkDir = document.getElementById('r-chk-dir');
+  var chkMed = document.getElementById('r-chk-med');
+  var chkPrs = document.getElementById('r-chk-prs');
+  var chkAdm = document.getElementById('r-chk-adm');
+
+  var chkDig = document.getElementById('r-chk-dig');
+  var chkPri = document.getElementById('r-chk-pri');
+  var chkQa  = document.getElementById('r-chk-qa');
+  var chkCfo = document.getElementById('r-chk-cfo');
+  var chkNur = document.getElementById('r-chk-nur');
+
+  // เลขที่รับ: ใช้จากช่อง r-recvno-main ก่อน ถ้าว่างใช้ r-recvno (hidden)
+  var mainRecvNo = v('r-recvno-main') || v('r-recvno');
+
+  var data = {
+    docNumber:     mainRecvNo,
+    recvNo:        mainRecvNo,
+    receivedDate:  v('r-date'),
+    receivedTime:  v('r-recv-time'),        // เวลาลงรับ (HH:MM)
+    fromOrg:       v('r-from'),
+    refNumber:     v('r-ref'),
+    receivedBy:    v('r-by'),
+    subject:       v('r-subj'),
+    detail:        v('r-detail'),
+    category:      v('r-cat'),
+    urgency:       v('r-urgency') || 'ปกติ',
+    confidential:  v('r-conf') || 'ไม่มีชั้น',
+    assignTo:      v('r-assign'),
+    action:        v('r-action'),
+    taskStored:    v('r-taskstored'),
+    docRefDate:    v('r-docrefdate'),
+    docReference:  v('r-docref'),
+    note:          v('r-note'),
+    fileId:        v('r-fileid'),
+    // ผ่านรองฯ
+    forwardTo:     (chkDir && chkDir.checked) ? v('r-date-dir') : '',
+    approverMed:   (chkMed && chkMed.checked) ? v('r-date-med') : '',
+    approverAdmin: (chkPrs && chkPrs.checked) ? v('r-date-prs') : '',
+    approverDir:   (chkAdm && chkAdm.checked) ? v('r-date-adm') : '',
+    approverDig:   (chkDig && chkDig.checked) ? v('r-date-dig') : '',
+    approverPri:   (chkPri && chkPri.checked) ? v('r-date-pri') : '',
+    approverQa:    (chkQa  && chkQa.checked)  ? v('r-date-qa')  : '',
+    approverCfo:   (chkCfo && chkCfo.checked) ? v('r-date-cfo') : '',
+    approverNur:   (chkNur && chkNur.checked) ? v('r-date-nur') : '',
+    returnDate1:   v('r-date-return'),
+    userName:      _user ? _user.name : '',
+    groupData:     collectGroupData()
+  };
+
+  if (!data.fromOrg)  return showA('r-alert-err','❌ กรุณากรอก จากหน่วยงาน');
+  if (!data.subject)  return showA('r-alert-err','❌ กรุณากรอก เรื่อง');
+  if (!data.category) return showA('r-alert-err','❌ กรุณาเลือก ประเภท');
+  if (!data.assignTo) return showA('r-alert-err','❌ กรุณาเลือก มอบหมายให้');
+
+  setLoad('r-btn', true, '💾 กำลังบันทึก...');
+
+  // ถ้ามีไฟล์รอ → อัพโหลดก่อน แล้วค่อยบันทึก
+  if (_recvPendingFile) {
+    showA('r-alert-info', '⏳ กำลังอัพโหลดไฟล์ ' + _recvPendingFile.name + ' ...');
+    var pf = _recvPendingFile;
+    gasRun('uploadFile')
+      .withSuccessHandler(function(uploadResult) {
+        hide('r-alert-info');
+        if (uploadResult && uploadResult.success) {
+          data.fileId = uploadResult.fileId;
+          // อัพเดท UI แสดง URL ไฟล์
+          var urlEl = document.getElementById('r-furl');
+          if (urlEl && uploadResult.fileUrl) { urlEl.href = uploadResult.fileUrl; urlEl.style.display = 'inline'; }
+          _recvPendingFile = null;
+          _doSaveRecv(data);
+        } else {
+          setLoad('r-btn', false, '💾 บันทึกหนังสือเข้า');
+          showA('r-alert-err', '❌ อัพโหลดไฟล์ล้มเหลว: ' + ((uploadResult && uploadResult.message) || 'ไม่ทราบสาเหตุ'));
+        }
+      })
+      .withFailureHandler(function(e) {
+        setLoad('r-btn', false, '💾 บันทึกหนังสือเข้า');
+        showA('r-alert-err', '❌ อัพโหลดล้มเหลว: ' + e);
+      })
+      .call(pf.b64, pf.name, pf.type, null, _user ? _user.name : '');
+  } else {
+    // ไม่มีไฟล์ → บันทึกเลย
+    _doSaveRecv(data);
+  }
+}
+
+function _doSaveRecv(data) {
+  gasRun('receiveDocument')
+    .withSuccessHandler(function(r) {
+      setLoad('r-btn', false, '💾 บันทึกหนังสือเข้า');
+      if (r && r.success) {
+        showA('r-alert-ok','✅ '+r.message);
+        toast('✅ บันทึกหนังสือเข้าสำเร็จ เลขที่ '+r.docNumber, 'ok', 4000);
+        // ถ้ามี fileId ให้แนบกับ docNumber ที่ได้รับ (กรณีอัพโหลดสำเร็จก่อนหน้า)
+        if (data.fileId && r.docNumber) {
+          gasRun('attachFileToDocument')
+            .withSuccessHandler(function(){})
+            .withFailureHandler(function(){})
+            .call(r.docNumber, data.fileId, 'แนบพร้อมบันทึก', _user ? _user.name : '');
+        }
+        resetRecv();
+      }
+      else showA('r-alert-err', errMsg(r));
+    })
+    .withFailureHandler(function(e) {
+      setLoad('r-btn', false, '💾 บันทึกหนังสือเข้า');
+      showA('r-alert-err','❌ เชื่อมต่อล้มเหลว: '+e);
+    })
+    .call(data);
+}
+
+function resetRecv() {
+  ['r-date','r-recv-time','r-from','r-ref','r-subj','r-detail','r-note',
+   'r-action','r-taskstored','r-docrefdate','r-docref',
+   'r-date-dir','r-date-med','r-date-prs','r-date-adm',
+   'r-date-dig','r-date-pri','r-date-qa','r-date-mr','r-date-cfo','r-date-nur',
+   'r-date-return','r-notify-date','r-recvno-main'].forEach(clr);
+  setVal('r-by',''); setVal('r-cat',''); setVal('r-urgency','ปกติ');
+  setVal('r-conf','ไม่มีชั้น'); setVal('r-assign','');
+  setText('r-subj-cnt','0'); setText('r-detail-cnt','0');
+  // reset checkboxes + disable date inputs
+  ['r-chk-dir','r-chk-med','r-chk-prs','r-chk-adm',
+   'r-chk-dig','r-chk-pri','r-chk-qa','r-chk-mr','r-chk-cfo','r-chk-nur'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.checked=false;
+  });
+  ['r-date-dir','r-date-med','r-date-prs','r-date-adm',
+   'r-date-dig','r-date-pri','r-date-qa','r-date-mr','r-date-cfo','r-date-nur','r-date-nur'].forEach(function(id){
+    var el=document.getElementById(id); if(el) el.disabled=true;
+  });
+  // reset notify status
+  var ns = document.getElementById('r-notify-status');
+  if (ns) { ns.className = 'st-badge st-pending'; ns.textContent = '⏳ ยังไม่รับทราบ'; }
+  // reset group table
+  buildGroupTable();
+  // reset image preview
+  removeRecvImg(null);
+  removeRecvFile();
+  hideAlerts(['r-alert-err','r-alert-ok','r-alert-info']);
+  setDefaultDate('r-date');
+  // โหลดเลขที่รับถัดไปใหม่
+  loadNextRecvSeq();
+}
+
+// ============================================================
+// SEND
+// ============================================================
+var _sendPendingFile = null; // เก็บไฟล์หนังสือส่งออกไว้รอบันทึก
+
+function handleFile(input) {
+  var file = input.files[0];
+  if (!file) return;
+  if (file.size > 20*1024*1024) { showA('s-alert-err','❌ ไฟล์ใหญ่เกิน 20 MB'); input.value=''; return; }
+  var allowed=['application/pdf','application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'image/jpeg','image/png','image/gif','text/plain'];
+  if (!allowed.includes(file.type)) { showA('s-alert-err','❌ ประเภทไฟล์ไม่รองรับ'); input.value=''; return; }
+  // เก็บไว้ก่อน ยังไม่อัพโหลด
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    _sendPendingFile = { b64: e.target.result.split(',')[1], name: file.name, type: file.type };
+    var sizeKB = Math.round(file.size / 1024);
+    setText('s-fname', file.name);
+    setText('s-fsize', sizeKB + ' KB');
+    document.getElementById('s-file-box').style.display = 'block';
+    showA('s-alert-info', '📎 เลือกไฟล์แล้ว: ' + file.name + ' (' + sizeKB + ' KB) — จะอัพโหลดเมื่อกดบันทึก');
+    hide('s-alert-err');
+  };
+  reader.readAsDataURL(file);
+}
+
+function submitSend() {
+  hideAlerts(['s-alert-err','s-alert-ok','s-alert-info']);
+  var data = {
+    sendDate: v('s-date'), toOrg: v('s-to'), refNumber: v('s-ref'),
+    sentBy: v('s-sentby'), subject: v('s-subj'), detail: v('s-detail'),
+    category: v('s-cat'), urgency: v('s-urgency') || 'ปกติ',
+    confidential: 'ไม่มีชั้น',
+    fileId: v('s-fileid'), note: v('s-note'),
+    userName: _user ? _user.name : ''
+  };
+  if (!data.toOrg)    return showA('s-alert-err','❌ กรุณากรอก ถึงหน่วยงาน');
+  if (!data.subject)  return showA('s-alert-err','❌ กรุณากรอก เรื่อง');
+  if (!data.category) return showA('s-alert-err','❌ กรุณาเลือก ประเภท');
+  setLoad('s-btn',true,'💾 กำลังบันทึก...');
+
+  // ถ้ามีไฟล์รอ → อัพโหลดก่อน
+  if (_sendPendingFile) {
+    showA('s-alert-info', '⏳ กำลังอัพโหลดไฟล์ ' + _sendPendingFile.name + ' ...');
+    var pf = _sendPendingFile;
+    gasRun('uploadFile')
+      .withSuccessHandler(function(uploadResult) {
+        hide('s-alert-info');
+        if (uploadResult && uploadResult.success) {
+          data.fileId = uploadResult.fileId;
+          _sendPendingFile = null;
+          _doSaveSend(data);
+        } else {
+          setLoad('s-btn', false, '💾 บันทึกหนังสือส่งออก');
+          showA('s-alert-err', '❌ อัพโหลดไฟล์ล้มเหลว: ' + ((uploadResult && uploadResult.message) || 'ไม่ทราบสาเหตุ'));
+        }
+      })
+      .withFailureHandler(function(e) {
+        setLoad('s-btn', false, '💾 บันทึกหนังสือส่งออก');
+        showA('s-alert-err','❌ อัพโหลดล้มเหลว: ' + e);
+      })
+      .call(pf.b64, pf.name, pf.type, null, _user ? _user.name : '');
+  } else {
+    _doSaveSend(data);
+  }
+}
+
+function _doSaveSend(data) {
+  gasRun('sendDocument')
+    .withSuccessHandler(function(r) {
+      setLoad('s-btn',false,'💾 บันทึกหนังสือส่งออก');
+      if (r && r.success) {
+        showA('s-alert-ok','✅ '+r.message);
+        toast('✅ บันทึกหนังสือส่งออกสำเร็จ เลขที่ '+r.docNumber, 'ok', 4000);
+        // แนบไฟล์กับเลขที่หนังสือถ้ามี fileId
+        if (data.fileId && r.docNumber) {
+          gasRun('attachFileToDocument')
+            .withSuccessHandler(function(){})
+            .withFailureHandler(function(){})
+            .call(r.docNumber, data.fileId, 'แนบพร้อมบันทึก', _user ? _user.name : '');
+        }
+        resetSend();
+      }
+      else showA('s-alert-err', errMsg(r));
+    })
+    .withFailureHandler(function(e) {
+      setLoad('s-btn',false,'💾 บันทึกหนังสือส่งออก');
+      showA('s-alert-err','❌ เชื่อมต่อล้มเหลว: '+e);
+    })
+    .call(data);
+}
+
+function resetSend() {
+  _sendPendingFile = null;
+  ['s-date','s-to','s-ref','s-subj','s-detail','s-note','s-fileid'].forEach(clr);
+  setVal('s-sentby',''); setVal('s-cat',''); setVal('s-urgency','ปกติ');
+  setText('s-subj-cnt','0'); setText('s-detail-cnt','0');
+  document.getElementById('s-file-box').style.display='none';
+  document.getElementById('s-file').value='';
+  hideAlerts(['s-alert-err','s-alert-ok','s-alert-info']);
+  setDefaultDate('s-date');
+}
+
+// ============================================================
+// SEARCH
+// ============================================================
+function doSearch() {
+  var term = v('q-term'), type = v('q-type');
+  hideAlerts(['q-alert']);
+  if (!term) return showA('q-alert','❌ กรุณากรอกคำค้นหา');
+  setLoad('q-btn', true, '🔍 กำลังค้น...');
+  hide('q-result-card'); show('q-empty');
+
+  gasRun('searchDocuments')
+    .withSuccessHandler(function(r) {
+      setLoad('q-btn', false, 'ค้นหา');
+      if (!r) {
+        showA('q-alert','❌ ไม่มีข้อมูลตอบกลับจากระบบ กรุณาลองใหม่อีกครั้ง'); return;
+      }
+      if (!r.success) {
+        showA('q-alert','❌ ' + (r.message || 'เกิดข้อผิดพลาด')); return;
+      }
+      if (!r.results || r.results.length === 0) {
+        showA('q-alert','❌ ไม่พบเอกสารที่ตรงกับ "' + esc(term) + '" — ลองพิมพ์น้อยลงหรือตรวจสะกด');
+        return;
+      }
+      setText('q-count', r.results.length);
+      _qResults = r.results; // cache สำหรับ detail popup
+      document.getElementById('q-tbody').innerHTML = r.results.map(function(d, idx) {
+        var fileLink = d.fileId
+          ? ' <a href="https://drive.google.com/file/d/'+esc(d.fileId)+'/view" target="_blank" '+
+            'onclick="event.stopPropagation()" '+
+            'title="ดูไฟล์แนบ" style="color:var(--accent);text-decoration:none;">&#128206; ดูไฟล์</a>'
+          : '<span style="color:var(--gray300);font-size:11px;">—</span>';
+        return '<tr style="cursor:pointer;" onclick="showSearchDetail('+idx+')">' +
+          '<td><strong style="font-family:IBM Plex Mono,monospace;font-size:12px;">'+esc(d.docNumber)+'</strong></td>'+
+          '<td style="white-space:nowrap;">'+fmtDate(d.date)+'</td>'+
+          '<td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(d.from)+'</td>'+
+          '<td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(d.subject)+'</td>'+
+          '<td><span class="badge b-in">'+esc(d.sheetType||d.type||'—')+'</span></td>'+
+          '<td>'+urgBadge(d.urgency)+'</td>'+
+          '<td>'+fileLink+'</td>'+
+          '</tr>';
+      }).join('');
+      show('q-result-card'); hide('q-empty');
+    })
+    .withFailureHandler(function(e) {
+      setLoad('q-btn', false, 'ค้นหา');
+      showA('q-alert','❌ เชื่อมต่อล้มเหลว: ' + e);
+    })
+    .call(term, type || null, { limit: 200 });
+}
+
+
+// ============================================================
+// SEARCH DETAIL POPUP — GROUP DATA PANEL
+// ============================================================
+function buildGroupPanel(groupData) {
+  if (!groupData || groupData.length === 0) return '';
+
+  var hasAny = groupData.some(function(g){ return g.name; });
+  if (!hasAny) return '';
+
+  var totalOk  = groupData.filter(function(g){ return g.status === 'รับทราบแล้ว'; }).length;
+  var totalNo  = groupData.filter(function(g){ return g.name && g.status !== 'รับทราบแล้ว'; }).length;
+  var totalAll = groupData.filter(function(g){ return g.name; }).length;
+
+  // สีของ progress bar
+  var pct = totalAll > 0 ? Math.round((totalOk / totalAll) * 100) : 0;
+  var barColor = pct === 100 ? '#16a34a' : pct >= 50 ? '#d97706' : '#dc2626';
+
+  var rows = groupData.filter(function(g){ return g.name; }).map(function(g) {
+    var isOk = g.status === 'รับทราบแล้ว';
+    var dot  = isOk
+      ? '<span style="width:8px;height:8px;border-radius:50%;background:#16a34a;display:inline-block;flex-shrink:0;"></span>'
+      : '<span style="width:8px;height:8px;border-radius:50%;background:#d1d5db;display:inline-block;flex-shrink:0;"></span>';
+    var badge = isOk
+      ? '<span style="font-size:10px;font-weight:700;color:#15803d;background:#dcfce7;border:1px solid #86efac;border-radius:10px;padding:2px 8px;white-space:nowrap;">✔ รับทราบแล้ว</span>'
+      : (g.status
+          ? '<span style="font-size:10px;font-weight:700;color:#92400e;background:#fff3cd;border:1px solid #fbbf24;border-radius:10px;padding:2px 8px;white-space:nowrap;">⏳ ยังไม่รับทราบ</span>'
+          : '<span style="font-size:10px;color:#9ca3af;background:#f3f4f6;border:1px solid #e5e7eb;border-radius:10px;padding:2px 8px;white-space:nowrap;">—</span>');
+    return '<div style="display:flex;align-items:center;gap:8px;padding:7px 12px;border-bottom:1px solid #f1f5f9;">' +
+      dot +
+      '<span style="flex:1;font-size:12.5px;color:#374151;">' + esc(g.name) + '</span>' +
+      badge +
+      '</div>';
+  }).join('');
+
+  var summary = totalAll > 0
+    ? '<div style="font-size:11px;color:#6b7280;margin-top:2px;">รับทราบแล้ว <strong style="color:#15803d;">' + totalOk + '</strong> / ' + totalAll + ' กลุ่มงาน</div>'
+    : '';
+
+  return '<tr style="border-bottom:1px solid var(--gray100);">' +
+    '<td colspan="2" style="padding:0;">' +
+      '<div style="padding:10px 16px 8px;background:#f8fafc;border-bottom:1px solid #e2e8f0;">' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:4px;">' +
+          '<div style="font-weight:700;font-size:11px;color:#475569;text-transform:uppercase;letter-spacing:.4px;">🏢 กลุ่มงานที่ส่งถึง / สถานะรับทราบ</div>' +
+          '<div style="display:flex;align-items:center;gap:8px;">' +
+            summary +
+            '<div style="width:80px;height:6px;background:#e5e7eb;border-radius:3px;overflow:hidden;">' +
+              '<div style="height:100%;width:' + pct + '%;background:' + barColor + ';border-radius:3px;transition:width .3s;"></div>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+      '</div>' +
+      '<div style="background:white;">' + rows + '</div>' +
+    '</td>' +
+  '</tr>';
+}
+
+// ============================================================
+// SEARCH DETAIL POPUP
+// ============================================================
+function showSearchDetail(idx) {
+  var d = _qResults[idx];
+  if (!d) return;
+
+  var urgColors = {'ด่วนที่สุด':'#ef4444','ด่วนมาก':'#f97316','ด่วน':'#eab308'};
+  var urgColor  = urgColors[d.urgency] || 'var(--gold)';
+
+  document.getElementById('q-detail-num').textContent = 'เลขที่รับ: ' + (d.docNumber||'—');
+  var urgEl = document.getElementById('q-detail-urg');
+  urgEl.innerHTML = (d.urgency && d.urgency!=='ปกติ')
+    ? '<span style="background:'+urgColor+';color:white;padding:2px 10px;border-radius:4px;font-size:12px;font-weight:700;">'+esc(d.urgency)+'</span>'
+    : '';
+  document.getElementById('q-detail-head').style.borderBottomColor = urgColor;
+
+  var fileCell = d.fileId && d.fileId.length > 10
+    ? '<a href="https://drive.google.com/file/d/'+esc(d.fileId)+'/view?usp=drive_link" target="_blank" style="display:inline-flex;align-items:center;gap:5px;background:var(--green-bg);color:var(--green);border:1px solid #86efac;border-radius:4px;padding:4px 12px;font-weight:700;text-decoration:none;font-size:13px;">📎 เปิดไฟล์แนบ</a>'
+    : '<span style="color:var(--gray400);">— ไม่มีไฟล์แนบ</span>';
+
+  // recvTime = เวลาลงรับที่กรอกเอง, recordTime = เวลาที่กดบันทึก
+  var recvTime = d.recvTime || extractTime(d.recordTime || '');
+  var dateDisplay = fmtDate(d.date) + (recvTime
+    ? ' &nbsp;<span style="background:var(--gray100);color:var(--navy);font-family:\'IBM Plex Mono\',monospace;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:4px;border:1px solid var(--gray200);">🕐 ' + esc(recvTime) + ' น.</span>'
+    : '');
+
+  var rows = [
+    ['เลขที่รับ',      '<strong style="font-family:IBM Plex Mono,monospace;">'+esc(d.docNumber||'—')+'</strong>'],
+    ['วันที่ / เวลารับ', dateDisplay],
+    ['จากหน่วยงาน',   esc(d.from||'—')],
+    ['เรื่อง',        '<strong>'+esc(d.subject||'—')+'</strong>'],
+    ['รายละเอียด',    esc(d.detail||'—')],
+    ['ประเภท',        esc(d.sheetType||d.type||'—')],
+    ['ความเร่งด่วน',  d.urgency ? urgBadge(d.urgency) : urgBadge('ปกติ')],
+    ['มอบหมายให้',    esc(d.assignTo||'—')],
+    ['สถานะ',         statusBadge(d.status||'—')],
+    ['ไฟล์แนบ',       fileCell]
+  ];
+
+  document.getElementById('q-detail-body').innerHTML =
+    '<table style="width:100%;font-size:13px;border-collapse:collapse;">' +
+    rows.map(function(r) {
+      return '<tr style="border-bottom:1px solid var(--gray100);">' +
+        '<td style="padding:9px 16px;font-weight:600;color:var(--gray500);font-size:11px;text-transform:uppercase;white-space:nowrap;width:130px;">'+r[0]+'</td>'+
+        '<td style="padding:9px 16px;color:var(--gray700);">'+r[1]+'</td>'+
+        '</tr>';
+    }).join('') +
+    buildGroupPanel(d.groupData) +
+    '</table>';
+
+  document.getElementById('q-detail-overlay').style.display = 'flex';
+}
+
+function closeSearchDetail(e) {
+  if (!e || e.target === document.getElementById('q-detail-overlay'))
+    document.getElementById('q-detail-overlay').style.display = 'none';
+}
+
+
+// ============================================================
+// REPORT
+// ============================================================
+function setReportDates() {
+  // ตั้งค่าเริ่มต้น: mode=วัน, วันนี้
+  rpSetMode('day');
+  var now = new Date();
+  document.getElementById('rp-day').value = toThaiDate(now);
+  // เดือน/ปีปัจจุบัน
+  document.getElementById('rp-month').value = ('0'+(now.getMonth()+1)).slice(-2);
+  document.getElementById('rp-year').value  = String(now.getFullYear()+543);
+}
+
+var _rpMode   = 'day'; // 'day' | 'month'
+var _rpParams = null;
+
+function rpSetMode(mode) {
+  _rpMode = mode;
+  var isDayActive = mode === 'day';
+  document.getElementById('rp-day-picker').style.display   = isDayActive ? '' : 'none';
+  document.getElementById('rp-month-picker').style.display = isDayActive ? 'none' : '';
+  document.getElementById('rp-mode-day').style.background   = isDayActive ? 'var(--navy)' : 'var(--gray100)';
+  document.getElementById('rp-mode-day').style.color        = isDayActive ? 'white' : 'var(--gray600)';
+  document.getElementById('rp-mode-month').style.background = isDayActive ? 'var(--gray100)' : 'var(--navy)';
+  document.getElementById('rp-mode-month').style.color      = isDayActive ? 'var(--gray600)' : 'white';
+  document.getElementById('rp-mode-icon').textContent       = isDayActive ? '📅' : '📆';
+}
+
+function doReport() {
+  hideAlerts(['rp-alert']);
+  hide('rp-results'); hide('rp-export-ok'); hide('rp-export-err');
+  _rpParams = null;
+
+  var s, e, label;
+  if (_rpMode === 'day') {
+    var d = v('rp-day');
+    if (!d) return showA('rp-alert','❌ กรุณาระบุวันที่');
+    s = d; e = d;
+    label = 'วัน ' + d;
+  } else {
+    var mon = v('rp-month'), yr = v('rp-year');
+    if (!mon || !yr) return showA('rp-alert','❌ กรุณาเลือกเดือนและปี');
+    if (!/^\d{4}$/.test(yr)) return showA('rp-alert','❌ ปีต้องเป็นตัวเลข 4 หลัก พ.ศ. เช่น 2569');
+    // สร้างช่วงต้นเดือน-ปลายเดือน
+    var yrInt = parseInt(yr, 10);
+    var monInt = parseInt(mon, 10);
+    // ปลายเดือน — ใช้ 28/30/31 ตามเดือน
+    var lastDays = [0,31,28,31,30,31,30,31,31,30,31,30,31];
+    // leap year (ค.ศ.)
+    var adYr = yrInt - 543;
+    if (adYr % 4 === 0 && (adYr % 100 !== 0 || adYr % 400 === 0)) lastDays[2] = 29;
+    s = '01/' + mon + '/' + yr;
+    e = lastDays[monInt] + '/' + mon + '/' + yr;
+    var monthNames = ['','มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
+                      'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+    label = 'เดือน ' + monthNames[monInt] + ' ' + yr;
+  }
+
+  var tp = v('rp-type');
+  setLoad('rp-btn', true, '⏳ กำลังโหลด...');
+
+  gasRun('generateReport')
+    .withSuccessHandler(function(r) {
+      setLoad('rp-btn', false, '📊 ดึงข้อมูล');
+      if (!r || !r.success) {
+        showA('rp-alert','❌ ' + ((r&&r.message)||'เกิดข้อผิดพลาด'));
+        return;
+      }
+      _rpParams = { s:s, e:e, type:tp, label:label };
+      setText('rp-period-txt', label);
+      var typeLabel = { both:'ทั้งรับและส่ง', incoming:'รับเข้า', outgoing:'ส่งออก' };
+      setText('rp-type-txt', typeLabel[tp] || '');
+      renderReport(r.report||{});
+      show('rp-results');
+      if (!r.report || r.report.total === 0) {
+        showA('rp-alert','⚠️ ไม่พบข้อมูลในช่วงวันที่นี้');
+      }
+    })
+    .withFailureHandler(function(err) {
+      setLoad('rp-btn', false, '📊 ดึงข้อมูล');
+      showA('rp-alert','❌ เชื่อมต่อล้มเหลว: ' + err);
+    })
+    .call(s, e, tp);
+}
+
+function renderReport(rpt) {
+  setText('rp-total', rpt.total||0);
+  setText('rp-in',    rpt.inTotal||0);
+  setText('rp-out',   rpt.outTotal||0);
+  setText('rp-urg1',  rpt.urgentSupermost||0);
+  setText('rp-urg2',  (rpt.urgentMost||0)+(rpt.urgentNormal||0));
+  setText('rp-norm',  rpt.normal||0);
+
+  function tbl(id, obj) {
+    var tb = document.getElementById(id); if (!tb) return;
+    var tot = Math.max(rpt.total||1, 1);
+    var keys = Object.keys(obj||{}).sort(function(a,b){ return (obj[b]||0)-(obj[a]||0); });
+    if (!keys.length) { tb.innerHTML='<tr class="tbl-empty"><td colspan="3">ไม่มีข้อมูล</td></tr>'; return; }
+    tb.innerHTML = keys.map(function(k) {
+      var c=obj[k]||0, p=((c/tot)*100).toFixed(1), w=Math.round((c/tot)*60);
+      return '<tr>' +
+        '<td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="'+esc(k)+'">'+esc(k)+'</td>' +
+        '<td style="text-align:right;font-weight:700;font-family:IBM Plex Mono,monospace;">'+c+'</td>' +
+        '<td><div style="display:flex;align-items:center;gap:4px;justify-content:flex-end;">' +
+          '<span style="font-size:10px;color:var(--gray400);">'+p+'%</span>' +
+          '<div style="width:'+w+'px;height:5px;background:var(--accent);border-radius:2px;min-width:2px;"></div>' +
+        '</div></td></tr>';
+    }).join('');
+  }
+  tbl('rp-dept',   rpt.byDepartment||{});
+  tbl('rp-cat',    rpt.byCategory||{});
+  tbl('rp-assign', rpt.byAssign||{});
+
+  var rows = rpt.rows||[];
+  setText('rp-rows-count', rows.length + (rpt.total>1000?' (แสดง 1000 แรก)':''));
+  var tb2 = document.getElementById('rp-rows-tbody');
+  if (!tb2) return;
+  if (!rows.length) {
+    tb2.innerHTML='<tr class="tbl-empty"><td colspan="7">ไม่มีรายการในช่วงเวลานี้</td></tr>';
+    return;
+  }
+  tb2.innerHTML = rows.map(function(row) {
+    var bg = row.urgency==='ด่วนที่สุด'?'background:#fef2f2;':
+             row.urgency==='ด่วนมาก'   ?'background:#fff7ed;':
+             row.urgency==='ด่วน'       ?'background:#fefce8;':'';
+    var fLink = row.fileId && row.fileId.length>10
+      ? '<a href="https://drive.google.com/file/d/'+esc(row.fileId)+'/view?usp=drive_link" target="_blank" style="color:var(--accent);font-size:17px;text-decoration:none;" title="เปิดไฟล์แนบ">📎</a>'
+      : '<span style="color:var(--gray200);">—</span>';
+    return '<tr style="'+bg+'">' +
+      '<td style="font-family:IBM Plex Mono,monospace;font-size:12px;font-weight:700;">'+esc(row.docNumber)+'</td>' +
+      '<td style="font-size:12px;white-space:nowrap;">'+esc(row.date)+'</td>' +
+      '<td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;" title="'+esc(row.from)+'">'+esc(row.from)+'</td>' +
+      '<td style="max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(row.subject)+'</td>' +
+      '<td>'+(row.urgency&&row.urgency!=='ปกติ'?urgBadge(row.urgency):'<span style="font-size:11px;color:var(--gray400);">ปกติ</span>')+'</td>' +
+      '<td><span class="badge '+(row.sheetType==='รับเข้า'?'b-in':'b-out')+'" style="font-size:10px;">'+esc(row.sheetType)+'</span></td>' +
+      '<td style="text-align:center;">'+fLink+'</td>' +
+      '</tr>';
+  }).join('');
+}
+
+function doExportReport() {
+  if (!_rpParams) return showA('rp-export-err','❌ กรุณาดึงข้อมูลก่อน');
+  var btn = document.getElementById('rp-export-btn');
+  if (btn) { btn.disabled=true; btn.innerHTML='⏳ กำลัง Export...'; }
+  hide('rp-export-ok'); hide('rp-export-err');
+  gasRun('exportReport')
+    .withSuccessHandler(function(r) {
+      if (btn) { btn.disabled=false; btn.innerHTML='📥 Export Excel'; }
+      if (!r||!r.success) {
+        var el=document.getElementById('rp-export-err');
+        if(el){el.textContent='❌ '+(r&&r.message||'Export ล้มเหลว');el.style.display='block';}
+        return;
+      }
+      var el=document.getElementById('rp-export-links');
+      if (el) el.innerHTML=
+        '<a href="'+r.exportUrl+'" target="_blank" style="display:inline-flex;align-items:center;gap:5px;background:var(--green);color:white;border-radius:4px;padding:6px 14px;font-size:13px;font-weight:700;text-decoration:none;margin-right:8px;">📥 ดาวน์โหลด .xlsx</a>' +
+        '<a href="'+r.viewUrl+'" target="_blank" style="display:inline-flex;align-items:center;gap:5px;background:var(--accent);color:white;border-radius:4px;padding:6px 14px;font-size:13px;font-weight:700;text-decoration:none;">🔗 Google Sheets</a>';
+      show('rp-export-ok');
+      toast('✅ Export สำเร็จ — '+(r.total||0)+' รายการ','ok',5000);
+    })
+    .withFailureHandler(function(err) {
+      if (btn) { btn.disabled=false; btn.innerHTML='📥 Export Excel'; }
+      var el=document.getElementById('rp-export-err');
+      if(el){el.textContent='❌ เชื่อมต่อล้มเหลว: '+err;el.style.display='block';}
+    })
+    .call(_rpParams.s, _rpParams.e, _rpParams.type);
+}
+// ============================================================
+// HISTORY SEARCH
+// ============================================================
+var _histResults  = [];
+var _histPage     = 1;
+var _histPageSize = 50;
+var _histYearsLoaded = false;
+
+function loadHistoryYears() {
+  if (_histYearsLoaded) return;
+  gasRun('getHistoryYears')
+    .withSuccessHandler(function(r) {
+      if (!r || !r.success) return;
+      _histYearsLoaded = true;
+      var currentYear = new Date().getFullYear() + 543;
+      var selYear = document.getElementById('h-year');
+      var selImp  = document.getElementById('imp-sheet');
+      if (r.years && r.years.length) {
+        r.years.forEach(function(y, i) {
+          if (selYear) {
+            var o = document.createElement('option');
+            o.value = String(y);
+            // ปีปัจจุบัน → ระบุว่ามาจากชีทรับเข้า
+            if (y === currentYear) {
+              o.textContent = 'ปี ' + y + ' (Sheet รับเข้า)';
+            } else {
+              o.textContent = 'ปี ' + y + ' (หนังสือรับ ' + y + ')';
+            }
+            selYear.appendChild(o);
+          }
+        });
+      }
+      // import sheet dropdown: ข้ามปีปัจจุบัน (อยู่ใน Sheet รับเข้าแล้ว)
+      if (r.sheetNames && r.sheetNames.length) {
+        r.sheetNames.forEach(function(n, i) {
+          if (n === 'รับเข้า') return; // ไม่ต้อง import ปีปัจจุบัน
+          if (selImp) {
+            var o = document.createElement('option');
+            o.value = n; o.textContent = n;
+            selImp.appendChild(o);
+          }
+        });
+      }
+    })
+    .withFailureHandler(function(){})
+    .call();
+}
+
+function doHistorySearch() {
+  hideAlerts(['h-alert']);
+  var params = {
+    term:     v('h-term'),
+    year:     v('h-year'),
+    urgency:  v('h-urgency'),
+    assignTo: v('h-assign')
+  };
+  if (!params.term && !params.year && !params.urgency && !params.assignTo) {
+    return showA('h-alert', '❌ กรุณากรอกคำค้นหา หรือเลือกปีงบประมาณ อย่างน้อย 1 เงื่อนไข');
+  }
+  setLoad('h-btn', true, '🔍 กำลังค้น...');
+  hide('h-result-card');
+  document.getElementById('h-stats-row').style.display = 'none';
+  show('h-empty');
+
+  gasRun('searchHistory')
+    .withSuccessHandler(function(r) {
+      setLoad('h-btn', false, '🔍 ค้นหา');
+      if (!r || !r.success) { showA('h-alert', '❌ ' + ((r&&r.message)||'เกิดข้อผิดพลาด')); return; }
+      _histResults = r.results || [];
+      _histPage    = 1;
+      if (_histResults.length === 0) {
+        showA('h-alert', '❌ ไม่พบรายการที่ตรงกับเงื่อนไข');
+        return;
+      }
+      var urgCount = _histResults.filter(function(x){ return x.urgency && x.urgency !== 'ปกติ'; }).length;
+      setText('h-count-num', _histResults.length);
+      setText('h-urg-num',   urgCount);
+      setText('h-sheet-num', (r.sheetsSearched || []).length + ' Sheet');
+      document.getElementById('h-stats-row').style.display = 'grid';
+      setText('h-count', _histResults.length);
+      setText('h-sheet-label', 'จาก: ' + (r.sheetsSearched || []).join(', '));
+      renderHistoryPage();
+      show('h-result-card'); hide('h-empty');
+    })
+    .withFailureHandler(function(e) {
+      setLoad('h-btn', false, '🔍 ค้นหา');
+      showA('h-alert', '❌ เชื่อมต่อล้มเหลว: ' + e);
+    })
+    .call(params);
+}
+
+function renderHistoryPage() {
+  var start      = (_histPage - 1) * _histPageSize;
+  var end        = Math.min(start + _histPageSize, _histResults.length);
+  var page       = _histResults.slice(start, end);
+  var totalPages = Math.ceil(_histResults.length / _histPageSize);
+
+  document.getElementById('h-tbody').innerHTML = page.map(function(d, idx) {
+    var subj = esc(d.subject || '');
+    if (subj.length > 70) subj = subj.substring(0, 70) + '...';
+    var fileLink = d.fileId
+      ? ' <a href="https://drive.google.com/file/d/'+esc(d.fileId)+'/view" target="_blank" '+
+        'title="ดูไฟล์แนบ" style="color:var(--accent);text-decoration:none;">📎</a>'
+      : '';
+    return '<tr style="cursor:pointer;" onclick="showHistoryDetail(' + (start+idx) + ')">' +
+      '<td><strong style="font-family:\'IBM Plex Mono\',monospace;">' + esc(d.recvNo || '—') + '</strong>'+fileLink+'</td>' +
+      '<td style="white-space:nowrap;">' + fmtDate(d.dateReceive) + '</td>' +
+      '<td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(d.fromOrg || '') + '</td>' +
+      '<td style="max-width:260px;">' + subj + '</td>' +
+      '<td>' + urgBadge(d.urgency) + '</td>' +
+      '<td style="font-size:12px;">' + esc(d.assignTo || '—') + '</td>' +
+      '<td style="font-size:12px;">' + esc(d.passThru || '—') + '</td>' +
+      '<td style="font-size:12px;">' + buildPassStr(d) + '</td>' +
+      '<td><span class="badge b-progress" style="font-size:10px;">' + esc(d.sheetName) + '</span></td>' +
+      '</tr>';
+  }).join('');
+
+  setText('h-page-info', 'หน้า ' + _histPage + ' / ' + totalPages + ' (' + (start+1) + '–' + end + ' จาก ' + _histResults.length + ')');
+  document.getElementById('h-prev').disabled = _histPage <= 1;
+  document.getElementById('h-next').disabled = _histPage >= totalPages;
+}
+
+function buildPassStr(d) {
+  var parts = [];
+  if (d.passDoc  && d.passDoc !== 'undefined')  parts.push(esc(d.passDoc));
+  if (d.passDoc2 && d.passDoc2 !== 'undefined') parts.push(esc(d.passDoc2));
+  if (d.passDoc3 && d.passDoc3 !== 'undefined') parts.push(esc(d.passDoc3));
+  return parts.length ? parts.join('<br>') : '—';
+}
+
+function historyPrevPage() { if (_histPage > 1) { _histPage--; renderHistoryPage(); } }
+function historyNextPage() {
+  if (_histPage < Math.ceil(_histResults.length / _histPageSize)) {
+    _histPage++; renderHistoryPage();
+    document.getElementById('h-result-card').scrollIntoView({ behavior: 'smooth' });
+  }
+}
+
+function showHistoryDetail(idx) {
+  var d = _histResults[idx];
+  if (!d) return;
+  var rows = [
+    ['เลขที่รับ',        d.recvNo || '—'],
+    ['ที่ / เลขอ้างอิง', d.refNum || '—'],
+    ['วันที่ / เวลารับ',  (function(){
+        var t = extractTime(d.recordTime || '');
+        return fmtDate(d.dateReceive) + (t
+          ? ' &nbsp;<span style="background:var(--gray100);color:var(--navy);font-family:\'IBM Plex Mono\',monospace;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:4px;border:1px solid var(--gray200);">🕐 ' + esc(t) + ' น.</span>'
+          : '');
+      })()],
+    ['วันที่หนังสือ',    d.dateDoc ? fmtDate(d.dateDoc) : '—'],
+    ['รับจาก',           d.fromOrg || '—'],
+    ['เรื่อง',           '<strong>' + esc(d.subject || '') + '</strong>'],
+    ['ความเร่งด่วน',     urgBadge(d.urgency)],
+    ['วันที่เสนอ',       d.dateSubmit || '—'],
+    ['หนังสือเสนอ',      esc(d.assignTo || '—')],
+    ['ผ่าน ผอก.',        esc(d.passThru || '—')],
+    ['ว/ด/ป คืนธุรการ 1', d.dateReturn1 || '—'],
+    ['ผ่านรองแพทย์',    esc(d.passDoc || '—')],
+    ['ว/ด/ป คืนธุรการ 2', d.dateReturn2 || '—'],
+    ['ผ่านรองพรส.',     esc(d.passDoc2 || '—')],
+    ['ว/ด/ป คืนธุรการ 3', d.dateReturn3 || '—'],
+    ['ผ่านรองบริหาร',   esc(d.passDoc3 || '—')],
+    ['ว/ด/ป คืนธุรการ 4', d.dateReturn4 || '—'],
+    ['Sheet ที่เก็บ',    '<span class="badge b-progress">' + esc(d.sheetName) + '</span>'],
+    ['ไฟล์แนบ',         d.fileId ? '<a href="https://drive.google.com/file/d/'+esc(d.fileId)+'/view" target="_blank" style="color:var(--accent);">📎 ดูไฟล์</a>' : '—']
+  ];
+  var html = '<table style="width:100%;font-size:13px;border-collapse:collapse;">' +
+    rows.map(function(r) {
+      return '<tr style="border-bottom:1px solid var(--gray100);">' +
+        '<td style="padding:8px 12px;font-weight:600;color:var(--gray500);font-size:11px;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;width:160px;">' + r[0] + '</td>' +
+        '<td style="padding:8px 12px;color:var(--gray700);">' + r[1] + '</td>' +
+        '</tr>';
+    }).join('') + '</table>';
+  document.getElementById('h-detail-body').innerHTML = html;
+  document.getElementById('h-detail-overlay').style.display = 'flex';
+}
+
+function closeHistoryDetail() {
+  document.getElementById('h-detail-overlay').style.display = 'none';
+}
+
+function resetHistorySearch() {
+  setVal('h-term',''); setVal('h-year',''); setVal('h-urgency',''); setVal('h-assign','');
+  hideAlerts(['h-alert']);
+  hide('h-result-card');
+  document.getElementById('h-stats-row').style.display = 'none';
+  show('h-empty');
+  _histResults = []; _histPage = 1;
+}
+
+// ============================================================
+// IMPORT
+// ============================================================
+function doImport() {
+  hideAlerts(['imp-alert-err','imp-alert-ok']);
+  hide('imp-result-card');
+  var sheetName = v('imp-sheet');
+  var overwrite = v('imp-overwrite') === 'true';
+  if (!confirm('ยืนยันการนำเข้าข้อมูล?\n\nการนำเข้าจะเพิ่มข้อมูลประวัติเข้าสู่ Sheet "รับเข้า"\nกระบวนการอาจใช้เวลา 1-3 นาที')) return;
+  setLoad('imp-btn', true, '↧ กำลังนำเข้า...');
+  gasRun('importHistoryFromSheet')
+    .withSuccessHandler(function(r) {
+      setLoad('imp-btn', false, '↧ เริ่มนำเข้าข้อมูล');
+      if (r && r.success) {
+        showA('imp-alert-ok', '✅ ' + r.message);
+        setText('imp-r-imported', r.imported || 0);
+        setText('imp-r-skipped',  r.skipped  || 0);
+        setText('imp-r-errors',   r.errors   || 0);
+        if (r.errorDetails && r.errorDetails.length) {
+          var em = document.getElementById('imp-r-errmsg');
+          em.style.display = 'block';
+          em.innerHTML = '<strong>รายละเอียดข้อผิดพลาด:</strong><br>' +
+            r.errorDetails.map(function(e){ return esc(e); }).join('<br>');
+        }
+        show('imp-result-card');
+      } else {
+        showA('imp-alert-err', '❌ ' + ((r&&r.message)||'เกิดข้อผิดพลาด'));
+      }
+    })
+    .withFailureHandler(function(e) {
+      setLoad('imp-btn', false, '↧ เริ่มนำเข้าข้อมูล');
+      showA('imp-alert-err', '❌ เชื่อมต่อล้มเหลว: ' + e);
+    })
+    .call({ sheetName: sheetName || null, overwrite: overwrite });
+}
+
+// ============================================================
+// ============================================================
+// ATTACH — อัพโหลดไฟล์จากเครื่องแนบย้อนหลัง
+// ============================================================
+var _attDocSelected   = null;  // { docNumber, type, existingFileId, subject }
+var _attPendingFile   = null;  // { b64, name, mimeType, sizeKB }
+var _attSearchResults = [];   // cache ผลค้นหาล่าสุด
+var _qResults         = [];   // cache ผลค้นหาหนังสือ
+
+// ขั้น 1: เลือกไฟล์จากเครื่อง
+function attHandleFile(input) {
+  var file = input.files[0];
+  if (!file) return;
+  hideAlerts(['att-alert-err','att-alert-ok']);
+  if (file.size > 20*1024*1024) {
+    showA('att-alert-err','❌ ไฟล์ใหญ่เกิน 20 MB'); input.value=''; return;
+  }
+  var allowed = ['application/pdf','application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'image/jpeg','image/png','image/gif','text/plain',
+    'application/vnd.ms-powerpoint',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation'];
+  if (!allowed.includes(file.type)) {
+    showA('att-alert-err','❌ ประเภทไฟล์ไม่รองรับ'); input.value=''; return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    _attPendingFile = { b64: e.target.result.split(',')[1], name: file.name,
+                        mimeType: file.type, sizeKB: Math.round(file.size/1024) };
+    setText('att-file-name', file.name);
+    setText('att-file-size', Math.round(file.size/1024) + ' KB');
+    document.getElementById('att-file-box').style.display = 'block';
+    if (_attDocSelected) {
+      setText('att-confirm-fname', file.name);
+      setText('att-confirm-fsize', Math.round(file.size/1024) + ' KB');
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function attRemoveFile() {
+  _attPendingFile = null;
+  document.getElementById('att-file-input').value = '';
+  document.getElementById('att-file-box').style.display = 'none';
+  hide('att-form');
+  hideAlerts(['att-alert-err','att-alert-ok']);
+}
+
+// ขั้น 2: ค้นหาหนังสือ
+function searchDocForAttach() {
+  var kw   = v('att-search');
+  var type = v('att-type');
+  hideAlerts(['att-alert-err','att-alert-ok']);
+  if (!kw) { showA('att-alert-err','❌ กรุณากรอกเลขที่รับ หรือ ชื่อเรื่อง'); return; }
+
+  setLoad('att-search-btn', true, '🔍 กำลังค้น...');
+  hide('att-results'); hide('att-form'); _attDocSelected = null;
+
+  gasRun('searchDocuments')
+    .withSuccessHandler(function(r) {
+      setLoad('att-search-btn', false, '🔍 ค้นหา');
+      if (!r || !r.success) {
+        var msg = (r && r.message) ? r.message : 'ไม่มีข้อมูลตอบกลับจากระบบ กรุณาลองใหม่';
+        showA('att-alert-err','❌ ค้นหาล้มเหลว: ' + msg);
+        return;
+      }
+      var lst = document.getElementById('att-list');
+      if (!r.results || r.results.length === 0) {
+        lst.innerHTML = '<div style="padding:24px;text-align:center;color:var(--gray400);font-size:13px;">ไม่พบเอกสารที่ตรงกับ "' + esc(kw) + '"</div>';
+        setText('att-result-count','0'); show('att-results'); return;
+      }
+      setText('att-result-count', r.results.length);
+      _attSearchResults = [];
+      lst.innerHTML = r.results.map(function(d, idx) {
+        var hasFile  = d.fileId && d.fileId.length > 5;
+        var fileTag  = hasFile
+          ? '<span style="background:var(--blue-bg);color:var(--blue);border:1px solid #bfdbfe;border-radius:3px;font-size:10px;padding:1px 6px;white-space:nowrap;">&#128206; มีไฟล์</span>'
+          : '<span style="background:var(--gray100);color:var(--gray400);border:1px solid var(--gray200);border-radius:3px;font-size:10px;padding:1px 6px;white-space:nowrap;">ไม่มีไฟล์</span>';
+        var typeBadge = d.type === 'incoming'
+          ? '<span class="badge b-in" style="font-size:10px;">รับเข้า</span>'
+          : '<span class="badge b-out" style="font-size:10px;">ส่งออก</span>';
+        var subj = (d.subject||'').length > 60 ? (d.subject||'').substring(0,60)+'...' : (d.subject||'');
+        // Store index in data attribute — avoid quoting issues in onclick
+        _attSearchResults.push(d);
+        return '<div onclick="attSelectFromResult(' + idx + ')" ' +
+          'style="padding:13px 18px;cursor:pointer;border-bottom:var(--line);transition:background .1s;" ' +
+          'onmouseover="this.style.background=\'var(--gray50)\'" onmouseout="this.style.background=\'\'">' +
+          '<div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;flex-wrap:wrap;">' +
+          '<strong style="color:var(--navy);font-family:\'IBM Plex Mono\',monospace;font-size:13px;">' + esc(d.docNumber) + '</strong> ' +
+          typeBadge + ' ' + fileTag +
+          '<span style="margin-left:auto;font-size:11px;color:var(--gray400);">' + fmtDate(d.date) + '</span>' +
+          '</div>' +
+          '<div style="font-size:13px;color:var(--gray700);margin-bottom:2px;">' + esc(subj) + '</div>' +
+          '<small style="color:var(--gray400);">' + esc(d.from||'') + '</small>' +
+          '</div>';
+      }).join('');
+      show('att-results');
+    })
+    .withFailureHandler(function(err) {
+      setLoad('att-search-btn', false, '🔍 ค้นหา');
+      showA('att-alert-err','❌ เชื่อมต่อ Apps Script ล้มเหลว: ' + err);
+    })
+    .call(kw, type || null, { limit: 50 });
+}
+
+function attSelectFromResult(idx) {
+  var d = _attSearchResults[idx];
+  if (!d) return;
+  var subj = (d.subject||'').length > 60 ? (d.subject||'').substring(0,60)+'...' : (d.subject||'');
+  selectDocForAttach(d.docNumber, d.type, d.fileId||'', subj);
+}
+
+function selectDocForAttach(docNum, type, existingFileId, subject) {
+  _attDocSelected = { docNumber: docNum, type: type,
+                      existingFileId: existingFileId||'', subject: subject||'' };
+  setText('att-doc-no', docNum);
+  setText('att-confirm-docno', docNum);
+  setText('att-confirm-subj', subject||'—');
+  hideAlerts(['att-alert-err','att-alert-ok']);
+  if (_attPendingFile) {
+    setText('att-confirm-fname', _attPendingFile.name);
+    setText('att-confirm-fsize', _attPendingFile.sizeKB + ' KB');
+  } else {
+    setText('att-confirm-fname', '— ยังไม่ได้เลือกไฟล์ (กลับไปขั้นที่ 1) —');
+    setText('att-confirm-fsize', '');
+  }
+  var existBox = document.getElementById('att-existing-box');
+  var existLink = document.getElementById('att-existing-link');
+  if (existingFileId) {
+    existLink.href = 'https://drive.google.com/file/d/' + existingFileId + '/view';
+    existBox.style.display = 'block';
+  } else {
+    existBox.style.display = 'none';
+  }
+  document.getElementById('att-form').style.display = 'block';
+  hide('att-results');
+  document.getElementById('att-form').scrollIntoView({ behavior:'smooth', block:'start' });
+}
+
+function cancelAttach() {
+  _attDocSelected = null;
+  hide('att-form');
+  hideAlerts(['att-alert-err','att-alert-ok']);
+}
+
+// ขั้น 3: อัพโหลด + แนบ
+function attachFileUpload() {
+  if (!_attDocSelected) { showA('att-alert-err','❌ กรุณาเลือกหนังสือก่อน'); return; }
+  if (!_attPendingFile) {
+    showA('att-alert-err','❌ กรุณาเลือกไฟล์จากเครื่องในขั้นที่ 1 ก่อน');
+    document.getElementById('att-file-input').scrollIntoView({ behavior:'smooth', block:'center' });
+    return;
+  }
+  var docNum = _attDocSelected.docNumber;
+  setLoad('att-save-btn', true, '⏳ กำลังอัพโหลด...');
+  hideAlerts(['att-alert-err','att-alert-ok']);
+  var pf = _attPendingFile;
+  gasRun('uploadFile')
+    .withSuccessHandler(function(uploadResult) {
+      if (!uploadResult || !uploadResult.success) {
+        setLoad('att-save-btn', false, '📎 แนบไฟล์');
+        showA('att-alert-err','❌ อัพโหลดล้มเหลว: '+((uploadResult&&uploadResult.message)||'')); return;
+      }
+      var newFileId = uploadResult.fileId;
+      setLoad('att-save-btn', true, '⏳ กำลังบันทึก...');
+      gasRun('attachFileToDocument')
+        .withSuccessHandler(function(attachResult) {
+          setLoad('att-save-btn', false, '📎 แนบไฟล์');
+          if (attachResult && attachResult.success) {
+            showA('att-alert-ok',
+              '✅ แนบไฟล์สำเร็จกับหนังสือเลขที่ <strong>' + esc(docNum) + '</strong>' +
+              '<br><span style="font-size:12px;color:var(--gray500);">Drive ID บันทึกใน Sheet แล้ว</span>' +
+              '&nbsp;<a href="https://drive.google.com/file/d/'+esc(newFileId)+'/view" target="_blank" '+
+              'style="font-size:12px;color:var(--accent);">🔗 ดูไฟล์</a>');
+            toast('✅ แนบไฟล์สำเร็จ — เลขที่ ' + docNum, 'ok', 4000);
+            _attPendingFile = null; _attDocSelected = null;
+            document.getElementById('att-file-input').value = '';
+            document.getElementById('att-file-box').style.display = 'none';
+            hide('att-form'); hide('att-results');
+          } else {
+            showA('att-alert-err','❌ บันทึก Drive ID ล้มเหลว: '+((attachResult&&attachResult.message)||''));
+          }
+        })
+        .withFailureHandler(function(err) {
+          setLoad('att-save-btn', false, '📎 แนบไฟล์');
+          showA('att-alert-err','❌ เชื่อมต่อล้มเหลว: ' + err);
+        })
+        .call(docNum, newFileId, 'แนบย้อนหลัง', _user ? _user.name : '');
+    })
+    .withFailureHandler(function(err) {
+      setLoad('att-save-btn', false, '📎 แนบไฟล์');
+      showA('att-alert-err','❌ อัพโหลดล้มเหลว: ' + err);
+    })
+    .call(pf.b64, pf.name, pf.mimeType, null, _user ? _user.name : '');
+}
+
+// TOAST NOTIFICATION (ข้อ 4)
+// ============================================================
+function toast(msg, type, duration) {
+  type     = type     || 'ok';      // ok | err | info
+  duration = duration || 3000;
+  var wrap = document.getElementById('toast-wrap');
+  if (!wrap) return;
+  var el = document.createElement('div');
+  el.className = 'toast t-' + type;
+  el.textContent = msg;
+  wrap.appendChild(el);
+  requestAnimationFrame(function(){
+    requestAnimationFrame(function(){ el.classList.add('show'); });
+  });
+  setTimeout(function(){
+    el.classList.remove('show');
+    setTimeout(function(){ if(el.parentNode) el.parentNode.removeChild(el); }, 300);
+  }, duration);
+}
+
+// ============================================================
+// UTILITIES
+// ============================================================
+function v(id)        { var el=document.getElementById(id); return el ? el.value.trim() : ''; }
+function setText(id,t){ var el=document.getElementById(id); if(el) el.textContent=t; }
+function setVal(id,t) { var el=document.getElementById(id); if(el) el.value=t; }
+function clr(id)      { setVal(id,''); }
+function show(id)     { var el=document.getElementById(id); if(el) el.style.display=''; }
+function hide(id)     { var el=document.getElementById(id); if(el) el.style.display='none'; }
+function showA(id, msg) {
+  var el=document.getElementById(id);
+  if (!el) return;
+  el.innerHTML=msg; el.style.display='block';
+  el.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+function hideAlerts(ids) { ids.forEach(function(id){ hide(id); }); }
+function setBtnLoad(id, loading, label) {
+  var btn=document.getElementById(id);
+  if (!btn) return;
+  btn.disabled=loading; btn.innerHTML=label;
+}
+function setLoad(id, loading, label) { setBtnLoad(id, loading, label); }
+function cnt(fieldId, cntId) {
+  var el=document.getElementById(fieldId);
+  if (el) setText(cntId, el.value.length);
+}
+function setDefaultDate(id) {
+  var el=document.getElementById(id);
+  if (el && !el.value) el.value=toThaiDate(new Date());
+}
+function esc(s) {
+  if (s==null) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function errMsg(r) {
+  if (!r) return '❌ เกิดข้อผิดพลาด (ไม่มีข้อมูลตอบกลับ)';
+  var msg='❌ '+(r.message||'เกิดข้อผิดพลาด');
+  if (r.errors && r.errors.length)
+    msg += '<ul>'+r.errors.map(function(e){ return '<li>'+esc(e)+'</li>'; }).join('')+'</ul>';
+  return msg;
+}
+function statusBadge(s) {
+  var m = { 'รอดำเนินการ':'b-pending','กำลังดำเนินการ':'b-progress','เสร็จสิ้น':'b-completed','ยกเลิก':'b-cancelled','ร่าง':'b-cancelled' };
+  return '<span class="badge '+(m[s]||'b-progress')+'">'+esc(s||'—')+'</span>';
+}
+function urgBadge(u) {
+  if (!u||u==='ปกติ') return '<span class="badge b-normal">ปกติ</span>';
+  return '<span class="badge b-urgent">'+esc(u)+'</span>';
+}
+
+// ============================================================
+// INIT
+// ============================================================
+window.onload = function() {
+  loadDashboard();
+};
+</script>
+</body>
+</html>
