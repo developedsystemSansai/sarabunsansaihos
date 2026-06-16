@@ -744,12 +744,37 @@ tbody tr:hover td { background: #f4f7fc; }
             <span class="card-head-icon">📋</span>
             <h3>รายการหนังสือรับล่าสุด <span style="font-size:11px;font-weight:400;color:var(--gray400);">(ชีทรับเข้า)</span></h3>
           </div>
-          <button onclick="loadRecentIncoming()" id="recent-refresh-btn"
-            style="background:var(--gray100);border:1px solid var(--gray200);border-radius:var(--r);
-                   padding:4px 12px;font-size:12px;cursor:pointer;font-family:inherit;color:var(--gray600);
-                   display:flex;align-items:center;gap:5px;">
-            🔄 รีเฟรช
-          </button>
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+            <!-- แถบเลื่อนหน้า -->
+            <div id="recent-pager" style="display:none;align-items:center;gap:3px;">
+              <button id="recent-pg-first" onclick="recentGotoPage(1)" title="หน้าแรก"
+                style="background:var(--white);border:1px solid var(--gray200);border-radius:var(--r);
+                       padding:3px 9px;font-size:13px;cursor:pointer;color:var(--gray600);line-height:1;
+                       transition:all .15s;">«</button>
+              <button id="recent-pg-prev" onclick="recentGotoPage(_recentPage-1)" title="ก่อนหน้า"
+                style="background:var(--white);border:1px solid var(--gray200);border-radius:var(--r);
+                       padding:3px 9px;font-size:13px;cursor:pointer;color:var(--gray600);line-height:1;
+                       transition:all .15s;">‹</button>
+              <span id="recent-pg-label"
+                style="font-size:12px;color:var(--gray700);padding:3px 10px;white-space:nowrap;
+                       font-weight:600;background:var(--gray50);border:1px solid var(--gray200);
+                       border-radius:var(--r);min-width:90px;text-align:center;"></span>
+              <button id="recent-pg-next" onclick="recentGotoPage(_recentPage+1)" title="ถัดไป"
+                style="background:var(--white);border:1px solid var(--gray200);border-radius:var(--r);
+                       padding:3px 9px;font-size:13px;cursor:pointer;color:var(--gray600);line-height:1;
+                       transition:all .15s;">›</button>
+              <button id="recent-pg-last" onclick="recentGotoPage(_recentTotalPages)" title="หน้าสุดท้าย"
+                style="background:var(--white);border:1px solid var(--gray200);border-radius:var(--r);
+                       padding:3px 9px;font-size:13px;cursor:pointer;color:var(--gray600);line-height:1;
+                       transition:all .15s;">»</button>
+            </div>
+            <button onclick="loadRecentIncoming()" id="recent-refresh-btn"
+              style="background:var(--gray100);border:1px solid var(--gray200);border-radius:var(--r);
+                     padding:4px 12px;font-size:12px;cursor:pointer;font-family:inherit;color:var(--gray600);
+                     display:flex;align-items:center;gap:5px;">
+              🔄 รีเฟรช
+            </button>
+          </div>
         </div>
         <div class="card-body" style="padding:0;">
           <div id="recent-loading" style="padding:20px;text-align:center;color:var(--gray400);font-size:13px;">
@@ -2189,7 +2214,14 @@ function loadDashboard() {
 // ============================================================
 // RECENT INCOMING — รายการล่าสุดจากชีทรับเข้า (ปี 2569)
 // ============================================================
-var _recentRows = [];
+// ============================================================
+// RECENT INCOMING — Pagination
+// ============================================================
+var _recentRows      = [];
+var _recentPage      = 1;
+var _recentPageSize  = 5;      // แสดงทีละ 5 รายการ
+var _recentTotalPages = 1;
+var _recentSheetUsed = '';
 
 function loadRecentIncoming() {
   var btn = document.getElementById('recent-refresh-btn');
@@ -2198,7 +2230,9 @@ function loadRecentIncoming() {
   document.getElementById('recent-loading').style.display  = 'block';
   document.getElementById('recent-empty').style.display    = 'none';
   document.getElementById('recent-tbl-wrap').style.display = 'none';
+  var pagerEl  = document.getElementById('recent-pager');
   var footerEl = document.getElementById('recent-footer');
+  if (pagerEl)  pagerEl.style.display  = 'none';
   if (footerEl) footerEl.style.display = 'none';
 
   gasRun('getRecentIncoming')
@@ -2211,41 +2245,12 @@ function loadRecentIncoming() {
         return;
       }
 
-      _recentRows = r.rows;
-      document.getElementById('recent-tbody').innerHTML = r.rows.map(function(d, idx) {
-        var urgStyle = '';
-        if (d.urgency === 'ด่วนที่สุด')  urgStyle = 'background:#fef2f2;';
-        else if (d.urgency === 'ด่วนมาก') urgStyle = 'background:#fff7ed;';
-        else if (d.urgency === 'ด่วน')    urgStyle = 'background:#fffbeb;';
+      _recentRows      = r.rows;
+      _recentSheetUsed = r.sheetUsed || '';
+      _recentPage      = 1;
+      _recentTotalPages = Math.max(1, Math.ceil(_recentRows.length / _recentPageSize));
 
-        var fileTag = d.fileId
-          ? '<a href="https://drive.google.com/file/d/'+esc(d.fileId)+'/view" target="_blank" '+
-            'onclick="event.stopPropagation()" title="ดูไฟล์แนบ" '+
-            'style="color:var(--accent);text-decoration:none;font-size:13px;">📎</a>'
-          : '<span style="color:var(--gray300);font-size:11px;">—</span>';
-
-        var subj = (d.subject||'').length > 55
-          ? (d.subject||'').substring(0, 55) + '…'
-          : (d.subject||'');
-
-        // วันที่ + เวลาลงรับ
-        var dateDisp = fmtDate(d.date);
-        if (d.recvTime) dateDisp += ' <span style="font-size:11px;color:var(--gray400);">' + esc(d.recvTime) + '</span>';
-
-        return '<tr style="cursor:pointer;'+urgStyle+'" onclick="showRecentDetail('+idx+')">' +
-          '<td><strong style="font-family:\'IBM Plex Mono\',monospace;font-size:12px;">'+esc(d.docNumber)+'</strong></td>' +
-          '<td style="white-space:nowrap;">'+dateDisp+'</td>' +
-          '<td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="'+esc(d.from||'')+'">'+esc(d.from||'—')+'</td>' +
-          '<td style="max-width:240px;" title="'+esc(d.subject||'')+'">'+esc(subj)+'</td>' +
-          '<td>'+urgBadge(d.urgency)+'</td>' +
-          '<td style="font-size:12px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(d.assignTo||'—')+'</td>' +
-          '<td style="text-align:center;">'+fileTag+'</td>' +
-          '</tr>';
-      }).join('');
-
-      document.getElementById('recent-tbl-wrap').style.display = '';
-      setText('recent-count-txt', 'แสดง ' + r.rows.length + ' รายการล่าสุด');
-      if (footerEl) footerEl.style.display = 'flex';
+      recentRenderPage();
     })
     .withFailureHandler(function(e) {
       if (btn) btn.disabled = false;
@@ -2255,7 +2260,82 @@ function loadRecentIncoming() {
         '⚠️ โหลดข้อมูลไม่สำเร็จ — <small style="color:var(--gray400);">'+String(e).substring(0,80)+'</small>';
       console.error('loadRecentIncoming error:', e);
     })
-    .call(20);
+    .call(50);   // ดึงมากขึ้นเพื่อรองรับ pagination
+}
+
+function recentGotoPage(p) {
+  p = Math.max(1, Math.min(_recentTotalPages, p));
+  if (p === _recentPage) return;
+  _recentPage = p;
+  recentRenderPage();
+  // scroll ตารางขึ้นบนเล็กน้อย
+  var card = document.getElementById('recent-card');
+  if (card) card.scrollIntoView({ behavior:'smooth', block:'nearest' });
+}
+
+function recentRenderPage() {
+  var start = (_recentPage - 1) * _recentPageSize;
+  var end   = Math.min(start + _recentPageSize, _recentRows.length);
+  var pageRows = _recentRows.slice(start, end);
+
+  // --- render แถว ---
+  document.getElementById('recent-tbody').innerHTML = pageRows.map(function(d, pi) {
+    var globalIdx = start + pi;   // index ใน _recentRows สำหรับ showRecentDetail
+    var urgStyle = '';
+    if (d.urgency === 'ด่วนที่สุด')  urgStyle = 'background:#fef2f2;';
+    else if (d.urgency === 'ด่วนมาก') urgStyle = 'background:#fff7ed;';
+    else if (d.urgency === 'ด่วน')    urgStyle = 'background:#fffbeb;';
+
+    var fileTag = d.fileId
+      ? '<a href="https://drive.google.com/file/d/'+esc(d.fileId)+'/view" target="_blank" '+
+        'onclick="event.stopPropagation()" title="ดูไฟล์แนบ" '+
+        'style="color:var(--accent);text-decoration:none;font-size:13px;">📎</a>'
+      : '<span style="color:var(--gray300);font-size:11px;">—</span>';
+
+    var subj = (d.subject||'').length > 55
+      ? (d.subject||'').substring(0, 55) + '…'
+      : (d.subject||'');
+
+    var dateDisp = fmtDate(d.date);
+    if (d.recvTime) dateDisp += ' <span style="font-size:11px;color:var(--gray400);">' + esc(d.recvTime) + '</span>';
+
+    return '<tr style="cursor:pointer;'+urgStyle+'" onclick="showRecentDetail('+globalIdx+')">' +
+      '<td><strong style="font-family:\'IBM Plex Mono\',monospace;font-size:12px;">'+esc(d.docNumber)+'</strong></td>' +
+      '<td style="white-space:nowrap;">'+dateDisp+'</td>' +
+      '<td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="'+esc(d.from||'')+'">'+esc(d.from||'—')+'</td>' +
+      '<td style="max-width:240px;" title="'+esc(d.subject||'')+'">'+esc(subj)+'</td>' +
+      '<td>'+urgBadge(d.urgency)+'</td>' +
+      '<td style="font-size:12px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(d.assignTo||'—')+'</td>' +
+      '<td style="text-align:center;">'+fileTag+'</td>' +
+      '</tr>';
+  }).join('');
+
+  document.getElementById('recent-tbl-wrap').style.display = '';
+
+  // --- อัปเดต pager ---
+  var pagerEl = document.getElementById('recent-pager');
+  if (pagerEl) {
+    pagerEl.style.display = _recentTotalPages > 1 ? 'flex' : 'none';
+    setText('recent-pg-label', 'หน้า ' + _recentPage + ' / ' + _recentTotalPages);
+    // disable/enable ปุ่ม
+    var btnFirst = document.getElementById('recent-pg-first');
+    var btnPrev  = document.getElementById('recent-pg-prev');
+    var btnNext  = document.getElementById('recent-pg-next');
+    var btnLast  = document.getElementById('recent-pg-last');
+    var isFirst  = _recentPage === 1;
+    var isLast   = _recentPage === _recentTotalPages;
+    if (btnFirst) { btnFirst.disabled = isFirst; btnFirst.style.opacity = isFirst ? '.35' : '1'; }
+    if (btnPrev)  { btnPrev.disabled  = isFirst; btnPrev.style.opacity  = isFirst ? '.35' : '1'; }
+    if (btnNext)  { btnNext.disabled  = isLast;  btnNext.style.opacity  = isLast  ? '.35' : '1'; }
+    if (btnLast)  { btnLast.disabled  = isLast;  btnLast.style.opacity  = isLast  ? '.35' : '1'; }
+  }
+
+  // --- footer ---
+  var footerEl = document.getElementById('recent-footer');
+  var sheetTxt = _recentSheetUsed ? ' · ชีท: ' + _recentSheetUsed : '';
+  setText('recent-count-txt',
+    'แสดง ' + (start+1) + '–' + end + ' จาก ' + _recentRows.length + ' รายการ' + sheetTxt);
+  if (footerEl) footerEl.style.display = 'flex';
 }
 
 function showRecentDetail(idx) {
