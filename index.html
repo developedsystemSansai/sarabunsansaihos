@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="icon" href="data:,">
   <title>ระบบสารบรรณอิเล็กทรอนิกส์ โรงพยาบาลสันทราย</title>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
@@ -1729,43 +1730,44 @@ tbody tr:hover td { background: #f4f7fc; }
 // ============================================================
 // GAS WEB API CONFIG
 // ============================================================
-// *** ตั้งค่า URL ของ Google Apps Script Web App ที่ deploy แล้ว ***
-// วิธีหา: ใน Apps Script Editor > Deploy > Manage deployments > Web app URL
-// รูปแบบ: https://script.google.com/macros/s/XXXXXXXXXXXXXXXX/exec
 var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyv4qVNduhQfe0gnwgmJK3ibgP7HDpWrNlghV8GjkOyy5vtUhTozURJ0oU6l5amzjGZ/exec';
 
 /**
- * gasCall(fnName, args) — เรียกฟังก์ชันบน Google Apps Script ผ่าน Web API (doPost)
+ * gasCall(fnName, args) — เรียกฟังก์ชันบน GAS ผ่าน JSONP (GET)
+ * ใช้ JSONP แทน fetch เพื่อหลีกเลี่ยงปัญหา CORS ของ Apps Script
  * คืนค่าเป็น Promise ที่ resolve เป็น object ผลลัพธ์จาก backend
  */
 function gasCall(fnName, args) {
   return new Promise(function(resolve, reject) {
-    var cbName = '_gcb_' + Date.now() + '_' + Math.floor(Math.random()*10000);
+    var cbName = '_gcb_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
     var script = document.createElement('script');
     var timer = setTimeout(function() {
-      delete window[cbName];
-      document.body.removeChild(script);
+      cleanup();
       reject(new Error('timeout'));
     }, 30000);
-    
-    window[cbName] = function(data) {
+
+    function cleanup() {
       clearTimeout(timer);
       delete window[cbName];
-      document.body.removeChild(script);
+      if (script.parentNode) script.parentNode.removeChild(script);
+    }
+
+    window[cbName] = function(data) {
+      cleanup();
       resolve(data);
     };
-    
+
+    script.onerror = function() {
+      cleanup();
+      reject(new Error('ไม่สามารถเชื่อมต่อ GAS ได้'));
+    };
+
     var argsStr = encodeURIComponent(JSON.stringify(args || []));
     script.src = GAS_API_URL
-      + '?fn=' + encodeURIComponent(fnName)
-      + '&args=' + argsStr
+      + '?fn='       + encodeURIComponent(fnName)
+      + '&args='     + argsStr
       + '&callback=' + cbName;
-    script.onerror = function() {
-      clearTimeout(timer);
-      delete window[cbName];
-      document.body.removeChild(script);
-      reject(new Error('script load error'));
-    };
+
     document.body.appendChild(script);
   });
 }
