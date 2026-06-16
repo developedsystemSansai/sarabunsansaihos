@@ -737,33 +737,12 @@ tbody tr:hover td { background: #f4f7fc; }
       </div>
 
 
-      <!-- ตารางเอกสารด่วน -->
-      <div class="card" id="urgent-card" style="display:none;">
-        <div class="card-head" style="background:linear-gradient(135deg,#7f1d1d,#b91c1c);">
-          <span class="card-head-icon">🚨</span>
-          <h3 style="color:white;">เอกสารที่ต้องดำเนินการด่วน</h3>
-        </div>
-        <div class="card-body" style="padding:0;">
-          <div class="tbl-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>เลขที่</th><th>วันที่</th><th>จากหน่วยงาน</th>
-                  <th>เรื่อง</th><th>ความเร่งด่วน</th><th>มอบหมาย</th>
-                </tr>
-              </thead>
-              <tbody id="urgent-tbody"></tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- ตารางรายการล่าสุด (ชีทรับเข้า ปี 2569) -->
+      <!-- ตารางรายการล่าสุด (ชีทรับเข้า) -->
       <div class="card" id="recent-card">
         <div class="card-head" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
           <div style="display:flex;align-items:center;gap:9px;">
             <span class="card-head-icon">📋</span>
-            <h3>รายการหนังสือรับล่าสุด <span style="font-size:11px;font-weight:400;color:var(--gray400);">(ชีทรับเข้า พ.ศ. 2569)</span></h3>
+            <h3>รายการหนังสือรับล่าสุด <span style="font-size:11px;font-weight:400;color:var(--gray400);">(ชีทรับเข้า)</span></h3>
           </div>
           <button onclick="loadRecentIncoming()" id="recent-refresh-btn"
             style="background:var(--gray100);border:1px solid var(--gray200);border-radius:var(--r);
@@ -802,6 +781,27 @@ tbody tr:hover td { background: #f4f7fc; }
                 font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">
               ดูทั้งหมด →
             </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ตารางเอกสารด่วน -->
+      <div class="card" id="urgent-card" style="display:none;">
+        <div class="card-head" style="background:linear-gradient(135deg,#7f1d1d,#b91c1c);">
+          <span class="card-head-icon">🚨</span>
+          <h3 style="color:white;">เอกสารที่ต้องดำเนินการด่วน</h3>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <div class="tbl-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>เลขที่</th><th>วันที่</th><th>จากหน่วยงาน</th>
+                  <th>เรื่อง</th><th>ความเร่งด่วน</th><th>มอบหมาย</th>
+                </tr>
+              </thead>
+              <tbody id="urgent-tbody"></tbody>
+            </table>
           </div>
         </div>
       </div>
