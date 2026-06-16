@@ -404,6 +404,20 @@ tbody tr:hover td { background: #f4f7fc; }
 .rpt-val   { font-size: 28px; font-weight: 700; color: var(--gray900); font-family: 'IBM Plex Mono', monospace; }
 
 /* ============================================================
+   SESSION RESTORE BANNER
+============================================================ */
+#session-restore-bar {
+  display: none;
+  position: fixed; top: 60px; left: 0; right: 0; z-index: 500;
+  background: linear-gradient(90deg,#0b3d6b,#1a6fad);
+  color: white; text-align: center;
+  padding: 9px 16px; font-size: 13px; font-weight: 500;
+  box-shadow: 0 2px 8px rgba(0,0,0,.2);
+  animation: slideDown .3s ease;
+}
+#session-restore-bar.show { display: block; }
+
+/* ============================================================
    FOOTER
 ============================================================ */
 .footer { text-align: center; padding: 16px; border-top: var(--line); background: var(--white); font-size: 11px; color: var(--gray400); margin-top: 20px; letter-spacing: .2px; }
@@ -620,6 +634,9 @@ tbody tr:hover td { background: #f4f7fc; }
   </div>
 </div>
 
+<!-- SESSION RESTORE BANNER -->
+<div id="session-restore-bar">⏳ กำลังตรวจสอบ session กรุณารอสักครู่...</div>
+
 <!-- ============================================================
      NAV BAR
 ============================================================ -->
@@ -737,6 +754,54 @@ tbody tr:hover td { background: #f4f7fc; }
               </thead>
               <tbody id="urgent-tbody"></tbody>
             </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ตารางรายการล่าสุด (ชีทรับเข้า ปี 2569) -->
+      <div class="card" id="recent-card">
+        <div class="card-head" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;">
+          <div style="display:flex;align-items:center;gap:9px;">
+            <span class="card-head-icon">📋</span>
+            <h3>รายการหนังสือรับล่าสุด <span style="font-size:11px;font-weight:400;color:var(--gray400);">(ชีทรับเข้า พ.ศ. 2569)</span></h3>
+          </div>
+          <button onclick="loadRecentIncoming()" id="recent-refresh-btn"
+            style="background:var(--gray100);border:1px solid var(--gray200);border-radius:var(--r);
+                   padding:4px 12px;font-size:12px;cursor:pointer;font-family:inherit;color:var(--gray600);
+                   display:flex;align-items:center;gap:5px;">
+            🔄 รีเฟรช
+          </button>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <div id="recent-loading" style="padding:20px;text-align:center;color:var(--gray400);font-size:13px;">
+            <span class="spinner spinner-dark"></span> &nbsp;กำลังโหลดข้อมูล...
+          </div>
+          <div id="recent-empty" style="display:none;padding:24px;text-align:center;color:var(--gray400);font-size:13px;">
+            📭 ยังไม่มีข้อมูล
+          </div>
+          <div class="tbl-wrap" id="recent-tbl-wrap" style="display:none;">
+            <table>
+              <thead>
+                <tr>
+                  <th>เลขที่</th>
+                  <th>วันที่รับ</th>
+                  <th>จากหน่วยงาน</th>
+                  <th>เรื่อง</th>
+                  <th>ความเร่งด่วน</th>
+                  <th>มอบหมายให้</th>
+                  <th>ไฟล์</th>
+                </tr>
+              </thead>
+              <tbody id="recent-tbody"></tbody>
+            </table>
+          </div>
+          <div id="recent-footer" style="display:none;padding:8px 16px;border-top:var(--line);
+               display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px;">
+            <span id="recent-count-txt" style="font-size:12px;color:var(--gray400);"></span>
+            <button onclick="gotoPage('search')" style="background:none;border:none;color:var(--accent);
+                font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;">
+              ดูทั้งหมด →
+            </button>
           </div>
         </div>
       </div>
@@ -1967,7 +2032,11 @@ function doLogin() {
       setBtnLoad('login-btn', false, 'เข้าสู่ระบบ');
       if (r && r.success) {
         _user = r.user;
-        try { localStorage.setItem('_uid', nid); } catch(e) {}
+        try {
+          localStorage.setItem('_uid', nid);
+          // เก็บ user data + เวลา login ไว้สำหรับ restore ด่วน (ก่อน checkSession กลับมา)
+          localStorage.setItem('_ucache', JSON.stringify({ user: r.user, ts: Date.now() }));
+        } catch(e) {}
         closeLogin();
         showAuthUI();
         gotoPage('home');
@@ -2003,7 +2072,7 @@ function showAuthUI() {
 function doLogout() {
   if (!confirm('ต้องการออกจากระบบใช่หรือไม่?')) return;
   gasCall('logout', [_user ? _user.nationalId : '']).catch(function(){});
-  try { localStorage.removeItem('_uid'); } catch(e) {}
+  try { localStorage.removeItem('_uid'); localStorage.removeItem('_ucache'); } catch(e) {}
   _user = null;
   document.getElementById('btn-open-login').style.display  = '';
   document.getElementById('btn-logout').style.display      = 'none';
@@ -2116,6 +2185,82 @@ function loadDashboard() {
     .call();
 }
 
+
+// ============================================================
+// RECENT INCOMING — รายการล่าสุดจากชีทรับเข้า (ปี 2569)
+// ============================================================
+var _recentRows = [];
+
+function loadRecentIncoming() {
+  var btn = document.getElementById('recent-refresh-btn');
+  if (btn) btn.disabled = true;
+
+  document.getElementById('recent-loading').style.display  = 'block';
+  document.getElementById('recent-empty').style.display    = 'none';
+  document.getElementById('recent-tbl-wrap').style.display = 'none';
+  var footerEl = document.getElementById('recent-footer');
+  if (footerEl) footerEl.style.display = 'none';
+
+  gasRun('getRecentIncoming')
+    .withSuccessHandler(function(r) {
+      if (btn) btn.disabled = false;
+      document.getElementById('recent-loading').style.display = 'none';
+
+      if (!r || !r.success || !r.rows || r.rows.length === 0) {
+        document.getElementById('recent-empty').style.display = 'block';
+        return;
+      }
+
+      _recentRows = r.rows;
+      document.getElementById('recent-tbody').innerHTML = r.rows.map(function(d, idx) {
+        var urgStyle = '';
+        if (d.urgency === 'ด่วนที่สุด')  urgStyle = 'background:#fef2f2;';
+        else if (d.urgency === 'ด่วนมาก') urgStyle = 'background:#fff7ed;';
+        else if (d.urgency === 'ด่วน')    urgStyle = 'background:#fffbeb;';
+
+        var fileTag = d.fileId
+          ? '<a href="https://drive.google.com/file/d/'+esc(d.fileId)+'/view" target="_blank" '+
+            'onclick="event.stopPropagation()" title="ดูไฟล์แนบ" '+
+            'style="color:var(--accent);text-decoration:none;font-size:13px;">📎</a>'
+          : '<span style="color:var(--gray300);font-size:11px;">—</span>';
+
+        var subj = (d.subject||'').length > 55
+          ? (d.subject||'').substring(0, 55) + '…'
+          : (d.subject||'');
+
+        return '<tr style="cursor:pointer;'+urgStyle+'" onclick="showRecentDetail('+idx+')">' +
+          '<td><strong style="font-family:\'IBM Plex Mono\',monospace;font-size:12px;">'+esc(d.docNumber)+'</strong></td>' +
+          '<td style="white-space:nowrap;">'+fmtDate(d.date)+'</td>' +
+          '<td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(d.from||'')+'</td>' +
+          '<td style="max-width:260px;">'+esc(subj)+'</td>' +
+          '<td>'+urgBadge(d.urgency)+'</td>' +
+          '<td style="font-size:12px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(d.assignTo||'—')+'</td>' +
+          '<td style="text-align:center;">'+fileTag+'</td>' +
+          '</tr>';
+      }).join('');
+
+      document.getElementById('recent-tbl-wrap').style.display = '';
+      setText('recent-count-txt', 'แสดง ' + r.rows.length + ' รายการล่าสุด');
+      if (footerEl) footerEl.style.display = 'flex';
+    })
+    .withFailureHandler(function(e) {
+      if (btn) btn.disabled = false;
+      document.getElementById('recent-loading').style.display = 'none';
+      document.getElementById('recent-empty').style.display   = 'block';
+      document.getElementById('recent-empty').innerHTML =
+        '⚠️ โหลดข้อมูลไม่สำเร็จ — <small style="color:var(--gray400);">'+String(e).substring(0,80)+'</small>';
+      console.error('loadRecentIncoming error:', e);
+    })
+    .call(20);
+}
+
+function showRecentDetail(idx) {
+  var d = _recentRows[idx];
+  if (!d) return;
+  // re-use dashboard detail popup
+  _dashRecent = _recentRows;
+  showDashDetail('recent', idx);
+}
 
 // ============================================================
 // DEPARTMENTS
@@ -3615,7 +3760,70 @@ function urgBadge(u) {
 // INIT
 // ============================================================
 window.onload = function() {
-  loadDashboard();
+  // ── Session Restore: ถ้ามี _uid ใน localStorage → checkSession ก่อน ──
+  var savedUid = null;
+  try { savedUid = localStorage.getItem('_uid'); } catch(e) {}
+
+  if (savedUid) {
+    // ── ลอง restore UI ทันทีจาก cache (กัน flash) ──
+    try {
+      var cached = JSON.parse(localStorage.getItem('_ucache') || 'null');
+      if (cached && cached.user && (Date.now() - cached.ts) < 86400000) {
+        // cache ยังไม่เกิน 24 ชม. → แสดง UI ไว้ก่อน
+        _user = cached.user;
+        showAuthUI();
+      }
+    } catch(e) {}
+
+    // ── แสดง banner แจ้งว่ากำลัง verify session กับ server ──
+    var bar = document.getElementById('session-restore-bar');
+    if (bar) bar.classList.add('show');
+
+    gasRun('checkSession')
+      .withSuccessHandler(function(r) {
+        if (bar) bar.classList.remove('show');
+        if (r && r.loggedIn && r.user) {
+          // Session ยังอยู่ → อัปเดต _user จาก server
+          _user = r.user;
+          try { localStorage.setItem('_ucache', JSON.stringify({ user: r.user, ts: Date.now() })); } catch(e) {}
+          if (!document.querySelector('.page.active') ||
+              document.getElementById('page-public').classList.contains('active')) {
+            showAuthUI();
+            gotoPage('home');
+          } else {
+            showAuthUI();
+          }
+        } else {
+          // Session หมด → logout
+          _user = null;
+          try { localStorage.removeItem('_uid'); localStorage.removeItem('_ucache'); } catch(e) {}
+          // ซ่อน nav bar และ user chip
+          document.getElementById('btn-open-login').style.display  = '';
+          document.getElementById('btn-logout').style.display      = 'none';
+          document.getElementById('hdr-user-chip').style.display   = 'none';
+          document.getElementById('nav-bar').classList.remove('visible');
+          document.getElementById('public-notice').style.display   = '';
+          document.getElementById('quick-actions-card').style.display = 'none';
+          showOnlyPage('page-public');
+          loadDashboard();
+          loadRecentIncoming();
+        }
+      })
+      .withFailureHandler(function() {
+        if (bar) bar.classList.remove('show');
+        // network error → คง UI ไว้ถ้ามี cache (offline tolerant)
+        if (!_user) { loadDashboard(); loadRecentIncoming(); }
+        else { gotoPage('home'); }
+      })
+      .call(savedUid);
+
+    // โหลด Dashboard และ Recent ขณะรอ checkSession
+    loadDashboard();
+    loadRecentIncoming();
+  } else {
+    loadDashboard();
+    loadRecentIncoming();
+  }
 };
 </script>
 </body>
