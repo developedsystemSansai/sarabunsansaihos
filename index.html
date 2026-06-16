@@ -687,14 +687,14 @@ tbody tr:hover td { background: #f4f7fc; }
     <div class="content">
       <div class="stat-grid">
         <div class="stat-card c-blue">
-          <div class="stat-label">รับเข้าวันนี้</div>
+          <div class="stat-label">รับเข้าเดือนนี้</div>
           <div class="stat-num" id="s-in"><span class="spinner spinner-dark"></span></div>
-          <div class="stat-sub">หนังสือรับเข้า</div>
+          <div class="stat-sub">หนังสือรับเข้า / <span id="s-in-today" style="font-size:13px;">-</span> วันนี้</div>
         </div>
         <div class="stat-card c-green">
-          <div class="stat-label">ส่งออกวันนี้</div>
-          <div class="stat-num" id="s-out"><span class="spinner spinner-dark"></span></div>
-          <div class="stat-sub">หนังสือส่งออก</div>
+          <div class="stat-label">รับเข้าทั้งหมด</div>
+          <div class="stat-num" id="s-in-total"><span class="spinner spinner-dark"></span></div>
+          <div class="stat-sub">สะสมในระบบปัจจุบัน</div>
         </div>
         <div class="stat-card c-amber">
           <div class="stat-label">ด่วน / ด่วนมาก</div>
@@ -718,26 +718,7 @@ tbody tr:hover td { background: #f4f7fc; }
           </div>
         </div>
       </div>
-      <div class="card">
-        <div class="card-head"><span class="card-head-icon">📄</span><h3>เอกสารล่าสุด</h3></div>
-        <div class="card-body" style="padding:0;">
-          <div class="tbl-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>เลขที่รับ</th><th>วันที่รับ</th><th>จาก / หน่วยงาน</th>
-                  <th>เรื่อง</th><th>มอบหมาย</th><th></th>
-                </tr>
-              </thead>
-              <tbody id="recent-tbody">
-                <tr><td colspan="6" style="text-align:center;padding:28px;color:#94a3b8;">
-                  <span class="spinner spinner-dark"></span> กำลังโหลดข้อมูล...
-                </td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+
 
       <!-- ตารางเอกสารด่วน -->
       <div class="card" id="urgent-card" style="display:none;">
@@ -2070,18 +2051,17 @@ function gotoPage(page) {
 // DASHBOARD
 // ============================================================
 function loadDashboard() {
-  ['s-in','s-out','s-urgent1','s-urgent2'].forEach(function(id){
+  ['s-in','s-in-total','s-urgent1','s-urgent2'].forEach(function(id){
     var el=document.getElementById(id);
     if(el) el.innerHTML='<span class="spinner spinner-dark"></span>';
   });
-  document.getElementById('recent-tbody').innerHTML=
-    '<tr><td colspan="6" style="text-align:center;padding:28px;color:#94a3b8;"><span class="spinner spinner-dark"></span> กำลังโหลด...</td></tr>';
 
   gasRun('getDashboardStats')
     .withSuccessHandler(function(r) {
-      if (!r) r = {success:true,inToday:0,outToday:0,urgentCount:0,urgentList:[],recent:[]};
-      document.getElementById('s-in').innerHTML  = (r.inToday  ||0)+'<span class="stat-unit">ฉบับ</span>';
-      document.getElementById('s-out').innerHTML = (r.outToday ||0)+'<span class="stat-unit">ฉบับ</span>';
+      if (!r) r = {success:true,inToday:0,inMonth:0,inTotal:0,outToday:0,urgentCount:0,urgentList:[],recent:[]};
+      document.getElementById('s-in').innerHTML       = (r.inMonth ||0)+'<span class="stat-unit">ฉบับ</span>';
+      document.getElementById('s-in-today').textContent = (r.inToday||0);
+      document.getElementById('s-in-total').innerHTML = (r.inTotal ||0)+'<span class="stat-unit">ฉบับ</span>';
 
       // นับ ด่วนที่สุด และ ด่วน/ด่วนมาก แยกกัน
       var ul = r.urgentList || [];
@@ -2089,29 +2069,6 @@ function loadDashboard() {
       var cnt2 = ul.filter(function(x){return x.urgency==='ด่วน'||x.urgency==='ด่วนมาก';}).length;
       document.getElementById('s-urgent1').innerHTML = cnt1+'<span class="stat-unit">ฉบับ</span>';
       document.getElementById('s-urgent2').innerHTML = cnt2+'<span class="stat-unit">ฉบับ</span>';
-
-      // ตาราง recent
-      var tb = document.getElementById('recent-tbody');
-      if (!r.recent || r.recent.length===0) {
-        tb.innerHTML='<tr class="tbl-empty"><td colspan="6">ยังไม่มีเอกสารในระบบ</td></tr>';
-      } else {
-        _dashRecent = r.recent || [];
-        tb.innerHTML = _dashRecent.map(function(d, i) {
-          var urgHtml = d.urgency && d.urgency!=='ปกติ'
-            ? ' '+urgBadge(d.urgency) : '';
-          var fileLink = d.fileId
-            ? '<a href="https://drive.google.com/file/d/'+esc(d.fileId)+'/view" target="_blank" onclick="event.stopPropagation()" style="color:var(--accent);font-size:13px;text-decoration:none;">📎</a>'
-            : '';
-          return '<tr style="cursor:pointer;" onclick="showDashDetail(\'recent\','+i+')">'+
-            '<td><strong style="font-family:\'IBM Plex Mono\',monospace;font-size:12px;">'+esc(d.docNumber)+'</strong> '+fileLink+urgHtml+'</td>'+
-            '<td style="white-space:nowrap;">'+fmtDate(d.date)+'</td>'+
-            '<td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(d.from)+'</td>'+
-            '<td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(d.subject)+'</td>'+
-            '<td style="font-size:12px;">'+esc(d.assignTo)+'</td>'+
-            '<td></td>'+
-            '</tr>';
-        }).join('');
-      }
 
       // ตารางเอกสารด่วน
       var uc = document.getElementById('urgent-card');
@@ -2154,9 +2111,7 @@ function loadDashboard() {
       }
     })
     .withFailureHandler(function(e){
-      ['s-in','s-out','s-urgent1','s-urgent2'].forEach(function(id){setText(id,'0');});
-      document.getElementById('recent-tbody').innerHTML=
-        '<tr class="tbl-empty"><td colspan="6">⚠ เชื่อมต่อล้มเหลว — กรุณารีโหลดหน้า</td></tr>';
+      ['s-in','s-in-total','s-urgent1','s-urgent2'].forEach(function(id){setText(id,'0');});
     })
     .call();
 }
