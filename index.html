@@ -2288,6 +2288,9 @@ function showRecentDetail(idx) {
     ['จากหน่วยงาน',   esc(d.from||'—')],
     ['เลขที่อ้างอิง', esc(d.refNo||'—')],
     ['เรื่อง',        '<strong>'+esc(d.subject||'—')+'</strong>'],
+    ['รายละเอียด',    d.detail && d.detail.trim()
+      ? '<span style="line-height:1.6;white-space:pre-wrap;">'+esc(d.detail)+'</span>'
+      : '<span style="color:var(--gray400);">—</span>'],
     ['ประเภท',        esc(d.category||'—')],
     ['ความเร่งด่วน',  urgBadge(d.urgency||'ปกติ')],
     ['มอบหมายให้',    esc(d.assignTo||'—')],
