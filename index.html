@@ -595,6 +595,102 @@ tbody tr:hover td { background: #f4f7fc; }
 /* notify bar */
 .notify-bar { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
 .notify-bar .nb-label { font-size: 11.5px; font-weight: 700; color: #856404; white-space: nowrap; flex-shrink: 0; }
+
+/* ============================================================
+   RECENT TABLE — RESPONSIVE (mobile / tablet)
+============================================================ */
+
+/* ── Assign chip base ── */
+.assign-chip {
+  display: inline-block; padding: 2px 9px; border-radius: 10px;
+  font-size: 11.5px; font-weight: 600; white-space: nowrap; letter-spacing: .1px;
+}
+
+/* ── Tablet: ซ่อนคอลัมน์ที่ไม่จำเป็น ── */
+@media (max-width: 900px) {
+  .recent-col-from { display: none; }
+}
+
+/* ── Mobile: เหลือแค่เลขที่ / เรื่อง / urgency / assign ── */
+@media (max-width: 640px) {
+  /* header */
+  #recent-tbl-wrap table thead tr th:nth-child(2),
+  #recent-tbl-wrap table thead tr th:nth-child(7) { display: none; }
+  /* rows */
+  .recent-col-from, .recent-col-file { display: none; }
+
+  /* ทำให้ตาราง scroll-free บนมือถือ โดยแสดงเป็น card-row */
+  #recent-tbl-wrap { overflow-x: visible; }
+  #recent-tbl-wrap table { display: block; }
+  #recent-tbl-wrap thead { display: none; }
+  #recent-tbl-wrap tbody { display: block; }
+  #recent-tbl-wrap tbody tr {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto auto;
+    gap: 0;
+    border-bottom: 2px solid var(--gray100);
+    padding: 10px 14px;
+    cursor: pointer;
+  }
+  #recent-tbl-wrap tbody tr:hover { background: #f4f7fc; }
+  #recent-tbl-wrap tbody td {
+    padding: 2px 4px;
+    border: none;
+    font-size: 13px;
+    display: block;
+  }
+  /* เลขที่ — row 1 col 1 */
+  #recent-tbl-wrap tbody td:nth-child(1) {
+    grid-column: 1; grid-row: 1;
+    font-size: 12px; color: var(--navy);
+    align-self: center; padding-right: 8px;
+  }
+  /* วันที่ — row 1 col 2 */
+  #recent-tbl-wrap tbody td:nth-child(2) {
+    grid-column: 2; grid-row: 1;
+    font-size: 11px; color: var(--gray400); text-align: right;
+  }
+  /* จากหน่วยงาน (ซ่อน) */
+  #recent-tbl-wrap tbody td:nth-child(3) { display: none; }
+  /* เรื่อง — row 2 ทั้งแถว */
+  #recent-tbl-wrap tbody td:nth-child(4) {
+    grid-column: 1 / -1; grid-row: 2;
+    font-size: 13px; color: var(--gray700);
+    white-space: normal; padding: 3px 0 4px;
+    font-weight: 500;
+  }
+  /* urgency — row 3 col 1 */
+  #recent-tbl-wrap tbody td:nth-child(5) {
+    grid-column: 1; grid-row: 3;
+    padding: 2px 0;
+  }
+  /* assign — row 3 col 2 */
+  #recent-tbl-wrap tbody td:nth-child(6) {
+    grid-column: 2; grid-row: 3;
+    text-align: right; padding: 2px 0;
+  }
+  /* ไฟล์ (ซ่อน บนมือถือ เปิดใน popup แทน) */
+  #recent-tbl-wrap tbody td:nth-child(7) { display: none; }
+
+  /* card head pager: ซ่อน «» บนมือถือ */
+  #recent-pg-first, #recent-pg-last { display: none; }
+
+  /* content padding บนมือถือ */
+  .content { padding: 12px 12px 40px; }
+
+  /* stat grid: 2 คอลัมน์บนมือถือ */
+  .stat-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+
+  /* card head wrap */
+  .card-head { flex-wrap: wrap; gap: 6px; }
+}
+
+/* ── ปรับ header ของ recent card บน mobile ── */
+@media (max-width: 480px) {
+  #recent-card .card-head h3 { font-size: 12px; }
+  #recent-pg-label { min-width: 70px; font-size: 11px; }
+}
 </style>
 </head>
 <body>
@@ -2219,7 +2315,7 @@ function loadDashboard() {
 // ============================================================
 var _recentRows      = [];
 var _recentPage      = 1;
-var _recentPageSize  = 5;      // แสดงทีละ 5 รายการ
+var _recentPageSize  = 10;     // แสดงทีละ 10 รายการ
 var _recentTotalPages = 1;
 var _recentSheetUsed = '';
 
@@ -2278,9 +2374,33 @@ function recentRenderPage() {
   var end   = Math.min(start + _recentPageSize, _recentRows.length);
   var pageRows = _recentRows.slice(start, end);
 
+  // --- assignTo color chip helper ---
+  function assignChip(val) {
+    if (!val || val === '—') return '<span style="color:var(--gray300);font-size:11px;">—</span>';
+    var colors = {
+      'ผอก.':        { bg:'#eff6ff', color:'#1e40af', border:'#bfdbfe' },
+      'ผอก':         { bg:'#eff6ff', color:'#1e40af', border:'#bfdbfe' },
+      'รองแพทย์':    { bg:'#f0fdf4', color:'#166534', border:'#bbf7d0' },
+      'รองบริหาร':   { bg:'#fff7ed', color:'#c2410c', border:'#fed7aa' },
+      'รองพรส':      { bg:'#fdf4ff', color:'#7e22ce', border:'#e9d5ff' },
+      'รองปฐมภูมิ':  { bg:'#fefce8', color:'#92400e', border:'#fde68a' },
+      'รองดิจิทัล':  { bg:'#ecfdf5', color:'#065f46', border:'#a7f3d0' },
+      'ผช.':         { bg:'#f8fafc', color:'#475569', border:'#cbd5e1' },
+      'รองการพยาบาล':{ bg:'#fdf2f8', color:'#9d174d', border:'#fbcfe8' }
+    };
+    var style = null;
+    for (var k in colors) {
+      if (val.indexOf(k) !== -1) { style = colors[k]; break; }
+    }
+    if (!style) style = { bg:'#f8fafc', color:'#334155', border:'#e2e8f0' };
+    return '<span style="display:inline-block;padding:2px 9px;border-radius:10px;font-size:11.5px;font-weight:600;'+
+      'background:'+style.bg+';color:'+style.color+';border:1px solid '+style.border+';white-space:nowrap;letter-spacing:.1px;">'+
+      esc(val)+'</span>';
+  }
+
   // --- render แถว ---
   document.getElementById('recent-tbody').innerHTML = pageRows.map(function(d, pi) {
-    var globalIdx = start + pi;   // index ใน _recentRows สำหรับ showRecentDetail
+    var globalIdx = start + pi;
     var urgStyle = '';
     if (d.urgency === 'ด่วนที่สุด')  urgStyle = 'background:#fef2f2;';
     else if (d.urgency === 'ด่วนมาก') urgStyle = 'background:#fff7ed;';
@@ -2289,7 +2409,7 @@ function recentRenderPage() {
     var fileTag = d.fileId
       ? '<a href="https://drive.google.com/file/d/'+esc(d.fileId)+'/view" target="_blank" '+
         'onclick="event.stopPropagation()" title="ดูไฟล์แนบ" '+
-        'style="color:var(--accent);text-decoration:none;font-size:13px;">📎</a>'
+        'style="color:var(--accent);text-decoration:none;font-size:14px;">📎</a>'
       : '<span style="color:var(--gray300);font-size:11px;">—</span>';
 
     var subj = (d.subject||'').length > 55
@@ -2301,12 +2421,12 @@ function recentRenderPage() {
 
     return '<tr style="cursor:pointer;'+urgStyle+'" onclick="showRecentDetail('+globalIdx+')">' +
       '<td><strong style="font-family:\'IBM Plex Mono\',monospace;font-size:12px;">'+esc(d.docNumber)+'</strong></td>' +
-      '<td style="white-space:nowrap;">'+dateDisp+'</td>' +
-      '<td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="'+esc(d.from||'')+'">'+esc(d.from||'—')+'</td>' +
+      '<td style="white-space:nowrap;font-size:12px;">'+dateDisp+'</td>' +
+      '<td class="recent-col-from" style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="'+esc(d.from||'')+'">'+esc(d.from||'—')+'</td>' +
       '<td style="max-width:240px;" title="'+esc(d.subject||'')+'">'+esc(subj)+'</td>' +
-      '<td>'+urgBadge(d.urgency)+'</td>' +
-      '<td style="font-size:12px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(d.assignTo||'—')+'</td>' +
-      '<td style="text-align:center;">'+fileTag+'</td>' +
+      '<td class="recent-col-urg">'+urgBadge(d.urgency)+'</td>' +
+      '<td class="recent-col-assign">'+assignChip(d.assignTo||'—')+'</td>' +
+      '<td style="text-align:center;" class="recent-col-file">'+fileTag+'</td>' +
       '</tr>';
   }).join('');
 
@@ -3410,14 +3530,18 @@ function loadHistoryYears() {
       var selImp  = document.getElementById('imp-sheet');
       if (r.years && r.years.length) {
         r.years.forEach(function(y, i) {
+          var sName = (r.sheetNames && r.sheetNames[i]) ? r.sheetNames[i] : '';
           if (selYear) {
             var o = document.createElement('option');
+            // ใช้ sheetName เป็น value เพื่อให้ searchHistory กรองถูก Sheet
             o.value = String(y);
-            // ปีปัจจุบัน → ระบุว่ามาจากชีทรับเข้า
+            // label: ระบุชื่อ Sheet ให้ชัดเจน
             if (y === currentYear) {
               o.textContent = 'ปี ' + y + ' (Sheet รับเข้า)';
+            } else if (sName.startsWith('ประวัติหนังสือ')) {
+              o.textContent = 'ปี ' + y + ' (' + sName + ')';
             } else {
-              o.textContent = 'ปี ' + y + ' (หนังสือรับ ' + y + ')';
+              o.textContent = 'ปี ' + y + ' (' + (sName || 'หนังสือรับ ' + y) + ')';
             }
             selYear.appendChild(o);
           }
@@ -3426,7 +3550,7 @@ function loadHistoryYears() {
       // import sheet dropdown: ข้ามปีปัจจุบัน (อยู่ใน Sheet รับเข้าแล้ว)
       if (r.sheetNames && r.sheetNames.length) {
         r.sheetNames.forEach(function(n, i) {
-          if (n === 'รับเข้า') return; // ไม่ต้อง import ปีปัจจุบัน
+          if (n === 'รับเข้า' || n === 'รับเข้า2569') return; // ไม่ต้อง import ปีปัจจุบัน
           if (selImp) {
             var o = document.createElement('option');
             o.value = n; o.textContent = n;
