@@ -2228,13 +2228,17 @@ function loadRecentIncoming() {
           ? (d.subject||'').substring(0, 55) + '…'
           : (d.subject||'');
 
+        // วันที่ + เวลาลงรับ
+        var dateDisp = fmtDate(d.date);
+        if (d.recvTime) dateDisp += ' <span style="font-size:11px;color:var(--gray400);">' + esc(d.recvTime) + '</span>';
+
         return '<tr style="cursor:pointer;'+urgStyle+'" onclick="showRecentDetail('+idx+')">' +
           '<td><strong style="font-family:\'IBM Plex Mono\',monospace;font-size:12px;">'+esc(d.docNumber)+'</strong></td>' +
-          '<td style="white-space:nowrap;">'+fmtDate(d.date)+'</td>' +
-          '<td style="max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(d.from||'')+'</td>' +
-          '<td style="max-width:260px;">'+esc(subj)+'</td>' +
+          '<td style="white-space:nowrap;">'+dateDisp+'</td>' +
+          '<td style="max-width:150px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="'+esc(d.from||'')+'">'+esc(d.from||'—')+'</td>' +
+          '<td style="max-width:240px;" title="'+esc(d.subject||'')+'">'+esc(subj)+'</td>' +
           '<td>'+urgBadge(d.urgency)+'</td>' +
-          '<td style="font-size:12px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(d.assignTo||'—')+'</td>' +
+          '<td style="font-size:12px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(d.assignTo||'—')+'</td>' +
           '<td style="text-align:center;">'+fileTag+'</td>' +
           '</tr>';
       }).join('');
@@ -2257,9 +2261,51 @@ function loadRecentIncoming() {
 function showRecentDetail(idx) {
   var d = _recentRows[idx];
   if (!d) return;
-  // re-use dashboard detail popup
-  _dashRecent = _recentRows;
-  showDashDetail('recent', idx);
+
+  var urgColors = {'ด่วนที่สุด':'#ef4444','ด่วนมาก':'#f97316','ด่วน':'#eab308'};
+  var urgColor  = urgColors[d.urgency] || 'var(--gold)';
+
+  // ใช้ dash-detail-overlay (popup เดียวกับ dashboard)
+  document.getElementById('dash-detail-num').textContent = 'เลขที่รับ: ' + (d.docNumber||'—');
+  var urgEl = document.getElementById('dash-detail-urg');
+  urgEl.innerHTML = d.urgency && d.urgency !== 'ปกติ'
+    ? '<span style="background:'+urgColor+';color:white;padding:2px 10px;border-radius:4px;font-size:12px;font-weight:700;">'+esc(d.urgency)+'</span>'
+    : '';
+  document.getElementById('dash-detail-head').style.borderBottomColor = urgColor;
+
+  var dateDisplay = fmtDate(d.date);
+  if (d.recvTime) {
+    dateDisplay += ' &nbsp;<span style="background:var(--gray100);color:var(--navy);font-family:\'IBM Plex Mono\',monospace;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:4px;border:1px solid var(--gray200);">🕐 '+esc(d.recvTime)+' น.</span>';
+  }
+
+  var fileCell = d.fileId && d.fileId.length > 10
+    ? '<a href="https://drive.google.com/file/d/'+esc(d.fileId)+'/view?usp=drive_link" target="_blank" style="display:inline-flex;align-items:center;gap:5px;background:var(--green-bg);color:var(--green);border:1px solid #86efac;border-radius:4px;padding:4px 12px;font-weight:700;text-decoration:none;font-size:13px;">📎 เปิดไฟล์แนบ</a>'
+    : '<span style="color:var(--gray400);">— ไม่มีไฟล์แนบ</span>';
+
+  var rows = [
+    ['เลขที่รับ',      '<strong style="font-family:IBM Plex Mono,monospace;">'+esc(d.docNumber||'—')+'</strong>'],
+    ['วันที่ / เวลารับ', dateDisplay],
+    ['จากหน่วยงาน',   esc(d.from||'—')],
+    ['เลขที่อ้างอิง', esc(d.refNo||'—')],
+    ['เรื่อง',        '<strong>'+esc(d.subject||'—')+'</strong>'],
+    ['ประเภท',        esc(d.category||'—')],
+    ['ความเร่งด่วน',  urgBadge(d.urgency||'ปกติ')],
+    ['มอบหมายให้',    esc(d.assignTo||'—')],
+    ['สถานะ',         statusBadge(d.status||'—')],
+    ['ไฟล์แนบ',       fileCell]
+  ];
+
+  document.getElementById('dash-detail-body').innerHTML =
+    '<table style="width:100%;font-size:13px;border-collapse:collapse;">' +
+    rows.map(function(r) {
+      return '<tr style="border-bottom:1px solid var(--gray100);">' +
+        '<td style="padding:9px 16px;font-weight:600;color:var(--gray500);font-size:11px;text-transform:uppercase;white-space:nowrap;width:130px;">'+r[0]+'</td>'+
+        '<td style="padding:9px 16px;color:var(--gray700);">'+r[1]+'</td>'+
+        '</tr>';
+    }).join('') +
+    '</table>';
+
+  document.getElementById('dash-detail-overlay').style.display = 'flex';
 }
 
 // ============================================================
