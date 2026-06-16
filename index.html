@@ -1739,15 +1739,34 @@ var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyv4qVNduhQfe0gnwgmJK
  * คืนค่าเป็น Promise ที่ resolve เป็น object ผลลัพธ์จาก backend
  */
 function gasCall(fnName, args) {
-  return fetch(GAS_API_URL, {
-    method: 'POST',
-    // ใช้ text/plain เพื่อหลีกเลี่ยง CORS preflight (OPTIONS) ซึ่ง Apps Script ไม่รองรับ
-    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-    body: JSON.stringify({ fn: fnName, args: args || [] })
-  })
-  .then(function(res) {
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    return res.json();
+  return new Promise(function(resolve, reject) {
+    var cbName = '_gcb_' + Date.now() + '_' + Math.floor(Math.random()*10000);
+    var script = document.createElement('script');
+    var timer = setTimeout(function() {
+      delete window[cbName];
+      document.body.removeChild(script);
+      reject(new Error('timeout'));
+    }, 30000);
+    
+    window[cbName] = function(data) {
+      clearTimeout(timer);
+      delete window[cbName];
+      document.body.removeChild(script);
+      resolve(data);
+    };
+    
+    var argsStr = encodeURIComponent(JSON.stringify(args || []));
+    script.src = GAS_API_URL
+      + '?fn=' + encodeURIComponent(fnName)
+      + '&args=' + argsStr
+      + '&callback=' + cbName;
+    script.onerror = function() {
+      clearTimeout(timer);
+      delete window[cbName];
+      document.body.removeChild(script);
+      reject(new Error('script load error'));
+    };
+    document.body.appendChild(script);
   });
 }
 
