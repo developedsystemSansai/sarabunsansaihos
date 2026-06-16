@@ -777,16 +777,29 @@ tbody tr:hover td { background: #f4f7fc; }
       </div>
       <div class="inp-group">
         <label class="inp-label">รหัสผ่าน <span>*</span></label>
-        <input type="password" id="inp-pin" class="inp-field" placeholder="รหัสผ่าน 6 หลัก"
-          maxlength="6" inputmode="numeric" onkeypress="onlyDigit(event)"
-          onkeyup="if(event.key==='Enter')doLogin()">
+        <div style="position:relative;">
+          <input type="password" id="inp-pin" class="inp-field" placeholder="รหัสผ่าน 6 หลัก"
+            maxlength="6" inputmode="numeric" onkeypress="onlyDigit(event)"
+            onkeyup="if(event.key==='Enter')doLogin()"
+            style="padding-right:42px;">
+          <button type="button" id="pin-toggle-btn" onclick="togglePinVisibility()"
+            title="แสดง/ซ่อนรหัสผ่าน"
+            style="position:absolute;right:0;top:0;bottom:0;width:40px;
+                   background:none;border:none;cursor:pointer;color:var(--gray400);
+                   font-size:16px;display:flex;align-items:center;justify-content:center;
+                   border-radius:0 var(--r) var(--r) 0;transition:color .15s;"
+            onmouseenter="this.style.color='var(--navy)'"
+            onmouseleave="this.style.color='var(--gray400)'">
+            <span id="pin-eye-icon">👁</span>
+          </button>
+        </div>
         <div class="inp-hint">ตัวเลข 6 หลัก</div>
       </div>
       <button class="btn-login" id="login-btn" onclick="doLogin()">
         <span id="login-btn-text">เข้าสู่ระบบ</span>
       </button>
     </div>
-    <div class="lm-foot">ติดต่อผู้ดูแลระบบ: งานธุรการ โทร. 053-xxxxxx</div>
+    <div class="lm-foot">ติดต่อผู้ดูแลระบบ: กลุ่มงานพัฒนาระบบและบริการ </div>
   </div>
 </div>
 
@@ -4009,6 +4022,23 @@ function urgBadge(u) {
   return '<span class="badge b-urgent">'+esc(u)+'</span>';
 }
 
+
+// ============================================================
+// TOGGLE PASSWORD VISIBILITY
+// ============================================================
+function togglePinVisibility() {
+  var inp = document.getElementById('inp-pin');
+  var icon = document.getElementById('pin-eye-icon');
+  if (!inp) return;
+  if (inp.type === 'password') {
+    inp.type = 'text';
+    icon.textContent = '🙈';
+  } else {
+    inp.type = 'password';
+    icon.textContent = '👁';
+  }
+  inp.focus();
+}
 // ============================================================
 // INIT
 // ============================================================
