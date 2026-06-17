@@ -1638,6 +1638,7 @@ tbody tr:hover td { background: #f4f7fc; }
 
 
 <!-- ===== PAGE: SEND (หนังสือส่งออก) ===== -->
+<!-- ===== PAGE: SEND (หนังสือส่งออก) ===== -->
 <div id="page-send" class="page">
   <div class="content content-md">
     <div class="ptb">
@@ -1704,12 +1705,13 @@ tbody tr:hover td { background: #f4f7fc; }
           </div>
         </div>
 
-        <!-- แถว 4: ผู้ส่ง/หน่วยงาน (dropdown) — เต็มแถว -->
+        <!-- แถว 4: ผู้ส่ง/หน่วยงาน (grouped dropdown จาก getMissionGroups) — เต็มแถว -->
         <div class="f-group">
           <label class="f-label" style="background:#3d9970;color:white;padding:4px 10px;border-radius:var(--r);display:inline-block;margin-bottom:6px;">ผู้ส่ง / หน่วยงาน <span style="color:#ffeb80;">*</span></label>
           <select id="s-sentby" class="f-select">
             <option value="">— เลือกหน่วยงาน —</option>
           </select>
+          <div class="f-hint" style="margin-top:3px;color:var(--gray400);">เลือกกลุ่มภารกิจ/กลุ่มงานที่เป็นเจ้าของหนังสือ</div>
         </div>
 
         <!-- แถว 5: เรื่อง — เต็มแถว -->
@@ -2913,9 +2915,7 @@ function gotoPage(page) {
     setDefaultDate('r-date');
     loadNextRecvSeq();
   }
-  if (page === 'send')    {
-  if (!_missionsLoaded) loadMissionGroups();
-  setDefaultDate('s-date');
+if (page === 'send')    { loadDepts('s-sentby'); setDefaultDate('s-date'); }
 }   { loadDepts('s-sentby'); setDefaultDate('s-date'); }
   if (page === 'report')  setReportDates();
   if (page === 'history') loadHistoryYears();
@@ -5018,7 +5018,8 @@ function loadNextOrderSeq() {
     .call();
 }
 
-var _missionsLoaded = false;   // เปลี่ยนชื่อจาก _orderMissionsLoaded
+
+var _missionsLoaded = false;   // ใช้แทน _orderMissionsLoaded
 
 function loadMissionGroups() {
   if (_missionsLoaded && _orderMissions && _orderMissions.length > 0) {
