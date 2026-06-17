@@ -1913,43 +1913,48 @@ tbody tr:hover td { background: #f4f7fc; }
 var GAS_API_URL = 'https://script.google.com/macros/s/AKfycbyv4qVNduhQfe0gnwgmJK3ibgP7HDpWrNlghV8GjkOyy5vtUhTozURJ0oU6l5amzjGZ/exec';
 
 /**
- * gasCall(fnName, args) — เรียกฟังก์ชันบน GAS ผ่าน JSONP (GET)
- * ใช้ JSONP แทน fetch เพื่อหลีกเลี่ยงปัญหา CORS ของ Apps Script
- * คืนค่าเป็น Promise ที่ resolve เป็น object ผลลัพธ์จาก backend
+ * gasCall(fnName, args) — เรียกฟังก์ชันบน GAS ผ่าน fetch (POST)
+ *
+ * อัปเดตคู่กับ Security Patch 3/4 ฝั่ง backend: doGet ไม่ dispatch ฟังก์ชันผ่าน
+ * JSONP/GET อีกต่อไป (เพื่อปิดช่องโหว่ที่ใครก็เรียกฟังก์ชันใดก็ได้ผ่าน query string
+ * โดยไม่ยืนยันตัวตน) — ทุกการเรียกต้องผ่าน doPost เท่านั้น
+ *
+ * ใช้ Content-Type: text/plain เพื่อให้เป็น "simple request" และไม่ trigger
+ * CORS preflight (OPTIONS) ซึ่ง Apps Script Web App ไม่รองรับ
+ *
+ * แนบ nationalId + token (จาก state ตัวแปร _user / _token ด้านล่าง) ไปกับทุก
+ * request เสมอ — backend จะตรวจสอบเองว่าฟังก์ชันนั้นต้องยืนยันตัวตนหรือไม่
+ * (ฟังก์ชันสาธารณะใน PUBLIC_FUNCTIONS จะไม่สนใจค่านี้)
  */
 function gasCall(fnName, args) {
-  return new Promise(function(resolve, reject) {
-    var cbName = '_gcb_' + Date.now() + '_' + Math.floor(Math.random() * 10000);
-    var script = document.createElement('script');
-    var timer = setTimeout(function() {
-      cleanup();
-      reject(new Error('timeout'));
-    }, 30000);
+  var payload = {
+    fn:         fnName,
+    args:       args || [],
+    nationalId: (typeof _user === 'object' && _user) ? _user.nationalId : '',
+    token:      (typeof _token !== 'undefined' && _token) ? _token : ''
+  };
 
-    function cleanup() {
+  var controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+  var timer = setTimeout(function() { if (controller) controller.abort(); }, 30000);
+
+  var fetchOpts = {
+    method:  'POST',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body:    JSON.stringify(payload)
+  };
+  if (controller) fetchOpts.signal = controller.signal;
+
+  return fetch(GAS_API_URL, fetchOpts)
+    .then(function(res) {
       clearTimeout(timer);
-      delete window[cbName];
-      if (script.parentNode) script.parentNode.removeChild(script);
-    }
-
-    window[cbName] = function(data) {
-      cleanup();
-      resolve(data);
-    };
-
-    script.onerror = function() {
-      cleanup();
-      reject(new Error('ไม่สามารถเชื่อมต่อ GAS ได้'));
-    };
-
-    var argsStr = encodeURIComponent(JSON.stringify(args || []));
-    script.src = GAS_API_URL
-      + '?fn='       + encodeURIComponent(fnName)
-      + '&args='     + argsStr
-      + '&callback=' + cbName;
-
-    document.body.appendChild(script);
-  });
+      if (!res.ok) throw new Error('HTTP ' + res.status);
+      return res.json();
+    })
+    .catch(function(err) {
+      clearTimeout(timer);
+      if (err && err.name === 'AbortError') throw new Error('timeout');
+      throw new Error('ไม่สามารถเชื่อมต่อ GAS ได้: ' + (err && err.message ? err.message : String(err)));
+    });
 }
 
 /**
@@ -1979,6 +1984,7 @@ function gasRun(fnName) {
 // STATE
 // ============================================================
 var _user    = null;
+var _token   = null; // session token จาก login — ต้องแนบไปกับทุก request ที่ต้องยืนยันตัวตน
 var _depts   = [];
 var _deptsOk = false;
 var _dashRecent = [];
@@ -2165,9 +2171,11 @@ function doLogin() {
     .withSuccessHandler(function(r) {
       setBtnLoad('login-btn', false, 'เข้าสู่ระบบ');
       if (r && r.success) {
-        _user = r.user;
+        _user  = r.user;
+        _token = r.token;
         try {
           localStorage.setItem('_uid', nid);
+          localStorage.setItem('_utoken', r.token || '');
           // เก็บ user data + เวลา login ไว้สำหรับ restore ด่วน (ก่อน checkSession กลับมา)
           localStorage.setItem('_ucache', JSON.stringify({ user: r.user, ts: Date.now() }));
         } catch(e) {}
@@ -2206,8 +2214,9 @@ function showAuthUI() {
 function doLogout() {
   if (!confirm('ต้องการออกจากระบบใช่หรือไม่?')) return;
   gasCall('logout', [_user ? _user.nationalId : '']).catch(function(){});
-  try { localStorage.removeItem('_uid'); localStorage.removeItem('_ucache'); } catch(e) {}
-  _user = null;
+  try { localStorage.removeItem('_uid'); localStorage.removeItem('_ucache'); localStorage.removeItem('_utoken'); } catch(e) {}
+  _user  = null;
+  _token = null;
   document.getElementById('btn-open-login').style.display  = '';
   document.getElementById('btn-logout').style.display      = 'none';
   document.getElementById('hdr-user-chip').style.display   = 'none';
@@ -4043,11 +4052,23 @@ function togglePinVisibility() {
 // INIT
 // ============================================================
 window.onload = function() {
-  // ── Session Restore: ถ้ามี _uid ใน localStorage → checkSession ก่อน ──
-  var savedUid = null;
-  try { savedUid = localStorage.getItem('_uid'); } catch(e) {}
+  // ── Session Restore: ถ้ามี _uid + _utoken ใน localStorage → checkSession ก่อน ──
+  var savedUid = null, savedToken = null;
+  try {
+    savedUid   = localStorage.getItem('_uid');
+    savedToken = localStorage.getItem('_utoken');
+  } catch(e) {}
 
-  if (savedUid) {
+  // session เก่าก่อน Security Patch 5 จะไม่มี token เก็บไว้ — ถือว่า session
+  // นั้นใช้ไม่ได้แล้ว (ต้อง login ใหม่) แทนที่จะพยายาม restore แบบไม่มี token
+  if (savedUid && !savedToken) {
+    try { localStorage.removeItem('_uid'); localStorage.removeItem('_ucache'); localStorage.removeItem('_utoken'); } catch(e) {}
+    savedUid = null;
+  }
+
+  if (savedUid && savedToken) {
+    _token = savedToken;
+
     // ── ลอง restore UI ทันทีจาก cache (กัน flash) ──
     try {
       var cached = JSON.parse(localStorage.getItem('_ucache') || 'null');
@@ -4066,9 +4087,13 @@ window.onload = function() {
       .withSuccessHandler(function(r) {
         if (bar) bar.classList.remove('show');
         if (r && r.loggedIn && r.user) {
-          // Session ยังอยู่ → อัปเดต _user จาก server
-          _user = r.user;
-          try { localStorage.setItem('_ucache', JSON.stringify({ user: r.user, ts: Date.now() })); } catch(e) {}
+          // Session ยังอยู่ → อัปเดต _user / _token จาก server
+          _user  = r.user;
+          _token = r.token || _token;
+          try {
+            localStorage.setItem('_ucache', JSON.stringify({ user: r.user, ts: Date.now() }));
+            if (r.token) localStorage.setItem('_utoken', r.token);
+          } catch(e) {}
           if (!document.querySelector('.page.active') ||
               document.getElementById('page-public').classList.contains('active')) {
             showAuthUI();
@@ -4077,9 +4102,10 @@ window.onload = function() {
             showAuthUI();
           }
         } else {
-          // Session หมด → logout
-          _user = null;
-          try { localStorage.removeItem('_uid'); localStorage.removeItem('_ucache'); } catch(e) {}
+          // Session หมด หรือ token ไม่ถูกต้อง → logout
+          _user  = null;
+          _token = null;
+          try { localStorage.removeItem('_uid'); localStorage.removeItem('_ucache'); localStorage.removeItem('_utoken'); } catch(e) {}
           // ซ่อน nav bar และ user chip
           document.getElementById('btn-open-login').style.display  = '';
           document.getElementById('btn-logout').style.display      = 'none';
