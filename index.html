@@ -527,6 +527,12 @@ tbody tr:hover td { background: #f4f7fc; }
   background: white; color: var(--gray900);
 }
 .grp-tbl .grp-other-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(30,111,173,.10); }
+.grp-tbl .grp-sub-select {
+  width: 100%; margin-top: 4px; border: 1px solid var(--gray300); border-radius: var(--r);
+  padding: 3px 6px; font-size: 11.5px; font-family: inherit;
+  background: var(--gray50); color: var(--gray700);
+}
+.grp-tbl .grp-sub-select:focus { outline: none; border-color: var(--accent); }
 
 /* สถานะ badge */
 .st-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 9px; border-radius: 12px; font-size: 11px; font-weight: 700; white-space: nowrap; }
@@ -977,33 +983,14 @@ tbody tr:hover td { background: #f4f7fc; }
             <div class="card-head"><span class="card-head-icon">📋</span><h3>ข้อมูลหนังสือรับเข้า</h3></div>
             <div class="card-body">
 
-              <!-- แถว 1: ความเร่งด่วน (ก่อนเลย) + เลขที่รับ -->
+              <!-- แถว 1: วันที่รับหนังสือ + เวลาลงรับ -->
               <div class="form-grid" style="grid-template-columns:1fr 1fr;">
                 <div class="f-group">
-                  <label class="f-label" style="color:var(--red);font-size:12px;">⚡ ความเร่งด่วน <span class="req">*</span></label>
-                  <select id="r-urgency" class="f-select" style="border-color:var(--gray300);font-weight:600;">
-                    <option value="ปกติ" selected>ปกติ</option>
-                    <option value="ด่วน">ด่วน</option>
-                    <option value="ด่วนมาก">ด่วนมาก</option>
-                    <option value="ด่วนที่สุด">ด่วนที่สุด</option>
-                  </select>
-                </div>
-                <div class="f-group">
-                  <label class="f-label">เลขที่รับ <span class="req">*</span></label>
-                  <input type="text" id="r-recvno-main" class="f-input"
-                    placeholder="เลขที่รับจากหนังสือ"
-                    style="font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:14px;">
-                </div>
-              </div>
-
-              <!-- แถว 2: วันที่รับ + เวลาลงรับ -->
-              <div class="form-grid" style="grid-template-columns:1fr 1fr;">
-                <div class="f-group">
-                  <label class="f-label">วันที่รับ</label>
+                  <label class="f-label">วันที่รับหนังสือ <span class="req">*</span></label>
                   <input type="text" id="r-date" class="f-input" placeholder="DD/MM/YYYY">
                 </div>
                 <div class="f-group">
-                  <label class="f-label">เวลาลงรับ</label>
+                  <label class="f-label">เวลาลงรับ <span class="req">*</span></label>
                   <input type="text" id="r-recv-time" class="f-input"
                     placeholder="เช่น 09:30"
                     style="font-family:'IBM Plex Mono',monospace;"
@@ -1013,44 +1000,55 @@ tbody tr:hover td { background: #f4f7fc; }
                 </div>
               </div>
 
-              <!-- แถว 3: จากหน่วยงาน (autocomplete) + เลขที่หนังสือ -->
+              <!-- แถว 2: ความเร่งด่วน + ชั้นความลับ -->
               <div class="form-grid" style="grid-template-columns:1fr 1fr;">
                 <div class="f-group">
-                  <label class="f-label">จากหน่วยงาน <span class="req">*</span></label>
-                  <div class="autocomplete-wrap">
-                    <input type="text" id="r-from" class="f-input" placeholder="พิมพ์ชื่อหน่วยงาน..."
-                      autocomplete="off"
-                      oninput="acSearch('r-from','r-from-list',_ORG_LIST)"
-                      onblur="setTimeout(function(){acHide('r-from-list')},180)"
-                      onfocus="acSearch('r-from','r-from-list',_ORG_LIST)">
-                    <div id="r-from-list" class="autocomplete-list" style="display:none;"></div>
-                  </div>
-                </div>
-                <div class="f-group">
-                  <label class="f-label">เลขที่หนังสือ (อ้างอิง)</label>
-                  <input type="text" id="r-ref" class="f-input" placeholder="เลขที่อ้างอิงจากต้นเรื่อง">
-                </div>
-              </div>
-
-              <!-- แถว 4: ผู้รับ + วันที่หนังสือ -->
-              <div class="form-grid" style="grid-template-columns:1fr 1fr;">
-                <div class="f-group">
-                  <label class="f-label">ผู้รับ</label>
-                  <select id="r-by" class="f-select">
-                    <option value="">-- เลือกผู้รับ --</option>
-                    <option value="นางสาวสุกัลยา ศิริวรรณ">นางสาวสุกัลยา ศิริวรรณ</option>
-                    <option value="นางสาวรัตติยากร มะที">นางสาวรัตติยากร มะที</option>
-                    <option value="นางสาวเดือนเพ็ญ เมืองมูล">นางสาวเดือนเพ็ญ เมืองมูล</option>
-                    <option value="นางสาวกัลญาณี สุทะ">นางสาวกัลญาณี สุทะ</option>
-                    <option value="นางสาวอัจฉรา ชัยมูล">นางสาวอัจฉรา ชัยมูล</option>
+                  <label class="f-label" style="color:var(--red);font-size:12px;">⚡ ความเร่งด่วน <span class="req">*</span></label>
+                  <select id="r-urgency" class="f-select" style="font-weight:600;">
+                    <option value="ปกติ" selected>–ปกติ–</option>
+                    <option value="ด่วน">ด่วน</option>
+                    <option value="ด่วนมาก">ด่วนมาก</option>
+                    <option value="ด่วนที่สุด">ด่วนที่สุด</option>
                   </select>
                 </div>
                 <div class="f-group">
-                  <label class="f-label">วันที่หนังสือ</label>
+                  <label class="f-label">ชั้นความลับ <span class="req">*</span></label>
+                  <select id="r-conf" class="f-select">
+                    <option value="ไม่มีชั้น" selected>–ปกติ–</option>
+                    <option value="ลับ">ลับ</option>
+                    <option value="ลับมาก">ลับมาก</option>
+                    <option value="ลับที่สุด">ลับที่สุด</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- แถว 3: เลขที่หนังสือ + วันที่หนังสือรับ -->
+              <div class="form-grid" style="grid-template-columns:1fr 1fr;">
+                <div class="f-group">
+                  <label class="f-label">เลขที่หนังสือ <span class="req">*</span></label>
+                  <input type="text" id="r-ref" class="f-input" placeholder="เลขที่หนังสือจากต้นเรื่อง"
+                    style="font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:14px;">
+                </div>
+                <div class="f-group">
+                  <label class="f-label">วันที่หนังสือรับ</label>
                   <input type="text" id="r-docrefdate" class="f-input" placeholder="DD/MM/YYYY">
                 </div>
               </div>
 
+              <!-- แถว 4: จากหน่วยงาน (autocomplete) เต็มแถว -->
+              <div class="f-group">
+                <label class="f-label">จากหน่วยงาน <span class="req">*</span></label>
+                <div class="autocomplete-wrap">
+                  <input type="text" id="r-from" class="f-input" placeholder="พิมพ์ชื่อหน่วยงาน..."
+                    autocomplete="off"
+                    oninput="acSearch('r-from','r-from-list',_ORG_LIST)"
+                    onblur="setTimeout(function(){acHide('r-from-list')},180)"
+                    onfocus="acSearch('r-from','r-from-list',_ORG_LIST)">
+                  <div id="r-from-list" class="autocomplete-list" style="display:none;"></div>
+                </div>
+              </div>
+
+              <!-- แถว 5: เรื่อง -->
               <div class="f-group">
                 <label class="f-label">เรื่อง <span class="req">*</span></label>
                 <input type="text" id="r-subj" class="f-input" placeholder="ระบุหัวข้อ/เรื่องของหนังสือ" maxlength="200"
@@ -1058,69 +1056,48 @@ tbody tr:hover td { background: #f4f7fc; }
                 <div class="f-counter"><span id="r-subj-cnt">0</span> / 200</div>
               </div>
 
+              <!-- แถว 6: อ้างถึงหนังสือ -->
               <div class="f-group">
-                <label class="f-label">รายละเอียด</label>
-                <textarea id="r-detail" class="f-textarea" placeholder="สรุปเนื้อหาโดยย่อ..." maxlength="500"
-                  oninput="cnt('r-detail','r-detail-cnt')"></textarea>
-                <div class="f-counter"><span id="r-detail-cnt">0</span> / 500</div>
+                <label class="f-label">อ้างถึงหนังสือ <span style="font-size:11px;font-weight:400;color:var(--gray500);">(เรื่องที่อ้างถึงในหนังสือราชการ)</span></label>
+                <input type="text" id="r-docref" class="f-input" placeholder="เลขที่/เรื่องที่อ้างถึง" maxlength="200">
               </div>
 
-              <div class="form-grid">
+              <!-- แถว 7: เลขานุการกลุ่มภารกิจรับหนังสือ + ว/ด/ป ส่ง -->
+              <div class="form-grid" style="grid-template-columns:1fr 1fr;">
                 <div class="f-group">
-                  <label class="f-label">ประเภท <span class="req">*</span></label>
-                  <select id="r-cat" class="f-select">
-                    <option value="">-- เลือกประเภท --</option>
-                    <option>หนังสือราชการ</option><option>บันทึกข้อความ</option>
-                    <option>คำสั่ง</option><option>ประกาศ</option><option>อื่น</option>
+                  <label class="f-label">เลขากลุ่มภารกิจรับหนังสือ</label>
+                  <select id="r-by" class="f-select">
+                    <option value="">–เลขานุการ–</option>
+                    <option value="เลขานุการ ผอก.">เลขานุการ ผอก.</option>
+                    <option value="เลขานุการรองแพทย์">เลขานุการรองแพทย์</option>
+                    <option value="เลขานุการรองพรส.">เลขานุการรองพรส.</option>
+                    <option value="เลขานุการรองบริหาร">เลขานุการรองบริหาร</option>
+                    <option value="เลขานุการรองดิจิทัล">เลขานุการรองดิจิทัล</option>
+                    <option value="เลขานุการรองปฐมภูมิ">เลขานุการรองปฐมภูมิ</option>
+                    <option value="เลขานุการรองฝ่ายการพยาบาล">เลขานุการรองฝ่ายการพยาบาล</option>
+                    <option value="เลขานุการ ผช.พัฒนาคุณภาพ">เลขานุการ ผช.พัฒนาคุณภาพ</option>
                   </select>
                 </div>
                 <div class="f-group">
-                  <label class="f-label" style="color:var(--gray500);">ชั้นความลับ</label>
-                  <select id="r-conf" class="f-select">
-                    <option value="ไม่มีชั้น" selected>ไม่มีชั้น</option>
-                    <option>ปกติ</option><option>ลับ</option><option>ลับมาก</option><option>ลับที่สุด</option>
-                  </select>
-                </div>
-              </div>
-
-              <div class="f-group">
-                <label class="f-label">มอบหมายให้ <span class="req">*</span></label>
-                <select id="r-assign" class="f-select"><option value="">-- เลือกหน่วยงาน --</option></select>
-              </div>
-
-              <div class="form-grid">
-                <div class="f-group">
-                  <label class="f-label">การปฏิบัติ</label>
-                  <input type="text" id="r-action" class="f-input" placeholder="การปฏิบัติที่ต้องดำเนินการ" maxlength="200">
-                </div>
-                <div class="f-group">
-                  <label class="f-label">งานที่เก็บ</label>
-                  <input type="text" id="r-taskstored" class="f-input" placeholder="ชื่องาน/แฟ้มที่เก็บ" maxlength="200">
-                </div>
-              </div>
-
-              <div class="form-grid">
-                <div class="f-group">
-                  <label class="f-label">หนังสืออ้างอิง</label>
-                  <input type="text" id="r-docref" class="f-input" placeholder="เลขที่หนังสืออ้างอิง" maxlength="200">
-                </div>
-                <div class="f-group">
-                  <label class="f-label">หมายเหตุ</label>
-                  <input type="text" id="r-note" class="f-input" placeholder="ข้อมูลเพิ่มเติม..." maxlength="200">
+                  <label class="f-label">ว/ด/ป ส่ง</label>
+                  <input type="text" id="r-recvno-main" class="f-input" placeholder="ว/ด/ป">
                 </div>
               </div>
 
             </div>
           </div>
 
-          <!-- ผ่านรองผู้อำนวยการ -->
+          <!-- หนังสือราชการผ่านผู้บริหาร -->
           <div class="card">
-            <div class="card-head"><span class="card-head-icon">✅</span><h3>การผ่านรองผู้อำนวยการ</h3></div>
+            <div class="card-head" style="background:linear-gradient(90deg,#1e3a5f 0%,#2d5a8e 100%);border-bottom:none;">
+              <span class="card-head-icon" style="color:#ffd700;">✅</span>
+              <h3 style="color:white;">หนังสือราชการผ่านผู้บริหาร</h3>
+            </div>
             <div class="card-body">
-              <p style="font-size:12px;color:var(--gray500);margin-bottom:10px;">เลือกได้หลายรองฯ พร้อมระบุ ว/ด/ป ที่ผ่าน</p>
+              <p style="font-size:11.5px;color:var(--gray500);margin-bottom:12px;">งานเลขาแต่ละภารกิจเป็นผู้บันทึก — เลือกได้หลายท่าน พร้อมระบุ ว/ด/ป ที่ผ่าน</p>
               <div class="dir-grid" style="grid-template-columns:1fr 1fr;">
                 <div class="dir-row c-dir">
-                  <label><input type="checkbox" id="r-chk-dir"> ผ่าน ผอก.</label>
+                  <label><input type="checkbox" id="r-chk-dir"> ผู้อำนวยการ</label>
                   <input type="text" id="r-date-dir" class="dir-date" placeholder="ว/ด/ป" disabled>
                 </div>
                 <div class="dir-row c-med">
@@ -1143,6 +1120,10 @@ tbody tr:hover td { background: #f4f7fc; }
                   <label><input type="checkbox" id="r-chk-pri"> รองปฐมภูมิ</label>
                   <input type="text" id="r-date-pri" class="dir-date" placeholder="ว/ด/ป" disabled>
                 </div>
+                <div class="dir-row c-nur">
+                  <label><input type="checkbox" id="r-chk-nur"> รองฝ่ายการพยาบาล</label>
+                  <input type="text" id="r-date-nur" class="dir-date" placeholder="ว/ด/ป" disabled>
+                </div>
                 <div class="dir-row c-qa">
                   <label><input type="checkbox" id="r-chk-qa"> ผช.พัฒนาคุณภาพ</label>
                   <input type="text" id="r-date-qa" class="dir-date" placeholder="ว/ด/ป" disabled>
@@ -1151,15 +1132,388 @@ tbody tr:hover td { background: #f4f7fc; }
                   <label><input type="checkbox" id="r-chk-cfo"> ผช.CFO</label>
                   <input type="text" id="r-date-cfo" class="dir-date" placeholder="ว/ด/ป" disabled>
                 </div>
-                <div class="dir-row c-nur">
-                  <label><input type="checkbox" id="r-chk-nur"> รองการพยาบาล</label>
-                  <input type="text" id="r-date-nur" class="dir-date" placeholder="ว/ด/ป" disabled>
-                </div>
                 <div class="dir-row c-ret">
                   <label style="min-width:120px;cursor:default;">ว/ด/ป คืนธุรการ</label>
                   <input type="text" id="r-date-return" class="dir-date" placeholder="ว/ด/ป">
                 </div>
               </div>
+            </div>
+          </div>
+
+          <!-- ข้อสั่งการ + การปฏิบัติ -->
+          <div class="card">
+            <div class="card-head"><span class="card-head-icon">📝</span><h3>ข้อสั่งการและการปฏิบัติ</h3></div>
+            <div class="card-body">
+              <div class="f-group">
+                <label class="f-label">ข้อสั่งการในหนังสือราชการ <span class="req">*</span></label>
+                <textarea id="r-detail" class="f-textarea" placeholder="ระบุข้อสั่งการที่ระบุในหนังสือ..." maxlength="500"
+                  oninput="cnt('r-detail','r-detail-cnt')"></textarea>
+                <div class="f-counter"><span id="r-detail-cnt">0</span> / 500</div>
+              </div>
+              <div class="f-group">
+                <label class="f-label">การปฏิบัติ <span class="req">*</span></label>
+                <input type="text" id="r-action" class="f-input" placeholder="การปฏิบัติที่ต้องดำเนินการ" maxlength="200">
+              </div>
+            </div>
+          </div>
+
+          <!-- รหัสแฟ้ม + หน่วยงานที่เก็บ -->
+          <div class="card">
+            <div class="card-head"><span class="card-head-icon">🗂️</span><h3>การจัดเก็บหนังสือ</h3></div>
+            <div class="card-body">
+              <div class="f-group">
+                <label class="f-label">รหัสแฟ้ม</label>
+                <select id="r-taskstored" class="f-select">
+                  <option value="">–เลือกรหัสแฟ้ม–</option>
+                  <optgroup label="หมวด 1 การเงิน, งบประมาณ">
+                    <optgroup label="1.1 ระเบียบปฏิบัติการเงิน (เงินงบประมาณ)">
+                      <option value="1.1.1">1.1.1 ระเบียบปฏิบัติเกี่ยวกับการเบิกจ่ายเงินงบประมาณ (ค่ารักษาพยาบาล)</option>
+                      <option value="1.1.2">1.1.2 ค่าช่วยเหลือบุตร</option>
+                      <option value="1.1.3">1.1.3 ค่าเล่าเรียนบุตร</option>
+                      <option value="1.1.4">1.1.4 ค่าเช่าบ้าน</option>
+                      <option value="1.1.5">1.1.5 ค่าใช้จ่ายในการเดินทางไปราชการ</option>
+                      <option value="1.1.6">1.1.6 ระเบียบเกี่ยวกับการเบิกจ่ายเงินงบประมาณทั่วไป</option>
+                    </optgroup>
+                    <optgroup label="1.2 ระเบียบปฏิบัติการเงิน (เงินนอกงบประมาณ)">
+                      <option value="1.2.1">1.2.1 ระเบียบการเบิกจ่ายเงินบำรุง</option>
+                      <option value="1.2.2">1.2.2 เงินบริจาค</option>
+                      <option value="1.2.3">1.2.3 เงินสวัสดิการ</option>
+                      <option value="1.2.4">1.2.4 เงินประกันสุขภาพถ้วนหน้า (บัตรทองหรือ UC)</option>
+                      <option value="1.2.5">1.2.5 เงินประกันสังคม</option>
+                      <option value="1.2.6">1.2.6 เงินเพิ่มพิเศษ</option>
+                    </optgroup>
+                    <optgroup label="1.3 ใบสำคัญและเอกสารประกอบการรับจ่ายเงิน">
+                      <option value="1.3.1">1.3.1 การเบิกจ่ายค่าจ้างชั่วคราว</option>
+                      <option value="1.3.2">1.3.2 สำเนาใบเรียกเก็บค่ารักษาฯ และตอบรับจากส่วนราชการอื่น</option>
+                    </optgroup>
+                    <option value="1.4">1.4 เอกสารมอบอำนาจเกี่ยวกับการเงิน</option>
+                    <optgroup label="1.5 บัญชีและการตรวจสอบ">
+                      <option value="1.5.1">1.5.1 รายงานต่างๆ ด้านการเงิน</option>
+                      <option value="1.5.2">1.5.2 บัญชีเงินกู้ธนาคาร</option>
+                    </optgroup>
+                    <optgroup label="1.6 การเงินทั่วไป">
+                      <option value="1.6.1">1.6.1 หนังสือโต้ตอบด้านการเงิน</option>
+                      <option value="1.6.2">1.6.2 ใบแจ้งการโอนเงินบัตรทองหรือ UC</option>
+                      <option value="1.6.3">1.6.3 ใบแจ้งเงินโอนเงิน สสจ.</option>
+                      <option value="1.6.4">1.6.4 สำเนาแจ้งการโอนเงิน สสอ.</option>
+                      <option value="1.6.5">1.6.5 สำเนาแจ้งเงินโอนเงิน ฌกส./ตอบรับ ฌกส.</option>
+                      <option value="1.6.6">1.6.6 สำเนาภาษีหัก ณ ที่จ่ายร้านค้า</option>
+                      <option value="1.6.7">1.6.7 แผนเงินบำรุง</option>
+                    </optgroup>
+                  </optgroup>
+                  <optgroup label="หมวด 2 คำสั่ง ระเบียบ ประกาศ มติ ครม. พรบ.">
+                    <optgroup label="2.1 คำสั่ง">
+                      <option value="2.1.1">2.1.1 คำสั่ง กสธ.</option>
+                      <option value="2.1.2">2.1.2 คำสั่ง สป.สธ</option>
+                      <option value="2.1.3">2.1.3 คำสั่ง กรมต่างๆ ในสังกัด กสธ.</option>
+                      <option value="2.1.4">2.1.4 คำสั่ง ศาลากลางจังหวัดเชียงใหม่</option>
+                      <option value="2.1.5">2.1.5 คำสั่ง สสจ.</option>
+                      <option value="2.1.6">2.1.6 คำสั่ง อำเภอ</option>
+                      <option value="2.1.7">2.1.7 คำสั่งอื่นๆ</option>
+                      <option value="2.1.8">2.1.8 คำสั่งโรงพยาบาล</option>
+                      <option value="2.1.9">2.1.9 คำสั่งจ้างลูกจ้างชั่วคราว</option>
+                    </optgroup>
+                    <optgroup label="2.2 ระเบียบ ข้อบังคับและหนังสือตอบข้อหารือ">
+                      <option value="2.2.1">2.2.1 ระเบียบข้อบังคับกระทรวง</option>
+                      <option value="2.2.2">2.2.2 ระเบียบข้อบังคับ สป.สธ.</option>
+                      <option value="2.2.3">2.2.3 ระเบียบข้อบังคับกรมกองต่างๆ ใน สธ.</option>
+                      <option value="2.2.4">2.2.4 ระเบียบข้อบังคับสำนักนายกรัฐมนตรี</option>
+                      <option value="2.2.5">2.2.5 ระเบียบข้อบังคับ กระทรวงการคลัง</option>
+                      <option value="2.2.6">2.2.6 ระเบียบข้อบังคับจังหวัด/สสจ.</option>
+                      <option value="2.2.7">2.2.7 ระเบียบข้อบังคับโรงพยาบาล</option>
+                      <option value="2.2.8">2.2.8 ระเบียบข้อบังคับอื่นๆ</option>
+                    </optgroup>
+                    <optgroup label="2.3 ประกาศ">
+                      <option value="2.3.1">2.3.1 ประกาศ กสธ.</option>
+                      <option value="2.3.2">2.3.2 ประกาศ สป.สธ.</option>
+                      <option value="2.3.3">2.3.3 ประกาศ กรม กอง ต่างๆ ของ กสธ.</option>
+                      <option value="2.3.4">2.3.4 ประกาศ จังหวัด/อำเภอ/สสจ./รพ.</option>
+                      <option value="2.3.5">2.3.5 ประกาศ ส่วนราชการหน่วยงานอื่นๆ</option>
+                    </optgroup>
+                    <optgroup label="2.4 มติ ครม.">
+                      <option value="2.4.1">2.4.1 การเงินงบประมาณ</option>
+                      <option value="2.4.2">2.4.2 งานสารบรรณ</option>
+                      <option value="2.4.3">2.4.3 งานบริหารทั่วไป</option>
+                      <option value="2.4.4">2.4.4 มติ ครม.ทั่วไป</option>
+                    </optgroup>
+                    <optgroup label="2.5 พรบ. พรก. พรฏ.">
+                      <option value="2.5.1">2.5.1 คุ้มครองผู้ประสบภัยจากรถ</option>
+                      <option value="2.5.2">2.5.2 พรบ.จราจรทางบก</option>
+                      <option value="2.5.3">2.5.3 พรบ.ต่างๆ</option>
+                      <option value="2.5.4">2.5.4 กฤษฎีกาต่างๆ</option>
+                    </optgroup>
+                    <option value="2.6">2.6 ราชกิจจานุเบกษา</option>
+                  </optgroup>
+                  <optgroup label="หมวด 3 โต้ตอบทั่วไป ขอความร่วมมือ ประชาสัมพันธ์">
+                    <optgroup label="3.1 โต้ตอบทั่วไป">
+                      <option value="3.1.1">3.1.1 หนังสือโต้ตอบต่างๆ</option>
+                      <option value="3.1.2">3.1.2 การบริจาคเงินและให้ความช่วยเหลือ</option>
+                      <option value="3.1.3">3.1.3 ตอบขอบคุณทั่วไป</option>
+                    </optgroup>
+                    <optgroup label="3.2 ขอความร่วมมือ">
+                      <option value="3.2.1">3.2.1 จากหน่วยงานภายใน</option>
+                      <option value="3.2.2">3.2.2 จากหน่วยงานภายนอก</option>
+                    </optgroup>
+                    <optgroup label="3.3 ประชาสัมพันธ์ หนังสือเวียน">
+                      <option value="3.3.1">3.3.1 วารสาร, จุลสาร, หนังสือ, ประชาสัมพันธ์โครงการ</option>
+                    </optgroup>
+                    <optgroup label="3.4 หนังสือเวียนภายในเพื่อทราบ">
+                      <option value="3.4.1">3.4.1 หนังสือเวียนภายในเพื่อทราบ</option>
+                      <option value="3.4.2">3.4.2 หนังสือเวียนภายในเพื่อทราบ ถือปฏิบัติ</option>
+                    </optgroup>
+                    <optgroup label="3.5 หนังสือเวียนภายนอกเพื่อทราบ">
+                      <option value="3.5.1">3.5.1 หนังสือเวียนภายนอกเพื่อทราบ</option>
+                      <option value="3.5.2">3.5.2 หนังสือเวียนภายนอกเพื่อทราบ ถือปฏิบัติ</option>
+                    </optgroup>
+                  </optgroup>
+                  <optgroup label="หมวด 4 การบริหารทั่วไป">
+                    <optgroup label="4.1 การจัดแบ่งส่วนราชการ">
+                      <option value="4.1.1">4.1.1 การแบ่งส่วนราชการกระทรวงสาธารณสุข</option>
+                      <option value="4.1.2">4.1.2 การจัดตั้งกระทรวง</option>
+                      <option value="4.1.3">4.1.3 การย้ายที่อยู่หน่วยงาน</option>
+                      <option value="4.1.4">4.1.4 การเปลี่ยนแปลงหมายเลขโทรศัพท์</option>
+                    </optgroup>
+                    <optgroup label="4.2 ปฏิบัติราชการแทน">
+                      <option value="4.2.1">4.2.1 การมอบอำนาจ ปฏิบัติราชการแทน รักษาการแทน</option>
+                    </optgroup>
+                    <optgroup label="4.3 กรรมการต่างๆ">
+                      <option value="4.3.1">4.3.1 กรรมการตามกฎหมาย</option>
+                      <option value="4.3.2">4.3.2 กรรมการที่กระทรวงแต่งตั้ง</option>
+                      <option value="4.3.3">4.3.3 กรรมการที่หน่วยงานอื่นแต่งตั้ง</option>
+                      <option value="4.3.4">4.3.4 กรรมการที่จังหวัดแต่งตั้ง</option>
+                      <option value="4.3.5">4.3.5 กรรมการที่ สสจ. แต่งตั้ง</option>
+                      <option value="4.3.6">4.3.6 กรรมการที่ รพ.แต่งตั้ง</option>
+                    </optgroup>
+                    <optgroup label="4.4 หลักและการปฏิบัติราชการ">
+                      <option value="4.4.1">4.4.1 หลักปฏิบัติภายในเกี่ยวกับการเข้าพักอาศัยในโรงพยาบาล</option>
+                      <option value="4.4.2">4.4.2 มาตรการรักษาความปลอดภัยในโรงพยาบาล</option>
+                      <option value="4.4.3">4.4.3 หนังสือเวียนเกี่ยวกับการจัดสวัสดิการ</option>
+                      <option value="4.4.4">4.4.4 การตรวจราชการ/เยี่ยมและการติดตามผล</option>
+                      <option value="4.4.5">4.4.5 การส่งมอบงาน</option>
+                      <option value="4.4.6">4.4.6 ขออนุมัติการเดินทางไปราชการต่างจังหวัด</option>
+                    </optgroup>
+                  </optgroup>
+                  <optgroup label="หมวด 5 บริหารงานบุคคล">
+                    <optgroup label="5.1 ระเบียบเกี่ยวกับการบริหารงานบุคคล">
+                      <option value="5.1.1">5.1.1 หนังสือเวียนเกี่ยวกับมติ ครม.เพื่อทราบ</option>
+                      <option value="5.1.2">5.1.2 หนังสือเวียนเกี่ยวกับมติ ครม.เพื่อถือปฏิบัติ</option>
+                    </optgroup>
+                    <optgroup label="5.2 การสมัครสอบคัดเลือก">
+                      <option value="5.2.1">5.2.1 รับสมัครคัดเลือกเพื่อเลื่อนระดับฯ สูงขึ้น</option>
+                      <option value="5.2.2">5.2.2 ประกาศผลการสอบคัดเลือกเพื่อเลื่อนระดับ</option>
+                      <option value="5.2.3">5.2.3 รับสมัครเข้ารับราชการในตำแหน่งวิชาชีพ</option>
+                      <option value="5.2.4">5.2.4 รายงานผลการทดลองปฏิบัติราชการ</option>
+                    </optgroup>
+                    <optgroup label="5.3 กำหนดตำแหน่งอัตราเงินเดือน">
+                      <option value="5.3.1">5.3.1 แผนอัตรากำลัง 3 ปี</option>
+                      <option value="5.3.2">5.3.2 กรอบอัตรากำลังของข้าราชการลูกจ้าง</option>
+                      <option value="5.3.3">5.3.3 การจัดกรอบอัตรากำลัง</option>
+                      <option value="5.3.4">5.3.4 กำหนดตำแหน่งทางวิชาการ</option>
+                    </optgroup>
+                    <optgroup label="5.4 บรรจุแต่งตั้ง เลื่อนขั้นเงินเดือน">
+                      <option value="5.4.1">5.4.1 คำสั่งบรรจุนักเรียนทุนต่างๆ</option>
+                      <option value="5.4.2">5.4.2 คำสั่งบรรจุผู้สอบแข่งขันได้</option>
+                      <option value="5.4.3">5.4.3 คำสั่งการเลื่อนระดับผู้สอบคัดเลือกได้</option>
+                      <option value="5.4.4">5.4.4 หนังสือที่เกี่ยวข้องกับการเลื่อนขั้นเงินเดือน</option>
+                      <option value="5.4.5">5.4.5 คำสั่งเปลี่ยนสายงานตำแหน่ง</option>
+                      <option value="5.4.7">5.4.7 การปรับวุฒิ, เพิ่มวุฒิ</option>
+                      <option value="5.4.8">5.4.8 คำสั่งการบรรจุกลับ ผู้ไปรับราชการทหาร</option>
+                      <option value="5.4.9">5.4.9 คำสั่งบรรจุกลับผู้ขอเข้ารับราชการ</option>
+                      <option value="5.4.10">5.4.10 หลักฐานการอนุญาตให้ลาประเภทต่างๆ</option>
+                      <option value="5.4.11">5.4.11 คำสั่งเลื่อนระดับ</option>
+                    </optgroup>
+                    <optgroup label="5.5 โอน ย้าย ยืมตัวและลาออก">
+                      <option value="5.5.1">5.5.1 โอนย้ายภายในกระทรวง</option>
+                      <option value="5.5.2">5.5.2 โอนย้ายต่างกระทรวง กรม</option>
+                      <option value="5.5.3">5.5.3 ย้ายระหว่างจังหวัด</option>
+                      <option value="5.5.4">5.5.4 ยืมตัวภายในจังหวัด</option>
+                      <option value="5.5.5">5.5.5 คำสั่งอนุญาตให้ข้าราชการและลูกจ้างลาออก</option>
+                      <option value="5.5.6">5.5.6 ผ่อนผันรับราชการ</option>
+                      <option value="5.5.7">5.5.7 ย้ายภายในจังหวัด</option>
+                    </optgroup>
+                    <optgroup label="5.6 อนุโมทนาบัตร เครื่องราชฯ">
+                      <option value="5.6.1">5.6.1 การขอรับพระราชทานเครื่องราชฯ ประจำปี</option>
+                      <option value="5.6.2">5.6.2 การขอพระราชทานผู้บริจาค</option>
+                      <option value="5.6.3">5.6.3 การพิจารณาความดีความชอบ</option>
+                    </optgroup>
+                    <optgroup label="5.7 วินัย สอบสวน">
+                      <option value="5.7.1">5.7.1 วินัยของข้าราชการ</option>
+                      <option value="5.7.2">5.7.2 วินัยของลูกจ้าง</option>
+                    </optgroup>
+                    <optgroup label="5.8 ประวัติเจ้าหน้าที่">
+                      <option value="5.8.1">5.8.1 การเปลี่ยนชื่อ–สกุล ของเจ้าหน้าที่</option>
+                      <option value="5.8.2">5.8.2 การทำบัตรประจำตัวต่างๆ</option>
+                    </optgroup>
+                    <optgroup label="5.9 เกษียณ บำเหน็จ บำนาญ">
+                      <option value="5.9.1">5.9.1 ข้าราชการ</option>
+                      <option value="5.9.2">5.9.2 ลูกจ้างประจำ</option>
+                      <option value="5.9.3">5.9.3 กบข., กสจ.</option>
+                    </optgroup>
+                    <optgroup label="5.10 สวัสดิการ">
+                      <option value="5.10.1">5.10.1 หนังสือรับรองซึ่งออกให้เจ้าหน้าที่ รพ.</option>
+                    </optgroup>
+                    <optgroup label="5.11 เบ็ดเตล็ด">
+                      <option value="5.11.1">5.11.1 เกี่ยวข้องกับงานการเจ้าหน้าที่</option>
+                      <option value="5.11.2">5.11.2 การประเมิน/ประกาศผู้ได้รับคัดเลือกเพื่อเลื่อนระดับ</option>
+                      <option value="5.11.3">5.11.3 รับย้ายข้าราชการ</option>
+                      <option value="5.11.4">5.11.4 สหกรณ์ออมทรัพย์สาธารณสุขจังหวัดเชียงใหม่</option>
+                      <option value="5.11.5">5.11.5 ระเบียบที่เกี่ยวข้องกับลูกจ้างชั่วคราว, นักเรียนทุน</option>
+                      <option value="5.11.6">5.11.6 การดำเนินงานเกี่ยวกับลูกจ้างชั่วคราว, นักเรียนทุน</option>
+                      <option value="5.11.7">5.11.7 ระเบียบที่เกี่ยวข้องกับพนักงานกระทรวงสาธารณสุข</option>
+                      <option value="5.11.8">5.11.8 การดำเนินงานเกี่ยวกับพนักงานกระทรวงสาธารณสุข</option>
+                      <option value="5.11.9">5.11.9 ระเบียบที่เกี่ยวข้องกับพนักงานราชการ</option>
+                      <option value="5.11.10">5.11.10 การดำเนินงานเกี่ยวกับพนักงานราชการ</option>
+                    </optgroup>
+                  </optgroup>
+                  <optgroup label="หมวด 6 เบ็ดเตล็ด">
+                    <option value="6.1.1">6.1.1 การขอและให้ความร่วมมือในกิจการสาธารณสุขกุศล</option>
+                    <option value="6.1.2">6.1.2 งานพิธีต่างๆ</option>
+                    <option value="6.2.1">6.2.1 การจัดกิจกรรมร่วมกับจังหวัด</option>
+                    <option value="6.2.2">6.2.2 การบริจาค</option>
+                  </optgroup>
+                  <optgroup label="หมวด 7 การประชุมสัมมนา">
+                    <optgroup label="7.1 การประชุมภายนอก">
+                      <option value="7.1.1">7.1.1 ประชุมกระทรวงกรม</option>
+                      <option value="7.1.2">7.1.2 ประชุมจังหวัด</option>
+                      <option value="7.1.3">7.1.3 ประชุมอำเภอ</option>
+                      <option value="7.1.4">7.1.4 ประชุม สสจ./สปสช./นักจัดการทั่วไป</option>
+                      <option value="7.1.5">7.1.5 ประชุม กวป.</option>
+                      <option value="7.1.6">7.1.6 ประชุมคณะกรรมการบริหารบุคคล/ประชุม ผอก.รพช.</option>
+                      <option value="7.1.7">7.1.7 ประชุมอื่นๆ ภายในจังหวัด</option>
+                      <option value="7.1.8">7.1.8 ประชุมอื่นๆ ภายนอกจังหวัด</option>
+                    </optgroup>
+                    <optgroup label="7.2 การประชุมภายใน">
+                      <option value="7.2.1">7.2.1 ประชุมคณะกรรมการบริหาร รพ.</option>
+                      <option value="7.2.2">7.2.2 ประชุมคณะกรรมการอื่นๆ</option>
+                    </optgroup>
+                    <optgroup label="7.3 สัมมนา">
+                      <option value="7.3.1">7.3.1 สัมมนาภายใน</option>
+                      <option value="7.3.2">7.3.2 สัมมนาภายนอก</option>
+                    </optgroup>
+                  </optgroup>
+                  <optgroup label="หมวด 8 การฝึกอบรม ทุนดูงานและลาศึกษาต่อ">
+                    <option value="8.1.1">8.1.1 ระเบียบการฝึกอบรมและลาศึกษาต่อ</option>
+                    <option value="8.2.1">8.2.1 อบรม จังหวัด</option>
+                    <option value="8.2.2">8.2.2 อบรม สสจ.</option>
+                    <option value="8.2.3">8.2.3 อบรมอื่นๆ ภายในจังหวัด</option>
+                    <option value="8.2.4">8.2.4 อบรมอื่นๆ ภายนอกจังหวัด</option>
+                    <option value="8.2.5">8.2.5 ศึกษาดูงานภายในและภายนอก รพ.</option>
+                    <option value="8.2.6">8.2.6 การบรรยายวิชาการ / การเป็นวิทยากร</option>
+                    <option value="8.2.7">8.2.7 การลาศึกษาต่อ/ดูงานของเจ้าหน้าที่</option>
+                    <option value="8.2.8">8.2.8 ประกาศรับสมัครอบรมศึกษาดูงานต่างๆ</option>
+                  </optgroup>
+                  <optgroup label="หมวด 9 วัสดุครุภัณฑ์ ที่ดินและสิ่งก่อสร้าง">
+                    <option value="9.1.1">9.1.1 มติ ครม.เกี่ยวกับพัสดุ ครุภัณฑ์ที่ดินสิ่งก่อสร้าง (1)</option>
+                    <option value="9.1.2">9.1.2 มติ ครม.เกี่ยวกับพัสดุ ครุภัณฑ์ที่ดินสิ่งก่อสร้าง (2)</option>
+                    <option value="9.2.1">9.2.1 ประวัติครุภัณฑ์</option>
+                    <option value="9.2.2">9.2.2 ทะเบียนคุมสำนักงาน</option>
+                    <option value="9.2.3">9.2.3 ทะเบียนคุมครุภัณฑ์ทางการแพทย์</option>
+                    <option value="9.2.4">9.2.4 ทะเบียนคุมครุภัณฑ์</option>
+                    <option value="9.2.5">9.2.5 การขอยืมครุภัณฑ์ทุกชนิด</option>
+                    <option value="9.3.1">9.3.1 ทะเบียนราชพัสดุ</option>
+                    <option value="9.3.2">9.3.2 เอกสาร/หนังสือที่เกี่ยวข้องกับที่ดินและสิ่งก่อสร้าง</option>
+                    <option value="9.3.3">9.3.3 หนังสือโต้ตอบการขอและการใช้ที่ดินราชพัสดุ</option>
+                  </optgroup>
+                  <optgroup label="หมวด 10 สถิติรายงาน แบบสอบถาม">
+                    <option value="10.1.1">10.1.1 รายงานรังสีการแพทย์</option>
+                    <option value="10.1.2">10.1.2 หนังสือโต้ตอบเกี่ยวกับรังสีการแพทย์</option>
+                    <option value="10.2.1">10.2.1 แบบสำรวจข้อมูล</option>
+                    <option value="10.2.2">10.2.2 แบบสอบถามข้อมูล</option>
+                  </optgroup>
+                  <optgroup label="หมวด 11 โครงการ">
+                    <option value="11.1.1">11.1.1 โครงการสวัสดิการต่างๆ / โครงการอื่นๆ</option>
+                    <option value="11.1.2">11.1.2 สำเนาหนังสือส่งโครงการ/โครงการ รพ.ที่ได้รับการอนุมัติ</option>
+                    <option value="11.1.3">11.1.3 โครงการที่ยังดำเนินการ/ยังไม่ได้ดำเนินการในปีงบประมาณ</option>
+                    <option value="11.2.1">11.2.1 แผนปฏิบัติงานต่างๆ / แผนอื่นๆ</option>
+                  </optgroup>
+                  <optgroup label="หมวด 12 นักเรียนทุน">
+                    <option value="12.1.1">12.1.1 ประกาศรับสมัครศึกษาต่อสาธารณสุข/วิทยาลัย</option>
+                    <option value="12.1.2">12.1.2 ประกาศผลสอบความรู้ขึ้นทะเบียนและรับใบอนุญาตฯ</option>
+                    <option value="12.1.3">12.1.3 ประกาศผลสอบ</option>
+                    <option value="12.1.4">12.1.4 แพทย์ประจำบ้าน / แพทย์ทั่วไป</option>
+                    <option value="12.1.5">12.1.5 นักศึกษาฝึกงานในโรงพยาบาล</option>
+                    <option value="12.1.6">12.1.6 งานวิจัยต่างๆ</option>
+                  </optgroup>
+                </select>
+              </div>
+
+              <!-- หน่วยงานที่เก็บหนังสือ -->
+              <div class="f-group" style="margin-top:12px;">
+                <label class="f-label">หน่วยงานที่เก็บหนังสือ <span class="req">*</span></label>
+                <select id="r-assign" class="f-select">
+                  <option value="">–เลือกกลุ่มงาน/หน่วยงาน–</option>
+                  <option value="ทุกกลุ่มงาน/งานในโรงพยาบาลสันทราย">ทุกกลุ่มงาน/งานในโรงพยาบาลสันทราย</option>
+                  <optgroup label="ภารกิจด้านอำนวยการ">
+                    <option value="กลุ่มงานบริหารทั่วไป">กลุ่มงานบริหารทั่วไป</option>
+                    <option value="กลุ่มงานพัสดุ">กลุ่มงานพัสดุ</option>
+                    <option value="กลุ่มงานโครงสร้างพื้นฐานและวิศวกรรมการแพทย์">กลุ่มงานโครงสร้างพื้นฐานและวิศวกรรมการแพทย์</option>
+                    <option value="กลุ่มงานทรัพยากรบุคคล">กลุ่มงานทรัพยากรบุคคล</option>
+                    <option value="กลุ่มงานการเงิน">กลุ่มงานการเงิน</option>
+                    <option value="กลุ่มงานบัญชี">กลุ่มงานบัญชี</option>
+                  </optgroup>
+                  <optgroup label="ภารกิจด้านบริการปฐมภูมิ">
+                    <option value="กลุ่มงานผู้ป่วยนอก">กลุ่มงานผู้ป่วยนอก</option>
+                    <option value="กลุ่มงานการแพทย์แผนไทยและการแพทย์ทางเลือก">กลุ่มงานการแพทย์แผนไทยและการแพทย์ทางเลือก</option>
+                    <option value="กลุ่มงานเวชกรรมสังคม">กลุ่มงานเวชกรรมสังคม</option>
+                    <option value="งานเวชปฏิบัติครอบครัวและชุมชนและศูนย์สุขภาพชุมชนเขตเมือง">งานเวชปฏิบัติครอบครัวและชุมชน</option>
+                    <option value="งานป้องกันควบคุมโรคและระบาดวิทยา">งานป้องกันควบคุมโรคและระบาดวิทยา</option>
+                    <option value="งานส่งเสริมสุขภาพและฟื้นฟู">งานส่งเสริมสุขภาพและฟื้นฟู</option>
+                    <option value="กลุ่มงานอาชีวเวชกรรม">กลุ่มงานอาชีวเวชกรรม</option>
+                    <option value="กลุ่มงานการพยาบาลชุมชน">กลุ่มงานการพยาบาลชุมชน</option>
+                    <option value="กลุ่มงานคุ้มครองผู้บริโภค">กลุ่มงานคุ้มครองผู้บริโภค</option>
+                  </optgroup>
+                  <optgroup label="ภารกิจด้านพัฒนาระบบบริการและสนับสนุนบริการสุขภาพ">
+                    <option value="กลุ่มงานประกันสุขภาพ">กลุ่มงานประกันสุขภาพ</option>
+                    <option value="กลุ่มงานยุทธศาสตร์และแผนงานโครงการ">กลุ่มงานยุทธศาสตร์และแผนงานโครงการ</option>
+                    <option value="กลุ่มงานพัฒนาคุณภาพบริการและมาตรฐาน">กลุ่มงานพัฒนาคุณภาพบริการและมาตรฐาน</option>
+                  </optgroup>
+                  <optgroup label="ภารกิจด้านสุขภาพดิจิทัล">
+                    <option value="กลุ่มงานเทคโนโลยีสารสนเทศ">กลุ่มงานเทคโนโลยีสารสนเทศ</option>
+                    <option value="กลุ่มงานสุขภาพดิจิทัล">กลุ่มงานสุขภาพดิจิทัล</option>
+                    <option value="กลุ่มงานเวชระเบียนและข้อมูลทางการแพทย์">กลุ่มงานเวชระเบียนและข้อมูลทางการแพทย์</option>
+                  </optgroup>
+                  <optgroup label="ภารกิจด้านบริการทุติยภูมิและตติยภูมิ">
+                    <option value="กลุ่มงานเวชศาสตร์ฉุกเฉิน">กลุ่มงานเวชศาสตร์ฉุกเฉิน</option>
+                    <option value="กลุ่มงานอายุรกรรม">กลุ่มงานอายุรกรรม</option>
+                    <option value="กลุ่มงานศัลยกรรม">กลุ่มงานศัลยกรรม</option>
+                    <option value="กลุ่มงานศัลยกรรมออร์โธปิดิกส์">กลุ่มงานศัลยกรรมออร์โธปิดิกส์</option>
+                    <option value="กลุ่มงานกุมารเวชกรรม">กลุ่มงานกุมารเวชกรรม</option>
+                    <option value="กลุ่มงานจักษุวิทยา">กลุ่มงานจักษุวิทยา</option>
+                    <option value="กลุ่มงานโสต ศอ นาสิก">กลุ่มงานโสต ศอ นาสิก</option>
+                    <option value="กลุ่มงานสูติ-นรีเวชกรรม">กลุ่มงานสูติ-นรีเวชกรรม</option>
+                    <option value="กลุ่มงานวิสัญญีวิทยา">กลุ่มงานวิสัญญีวิทยา</option>
+                    <option value="กลุ่มงานโภชนศาสตร์">กลุ่มงานโภชนศาสตร์</option>
+                    <option value="กลุ่มงานจิตเวชและยาเสพติด">กลุ่มงานจิตเวชและยาเสพติด</option>
+                    <option value="กลุ่มงานทันตกรรม">กลุ่มงานทันตกรรม</option>
+                    <option value="กลุ่มงานรังสีวิทยา">กลุ่มงานรังสีวิทยา</option>
+                    <option value="กลุ่มงานเทคนิคการแพทย์พยาธิวิทยาคลินิกและพยาธิวิทยากายวิภาค">กลุ่มงานเทคนิคการแพทย์และพยาธิวิทยา</option>
+                    <option value="กลุ่มงานเวชกรรมฟื้นฟู">กลุ่มงานเวชกรรมฟื้นฟู</option>
+                    <option value="กลุ่มงานเภสัชกรรม">กลุ่มงานเภสัชกรรม</option>
+                  </optgroup>
+                  <optgroup label="ภารกิจด้านการพยาบาล">
+                    <option value="กลุ่มงานการพยาบาลผู้ป่วยอุบัติเหตุและฉุกเฉิน">กลุ่มงานการพยาบาลผู้ป่วยอุบัติเหตุและฉุกเฉิน</option>
+                    <option value="กลุ่มงานการพยาบาลผู้ป่วยนอก">กลุ่มงานการพยาบาลผู้ป่วยนอก</option>
+                    <option value="กลุ่มงานการพยาบาลผู้ป่วยหนัก">กลุ่มงานการพยาบาลผู้ป่วยหนัก</option>
+                    <option value="กลุ่มงานการพยาบาลผู้คลอด">กลุ่มงานการพยาบาลผู้คลอด</option>
+                    <option value="กลุ่มงานการพยาบาลผู้ป่วยห้องผ่าตัด">กลุ่มงานการพยาบาลผู้ป่วยห้องผ่าตัด</option>
+                    <option value="กลุ่มงานการพยาบาลวิสัญญี">กลุ่มงานการพยาบาลวิสัญญี</option>
+                    <option value="กลุ่มงานการพยาบาลผู้ป่วยอายุรกรรม">กลุ่มงานการพยาบาลผู้ป่วยอายุรกรรม</option>
+                    <option value="กลุ่มงานการพยาบาลผู้ป่วยศัลยกรรม">กลุ่มงานการพยาบาลผู้ป่วยศัลยกรรม</option>
+                    <option value="กลุ่มงานการพยาบาลผู้ป่วยสูติ-นรีเวช">กลุ่มงานการพยาบาลผู้ป่วยสูติ-นรีเวช</option>
+                    <option value="กลุ่มงานการพยาบาลจิตเวช">กลุ่มงานการพยาบาลจิตเวช</option>
+                    <option value="กลุ่มงานการพยาบาลผู้ป่วยกุมารเวชกรรม">กลุ่มงานการพยาบาลผู้ป่วยกุมารเวชกรรม</option>
+                    <option value="กลุ่มงานการพยาบาลผู้ป่วยออร์โธปิดิกส์">กลุ่มงานการพยาบาลผู้ป่วยออร์โธปิดิกส์</option>
+                    <option value="กลุ่มงานการพยาบาลผู้ป่วย โสต ศอ นาสิก จักษุ">กลุ่มงานการพยาบาลผู้ป่วย โสต ศอ นาสิก จักษุ</option>
+                    <option value="กลุ่มงานการพยาบาลด้านการควบคุมและป้องกันการติดเชื้อ">กลุ่มงานการพยาบาลด้านการควบคุมและป้องกันการติดเชื้อ</option>
+                  </optgroup>
+                </select>
+              </div>
+
+              <div class="f-group" style="margin-top:12px;">
+                <label class="f-label">หมายเหตุ</label>
+                <input type="text" id="r-note" class="f-input" placeholder="ข้อมูลเพิ่มเติม..." maxlength="200">
+              </div>
+
             </div>
           </div>
 
@@ -1282,68 +1636,57 @@ tbody tr:hover td { background: #f4f7fc; }
       <div class="card">
         <div class="card-head"><span class="card-head-icon">📋</span><h3>ข้อมูลหนังสือส่งออก</h3></div>
         <div class="card-body">
-          <!-- แถว 1: วันที่ลงเลขหนังสือส่ง (เต็มแถว) -->
-          <div class="f-group">
-            <label class="f-label">วันที่ลงเลขหนังสือส่ง <span class="req">*</span></label>
-            <input type="text" id="s-regdate" class="f-input" placeholder="DD/MM/YYYY" style="max-width:220px;">
-          </div>
-          <!-- แถว 2: ความเร่งด่วน + ชั้นความลับ -->
           <div class="form-grid">
             <div class="f-group">
-              <label class="f-label">ความเร่งด่วน <span class="req">*</span></label>
-              <select id="s-urgency" class="f-select">
-                <option value="ปกติ" selected>–ปกติ–</option>
-                <option value="ด่วน">ด่วน</option>
-                <option value="ด่วนมาก">ด่วนมาก</option>
-                <option value="ด่วนที่สุด">ด่วนที่สุด</option>
-              </select>
-            </div>
-            <div class="f-group">
-              <label class="f-label">ชั้นความลับ <span class="req">*</span></label>
-              <select id="s-secret" class="f-select">
-                <option value="ไม่มีชั้น" selected>–ปกติ–</option>
-                <option value="ลับ">ลับ</option>
-                <option value="ลับมาก">ลับมาก</option>
-                <option value="ลับที่สุด">ลับที่สุด</option>
-              </select>
-            </div>
-          </div>
-          <!-- แถว 3: เลขที่หนังสือ + วันที่หนังสือ -->
-          <div class="form-grid">
-            <div class="f-group">
-              <label class="f-label">เลขที่หนังสือ <span class="req">*</span></label>
-              <input type="text" id="s-docnum" class="f-input" placeholder="เช่น สธ 0032.201/1234">
-            </div>
-            <div class="f-group">
-              <label class="f-label">วันที่หนังสือ <span class="req">*</span></label>
+              <label class="f-label">วันที่ส่ง</label>
               <input type="text" id="s-date" class="f-input" placeholder="DD/MM/YYYY">
             </div>
+            <div class="f-group">
+              <label class="f-label">ถึงหน่วยงาน <span class="req">*</span></label>
+              <input type="text" id="s-to" class="f-input" placeholder="ชื่อหน่วยงานผู้รับ">
+            </div>
           </div>
-          <!-- แถว 4: ผู้ส่ง/หน่วยงาน (dropdown ดึงจาก getDepartments) -->
-          <div class="f-group">
-            <label class="f-label">ผู้ส่ง / หน่วยงาน <span class="req">*</span></label>
-            <select id="s-sentby" class="f-select"><option value="">–เลือกหน่วยงาน–</option></select>
+          <div class="form-grid">
+            <div class="f-group">
+              <label class="f-label">เลขที่อ้างอิง</label>
+              <input type="text" id="s-ref" class="f-input" placeholder="เลขที่อ้างอิง">
+            </div>
+            <div class="f-group">
+              <label class="f-label">ผู้ส่ง / หน่วยงาน</label>
+              <select id="s-sentby" class="f-select"><option value="">-- เลือกหน่วยงาน --</option></select>
+            </div>
           </div>
-          <!-- แถว 5: เรื่อง -->
           <div class="f-group">
             <label class="f-label">เรื่อง <span class="req">*</span></label>
             <input type="text" id="s-subj" class="f-input" placeholder="ระบุหัวข้อ/เรื่องของหนังสือ" maxlength="200"
               oninput="cnt('s-subj','s-subj-cnt')">
             <div class="f-counter"><span id="s-subj-cnt">0</span> / 200</div>
           </div>
-          <!-- แถว 6: ส่งถึง/หน่วยงาน -->
-          <div class="f-group">
-            <label class="f-label">ส่งถึง / หน่วยงาน <span class="req">*</span></label>
-            <input type="text" id="s-to" class="f-input" placeholder="ชื่อหน่วยงานผู้รับ (ภายนอก)">
-          </div>
-          <!-- แถว 7: รายละเอียด -->
           <div class="f-group">
             <label class="f-label">รายละเอียด</label>
             <textarea id="s-detail" class="f-textarea" placeholder="สรุปเนื้อหาโดยย่อ..." maxlength="500"
               oninput="cnt('s-detail','s-detail-cnt')"></textarea>
             <div class="f-counter"><span id="s-detail-cnt">0</span> / 500</div>
           </div>
-          <!-- แถว 8: หมายเหตุ + ไฟล์แนบ -->
+          <div class="form-grid">
+            <div class="f-group">
+              <label class="f-label">ประเภท <span class="req">*</span></label>
+              <select id="s-cat" class="f-select">
+                <option value="">-- เลือกประเภท --</option>
+                <option>หนังสือราชการ</option><option>บันทึกข้อความ</option>
+                <option>คำสั่ง</option><option>ประกาศ</option><option>อื่น</option>
+              </select>
+            </div>
+            <div class="f-group">
+              <label class="f-label">ความเร่งด่วน</label>
+              <select id="s-urgency" class="f-select">
+                <option value="ปกติ" selected>ปกติ</option>
+                <option value="ด่วน">ด่วน</option>
+                <option value="ด่วนมาก">ด่วนมาก</option>
+                <option value="ด่วนที่สุด">ด่วนที่สุด</option>
+              </select>
+            </div>
+          </div>
           <div class="form-grid">
             <div class="f-group">
               <label class="f-label">หมายเหตุ</label>
@@ -2501,7 +2844,7 @@ function gotoPage(page) {
     setDefaultDate('r-date');
     loadNextRecvSeq();
   }
-  if (page === 'send')    { loadDepts('s-sentby'); setDefaultDate('s-regdate'); setDefaultDate('s-date'); }
+  if (page === 'send')    { loadDepts('s-sentby'); setDefaultDate('s-date'); }
   if (page === 'report')  setReportDates();
   if (page === 'history') loadHistoryYears();
   if (page === 'import')  loadHistoryYears();
@@ -2989,8 +3332,13 @@ function formatTimeInput(el) {
 // ── รายการภารกิจ (แสดงเป็น row ตรงๆ ไม่มีกลุ่มงานย่อย) ──
 // isOther=true → แถวกรอกข้อความได้
 var _MISSIONS = [
-  { name: 'ภารกิจด้านอำนวยการ',                                   isOther: false },
-  { name: 'ภารกิจด้านบริการปฐมภูมิ',                              isOther: false },
+  { name: 'ภารกิจด้านอำนวยการ',                                   isOther: false,
+    subGroups: ['กลุ่มงานบริหารทั่วไป','กลุ่มงานพัสดุ','กลุ่มงานโครงสร้างพื้นฐานและวิศวกรรมการแพทย์',
+                 'กลุ่มงานทรัพยากรบุคคล','กลุ่มงานการเงิน','กลุ่มงานบัญชี'] },
+  { name: 'ภารกิจด้านบริการปฐมภูมิ',                              isOther: false,
+    subGroups: ['กลุ่มงานผู้ป่วยนอก','กลุ่มงานการแพทย์แผนไทยและการแพทย์ทางเลือก','กลุ่มงานเวชกรรมสังคม',
+                 'งานเวชปฏิบัติครอบครัวและชุมชนและศูนย์สุขภาพชุมชนเขตเมือง','งานป้องกันควบคุมโรคและระบาดวิทยา',
+                 'งานส่งเสริมสุขภาพและฟื้นฟู','กลุ่มงานอาชีวเวชกรรม','กลุ่มงานการพยาบาลชุมชน','กลุ่มงานคุ้มครองผู้บริโภค'] },
   { name: 'ภารกิจด้านพัฒนาระบบบริการและสนับสนุนบริการสุขภาพ',   isOther: false },
   { name: 'ภารกิจด้านสุขภาพดิจิทัล',                              isOther: false },
   { name: 'ภารกิจด้านบริการทุติยภูมิและตติยภูมิ',                isOther: false },
@@ -3032,9 +3380,18 @@ function buildGroupTable() {
           '<span id="' + p + '_badge" class="st-badge st-na" style="font-size:10.5px;">—</span>' +
         '</td>';
     } else {
-      // แถวภารกิจปกติ
+      // แถวภารกิจปกติ (อาจมี dropdown เลือกกลุ่มงานย่อยในภารกิจด้วย)
+      var subHtml = '';
+      if (m.subGroups && m.subGroups.length) {
+        subHtml = '<select id="' + p + '_sub" class="grp-sub-select" onchange="updateGroupStatus(' + i + ')">' +
+          '<option value="">– ทั้งภารกิจ / เลือกกลุ่มงาน –</option>' +
+          m.subGroups.map(function(sg) {
+            return '<option value="' + esc(sg) + '">' + esc(sg) + '</option>';
+          }).join('') +
+          '</select>';
+      }
       tr.innerHTML =
-        '<td class="grp-name">' + m.name + '</td>' +
+        '<td class="grp-name">' + m.name + subHtml + '</td>' +
         '<td class="grp-chk">' +
           '<input type="radio" name="' + p + '" id="' + p + '_ok" value="ok" ' +
             'style="accent-color:var(--green);width:15px;height:15px;cursor:pointer;" ' +
@@ -3081,12 +3438,15 @@ function updateGroupStatus(i) {
       badge.textContent = '—';
     }
   } else {
+    var subEl  = document.getElementById(p + '_sub');
+    var subVal = subEl ? subEl.value : '';
+    var subTag = subVal ? ' (' + subVal + ')' : '';
     if (okEl && okEl.checked) {
       badge.className = 'st-badge st-ok';
-      badge.textContent = '✔ รับทราบแล้ว';
+      badge.textContent = '✔ รับทราบแล้ว' + subTag;
     } else if (noEl && noEl.checked) {
       badge.className = 'st-badge st-pending';
-      badge.textContent = '⏳ ยังไม่รับทราบ';
+      badge.textContent = '⏳ ยังไม่รับทราบ' + subTag;
     }
   }
 
@@ -3127,6 +3487,11 @@ function collectGroupData() {
     var name = m.isOther
       ? (function(){ var el = document.getElementById(p + '_othertxt'); return el ? el.value.trim() : 'อื่นๆ'; })()
       : m.name;
+    if (!m.isOther && m.subGroups) {
+      var subEl = document.getElementById(p + '_sub');
+      var subVal = subEl ? subEl.value : '';
+      if (subVal) name = name + ' (' + subVal + ')';
+    }
     var status = '';
     if (okEl && okEl.checked)      status = 'รับทราบแล้ว';
     else if (noEl && noEl.checked) status = 'ยังไม่รับทราบ';
@@ -3375,20 +3740,16 @@ function handleFile(input) {
 function submitSend() {
   hideAlerts(['s-alert-err','s-alert-ok','s-alert-info']);
   var data = {
-    regDate: v('s-regdate'), sendDate: v('s-date'), toOrg: v('s-to'),
-    docNumber: v('s-docnum'),
+    sendDate: v('s-date'), toOrg: v('s-to'), refNumber: v('s-ref'),
     sentBy: v('s-sentby'), subject: v('s-subj'), detail: v('s-detail'),
-    urgency: v('s-urgency') || 'ปกติ',
-    confidential: v('s-secret') || 'ไม่มีชั้น',
+    category: v('s-cat'), urgency: v('s-urgency') || 'ปกติ',
+    confidential: 'ไม่มีชั้น',
     fileId: v('s-fileid'), note: v('s-note'),
     userName: _user ? _user.name : ''
   };
-  if (!data.regDate)  return showA('s-alert-err','❌ กรุณากรอก วันที่ลงเลขหนังสือส่ง');
-  if (!data.docNumber) return showA('s-alert-err','❌ กรุณากรอก เลขที่หนังสือ');
-  if (!data.date)     {} // optional
-  if (!data.sentBy)   return showA('s-alert-err','❌ กรุณาเลือก ผู้ส่ง/หน่วยงาน');
+  if (!data.toOrg)    return showA('s-alert-err','❌ กรุณากรอก ถึงหน่วยงาน');
   if (!data.subject)  return showA('s-alert-err','❌ กรุณากรอก เรื่อง');
-  if (!data.toOrg)    return showA('s-alert-err','❌ กรุณากรอก ส่งถึง/หน่วยงาน');
+  if (!data.category) return showA('s-alert-err','❌ กรุณาเลือก ประเภท');
   setLoad('s-btn',true,'💾 กำลังบันทึก...');
 
   // ถ้ามีไฟล์รอ → อัพโหลดก่อน
@@ -3444,8 +3805,8 @@ function _doSaveSend(data) {
 
 function resetSend() {
   _sendPendingFile = null;
-  ['s-regdate','s-date','s-docnum','s-to','s-subj','s-detail','s-note','s-fileid'].forEach(clr);
-  setVal('s-sentby',''); setVal('s-urgency','ปกติ'); setVal('s-secret','ไม่มีชั้น');
+  ['s-date','s-to','s-ref','s-subj','s-detail','s-note','s-fileid'].forEach(clr);
+  setVal('s-sentby',''); setVal('s-cat',''); setVal('s-urgency','ปกติ');
   setText('s-subj-cnt','0'); setText('s-detail-cnt','0');
   document.getElementById('s-file-box').style.display='none';
   document.getElementById('s-file').value='';
