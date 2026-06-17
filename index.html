@@ -2907,16 +2907,16 @@ function gotoPage(page) {
   window.scrollTo(0, 0);
   if (page === 'home')    loadDashboard();
   if (page === 'receive') {
-    loadDepts('r-assign');
-    setDefaultDate('r-date');
-    loadNextRecvSeq();
-  }
-  if (page === 'send')    {
-    if (!_missionsLoaded) loadMissionGroups();
-    setDefaultDate('s-date-assigned');
-    setDefaultDate('s-docdate');
-    loadNextSendSeq();
-  }
+  if (!_missionsLoaded) loadMissionGroups();
+  setDefaultDate('r-date');
+  loadNextRecvSeq();
+}
+  if (page === 'send') {
+  if (!_missionsLoaded) loadMissionGroups();
+  setDefaultDate('s-date-assigned');  // เปลี่ยนเป็น s-date-assigned
+  setDefaultDate('s-docdate');         // เพิ่มบรรทัดนี้
+  loadNextSendSeq();                   // เพิ่มบรรทัดนี้
+}
   if (page === 'report')  setReportDates();
   if (page === 'history') loadHistoryYears();
   if (page === 'import')  loadHistoryYears();
@@ -2927,13 +2927,13 @@ function gotoPage(page) {
     setDefaultDate('cert-date-assigned');
     setDefaultDate('cert-docdate');
   }
-  if (page === 'order')   {
-    loadNextOrderSeq();
-    loadRecentOrders();
-    if (!_missionsLoaded) loadMissionGroups();
-    setDefaultDate('order-date-assigned');
-    setDefaultDate('order-date');
-  }
+  if (page === 'order') {
+  loadNextOrderSeq();
+  loadRecentOrders();
+  if (!_missionsLoaded) loadMissionGroups();  // เปลี่ยนจาก _orderMissionsLoaded เป็น _missionsLoaded
+  setDefaultDate('order-date-assigned');
+  setDefaultDate('order-date');
+}
 }
 // ============================================================
 // SEND — หนังสือส่งออก
@@ -5035,6 +5035,7 @@ function loadMissionGroups() {
     renderMissionGroupedSelect('order-owner-dept', _orderMissions);
     renderMissionGroupedSelect('cert-req-dept',   _orderMissions);
     renderMissionGroupedSelect('s-sentby',        _orderMissions);
+    renderMissionGroupedSelect('r-assign',        _orderMissions);  // เพิ่มบรรทัดนี้
     renderOrderCirculate(ALL_GROUPS_LABEL, _orderMissions);
     return;
   }
@@ -5042,14 +5043,15 @@ function loadMissionGroups() {
   gasRun('getMissionGroups')
     .withSuccessHandler(function(r) {
       if (!r || !r.success) return;
-      _orderMissions    = r.missions || [];
-      _missionsLoaded   = true;
-
-      // render dropdown ทั้ง 3 จุดที่ใช้ข้อมูล mission groups
-      renderMissionGroupedSelect('order-owner-dept', r.missions);   // หนังสือคำสั่ง — เจ้าของเรื่อง
-      renderMissionGroupedSelect('cert-req-dept',    r.missions);   // หนังสือรับรอง — หน่วยงานที่ขอ
-      renderMissionGroupedSelect('s-sentby',         r.missions);   // หนังสือส่งออก — ผู้ส่ง/หน่วยงาน
-
+      _orderMissions  = r.missions || [];
+      _missionsLoaded = true;
+      
+      // render dropdown ทั้ง 4 จุดที่ใช้ข้อมูล mission groups
+      renderMissionGroupedSelect('order-owner-dept', r.missions);   // หนังสือคำสั่ง
+      renderMissionGroupedSelect('cert-req-dept',    r.missions);   // หนังสือรับรอง
+      renderMissionGroupedSelect('s-sentby',         r.missions);   // หนังสือส่งออก
+      renderMissionGroupedSelect('r-assign',         r.missions);   // รับหนังสือ ← เพิ่มบรรทัดนี้
+      
       // render panel checkbox เวียนถึง (หนังสือคำสั่ง)
       renderOrderCirculate(r.allLabel, r.missions);
     })
