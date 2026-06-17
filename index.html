@@ -2897,10 +2897,6 @@ function showOnlyPage(pageId) {
 }
 
 function gotoPage(page) {
-    if (page === 'order') {
-    loadOrderDepartments();
-    setDefaultDate('order-date-assigned');
-    setDefaultDate('order-date');}
   if (!_user && page !== 'home') { openLogin(); return; }
   document.querySelectorAll('.page').forEach(function(el){ el.classList.remove('active'); });
   document.querySelectorAll('.nav-item').forEach(function(el){ el.classList.remove('active'); });
@@ -2915,24 +2911,29 @@ function gotoPage(page) {
     setDefaultDate('r-date');
     loadNextRecvSeq();
   }
-if (page === 'send')    { loadDepts('s-sentby'); setDefaultDate('s-date'); }
-}   { loadDepts('s-sentby'); setDefaultDate('s-date'); }
+  if (page === 'send')    {
+    if (!_missionsLoaded) loadMissionGroups();
+    setDefaultDate('s-date-assigned');
+    setDefaultDate('s-docdate');
+    loadNextSendSeq();
+  }
   if (page === 'report')  setReportDates();
   if (page === 'history') loadHistoryYears();
   if (page === 'import')  loadHistoryYears();
   if (page === 'cert')    {
-  loadNextCertSeq();
-  loadRecentCerts();
-  if (!_missionsLoaded) loadMissionGroups();
-  setDefaultDate('cert-date-assigned');
-  setDefaultDate('cert-docdate');
-}
+    loadNextCertSeq();
+    loadRecentCerts();
+    if (!_missionsLoaded) loadMissionGroups();
+    setDefaultDate('cert-date-assigned');
+    setDefaultDate('cert-docdate');
+  }
   if (page === 'order')   {
-  loadNextOrderSeq();
-  loadRecentOrders();
-  if (!_missionsLoaded) loadMissionGroups();
-  setDefaultDate('order-date-assigned');
-  setDefaultDate('order-date');
+    loadNextOrderSeq();
+    loadRecentOrders();
+    if (!_missionsLoaded) loadMissionGroups();
+    setDefaultDate('order-date-assigned');
+    setDefaultDate('order-date');
+  }
 }
 // ============================================================
 // SEND — หนังสือส่งออก
@@ -4078,6 +4079,13 @@ function buildGroupPanel(groupData) {
       '<div style="background:white;">' + rows + '</div>' +
     '</td>' +
   '</tr>';
+}
+  function certUpdateDocNoPreview() {
+  var docno = v('cert-docno').trim();
+  var el = document.getElementById('cert-docno-preview');
+  if (el) {
+    el.textContent = docno ? ('ชม 0033.301/' + docno) : '';
+  }
 }
 
 // ============================================================
