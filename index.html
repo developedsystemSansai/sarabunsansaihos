@@ -847,10 +847,10 @@ tbody tr:hover td { background: #f4f7fc; }
           <div class="action-grid">
             <div class="action-card" onclick="gotoPage('receive')"><div class="a-icon">&#8595;</div><div class="a-label">รับหนังสือเข้า</div></div>
             <div class="action-card" onclick="gotoPage('send')"><div class="a-icon">&#8593;</div><div class="a-label">ส่งหนังสือออก</div></div>
-            <div class="action-card" onclick="gotoPage('search')"><div class="a-icon">&#9906;</div><div class="a-label">ค้นหาหนังสือ</div></div>
-            <div class="action-card" onclick="gotoPage('report')"><div class="a-icon">&#9776;</div><div class="a-label">รายงานสรุป</div></div>
             <div class="action-card" onclick="gotoPage('cert')"><div class="a-icon">&#9670;</div><div class="a-label">หนังสือรับรอง</div></div>
             <div class="action-card" onclick="gotoPage('order')"><div class="a-icon">&#9632;</div><div class="a-label">หนังสือคำสั่ง</div></div>
+            <div class="action-card" onclick="gotoPage('search')"><div class="a-icon">&#9906;</div><div class="a-label">ค้นหาหนังสือ</div></div>
+            <div class="action-card" onclick="gotoPage('report')"><div class="a-icon">&#9776;</div><div class="a-label">รายงานสรุป</div></div>
           </div>
         </div>
       </div>
@@ -2382,66 +2382,86 @@ tbody tr:hover td { background: #f4f7fc; }
           <div id="order-no-preview" style="margin-left:auto;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:4px;padding:4px 12px;font-size:12px;font-family:'IBM Plex Mono',monospace;color:var(--gold);font-weight:700;white-space:nowrap;"></div>
         </div>
         <div class="card-body">
+
+          <!-- แถว 1: วันที่ลงเลข + เลขหนังสือส่ง (ชม 0033.301/...) -->
           <div class="form-grid">
             <div class="f-group">
               <label class="f-label">วันที่ลงเลขหนังสือคำสั่ง <span class="req">*</span></label>
               <input type="text" id="order-date-assigned" class="f-input" placeholder="ว/ด/ป พ.ศ. เช่น 01/06/2569">
             </div>
             <div class="f-group">
-              <label class="f-label">เลขที่คำสั่ง <span class="req">*</span></label>
-              <input type="text" id="order-docno" class="f-input" placeholder="เช่น 12/2569 (ระบบจะกำหนดให้อัตโนมัติ)">
-              <div class="f-hint">ปล่อยว่างเพื่อให้ระบบกำหนดเลขที่ถัดไปอัตโนมัติ (รูปแบบ ลำดับ/ปีพ.ศ.)</div>
+              <label class="f-label">เลขหนังสือส่ง (ชม 0033.301/...)</label>
+              <div style="display:flex;align-items:center;gap:0;">
+                <span style="background:var(--gray100);border:1px solid var(--gray300);border-right:none;border-radius:var(--r) 0 0 var(--r);padding:9px 12px;font-size:13px;color:var(--gray600);white-space:nowrap;font-weight:600;">ชม 0033.301/</span>
+                <input type="text" id="order-send-no" class="f-input" placeholder="เลขที่ (เช่น 1234)" style="border-radius:0 var(--r) var(--r) 0;border-left:none;">
+              </div>
+              <div class="f-hint" id="order-send-no-preview" style="color:var(--navy);font-weight:600;font-family:'IBM Plex Mono',monospace;"></div>
             </div>
           </div>
+
+          <!-- แถว 2: เลขที่คำสั่ง (ลำดับ/2569) + วันที่ออกคำสั่ง -->
           <div class="form-grid">
+            <div class="f-group">
+              <label class="f-label">เลขที่คำสั่ง <span class="req">*</span></label>
+              <div style="display:flex;align-items:center;gap:0;">
+                <input type="text" id="order-docno-seq" class="f-input" placeholder="เลขลำดับ (เช่น 12)" style="border-radius:var(--r) 0 0 var(--r);border-right:none;text-align:center;max-width:90px;">
+                <span style="background:var(--gray100);border:1px solid var(--gray300);border-left:none;border-right:none;padding:9px 10px;font-size:14px;color:var(--gray600);font-weight:700;">/</span>
+                <span id="order-docno-year" style="background:var(--gray100);border:1px solid var(--gray300);border-left:none;border-radius:0 var(--r) var(--r) 0;padding:9px 12px;font-size:13px;color:var(--navy);font-weight:700;white-space:nowrap;">2569</span>
+              </div>
+              <div class="f-hint">ปล่อยว่างเพื่อให้ระบบกำหนดเลขถัดไปอัตโนมัติ</div>
+              <input type="hidden" id="order-docno">
+            </div>
             <div class="f-group">
               <label class="f-label">วันที่ออกคำสั่ง <span class="req">*</span></label>
               <input type="text" id="order-date" class="f-input" placeholder="ว/ด/ป พ.ศ. เช่น 01/06/2569">
             </div>
-            <div class="f-group">
-              <label class="f-label">เจ้าของเรื่อง / หน่วยงาน <span class="req">*</span></label>
-              <select id="order-owner-dept" class="f-select">
-                <option value="">— เลือกหน่วยงานเจ้าของเรื่อง —</option>
-              </select>
-            </div>
-          </div>
-          <div class="f-group">
-            <label class="f-label">คำสั่งเรื่อง <span class="req">*</span></label>
-            <input type="text" id="order-subject" class="f-input" placeholder="เรื่องของคำสั่ง เช่น แต่งตั้งคณะกรรมการ..." oninput="cnt('order-subject','order-subject-cnt')">
-            <div class="f-counter"><span id="order-subject-cnt">0</span> ตัวอักษร</div>
-          </div>
-          <div class="f-group">
-            <label class="f-label">เวียนถึง / หน่วยงาน <span class="req">*</span></label>
-            <div style="margin-bottom:8px;">
-              <button type="button" onclick="orderCirculateSelectAll()" style="background:var(--navy);color:white;border:none;border-radius:4px;padding:5px 14px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;">✅ เลือกทั้งหมด</button>
-              <button type="button" onclick="orderCirculateClear()" style="background:var(--gray100);color:var(--gray600);border:var(--line);border-radius:4px;padding:5px 14px;cursor:pointer;font-size:12px;font-family:inherit;margin-left:6px;">✕ ล้างทั้งหมด</button>
-            </div>
-            <div id="order-circulate-container" style="border:1px solid var(--gray200);border-radius:var(--r);overflow:hidden;">
-              <div style="padding:12px 16px;background:var(--gray50);text-align:center;color:var(--gray400);font-size:13px;" id="order-circulate-loading">⏳ กำลังโหลดรายชื่อหน่วยงาน...</div>
-            </div>
-            <div id="order-circulate-summary" style="display:none;margin-top:8px;background:var(--blue-bg);border:1px solid #bfdbfe;border-radius:var(--r);padding:9px 14px;font-size:12px;color:var(--blue);">
-              <strong>ที่เลือก: </strong><span id="order-circulate-count">0</span> หน่วยงาน
-            </div>
-          </div>
-          <div class="f-group">
-            <label class="f-label">รายละเอียด</label>
-            <textarea id="order-detail" class="f-textarea" rows="3" placeholder="รายละเอียดเพิ่มเติมของคำสั่ง (ถ้ามี)"></textarea>
-          </div>
-          <div class="f-group">
-            <label class="f-label">หมายเหตุ</label>
-            <textarea id="order-note" class="f-textarea" rows="2" placeholder="หมายเหตุเพิ่มเติม (ถ้ามี)"></textarea>
           </div>
 
-          <!-- Upload ไฟล์ -->
-          <div class="f-group">
-            <label class="f-label">แนบไฟล์ (ไม่บังคับ)</label>
-            <input type="file" id="order-file-input" class="f-input"
-              accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.txt,.ppt,.pptx"
-              onchange="orderHandleFile(this)">
-            <div class="f-hint">PDF, Word, Excel, Image — ขนาดสูงสุด 20 MB</div>
-            <div id="order-file-box" style="display:none;margin-top:8px;background:var(--green-bg);border:1px solid #bbf7d0;border-radius:var(--r);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
-              <span>📄 <strong id="order-fname" style="color:var(--green);font-size:13px;"></strong> <span id="order-fsize" style="color:var(--gray400);font-size:12px;"></span></span>
-              <button onclick="orderRemoveFile()" style="background:var(--red-bg);color:var(--red);border:1px solid #fca5a5;border-radius:4px;padding:2px 9px;cursor:pointer;font-size:12px;">✕</button>
+          <!-- แถว 3: เจ้าของเรื่อง + คำสั่งเรื่อง -->
+          <div class="form-grid">
+            <div class="f-group">
+              <label class="f-label" style="background:#3d9970;color:white;padding:4px 10px;border-radius:var(--r);display:inline-block;margin-bottom:6px;">เจ้าของเรื่อง / หน่วยงาน <span style="color:#ffeb80;">*</span></label>
+              <select id="order-owner-dept" class="f-select">
+                <option value="">— เลือกหน่วยงาน —</option>
+              </select>
+            </div>
+            <div class="f-group">
+              <label class="f-label">คำสั่งเรื่อง <span class="req">*</span></label>
+              <input type="text" id="order-subject" class="f-input" placeholder="— เรื่องของคำสั่ง" oninput="cnt('order-subject','order-subject-cnt')">
+              <div class="f-counter"><span id="order-subject-cnt">0</span> ตัวอักษร</div>
+            </div>
+          </div>
+
+          <!-- แถว 4: เวียนถึง/หน่วยงาน (dropdown grouped) -->
+          <div class="form-grid">
+            <div class="f-group">
+              <label class="f-label" style="background:#3d9970;color:white;padding:4px 10px;border-radius:var(--r);display:inline-block;margin-bottom:6px;">เวียนถึง / หน่วยงาน <span style="color:#ffeb80;">*</span></label>
+              <select id="order-circulate-dept" class="f-select">
+                <option value="">— เลือกหน่วยงาน —</option>
+              </select>
+            </div>
+            <div class="f-group" style="display:flex;flex-direction:column;justify-content:flex-end;">
+              <label class="f-label">รายละเอียด</label>
+              <textarea id="order-detail" class="f-textarea" rows="3" placeholder="— สรุปเนื้อหาโดยย่อ"></textarea>
+            </div>
+          </div>
+
+          <!-- แถว 5: หมายเหตุ + ไฟล์แนบ -->
+          <div class="form-grid">
+            <div class="f-group">
+              <label class="f-label">หมายเหตุ</label>
+              <textarea id="order-note" class="f-textarea" rows="2" placeholder="ข้อมูลเพิ่มเติม..."></textarea>
+            </div>
+            <div class="f-group">
+              <label class="f-label">ไฟล์แนบ</label>
+              <input type="file" id="order-file-input" class="f-input"
+                accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.txt,.ppt,.pptx"
+                onchange="orderHandleFile(this)">
+              <div class="f-hint">PDF, Word, Excel, JPG, PNG — ขนาดสูงสุด 20 MB</div>
+              <div id="order-file-box" style="display:none;margin-top:8px;background:var(--green-bg);border:1px solid #bbf7d0;border-radius:var(--r);padding:10px 14px;align-items:center;justify-content:space-between;gap:10px;">
+                <span>📄 <strong id="order-fname" style="color:var(--green);font-size:13px;"></strong> <span id="order-fsize" style="color:var(--gray400);font-size:12px;"></span></span>
+                <button onclick="orderRemoveFile()" style="background:var(--red-bg);color:var(--red);border:1px solid #fca5a5;border-radius:4px;padding:2px 9px;cursor:pointer;font-size:12px;">✕</button>
+              </div>
             </div>
           </div>
 
@@ -4860,14 +4880,35 @@ var _orderPendingFile    = null;
 var _orderMissionsLoaded = false;
 var _orderMissions       = [];
 
+/** อัปเดต preview เลขหนังสือส่ง ชม 0033.301/... */
+function orderUpdateSendNoPreview() {
+  var val = v('order-send-no').trim();
+  var el  = document.getElementById('order-send-no-preview');
+  if (!el) return;
+  el.textContent = val ? '→ ชม 0033.301/' + val : '';
+}
+
+/** อ่านเลขที่คำสั่ง (seq / year) จาก UI */
+function orderGetDocno() {
+  var seq = v('order-docno-seq').trim();
+  var yr  = (document.getElementById('order-docno-year') || {}).textContent || '2569';
+  if (seq) return seq + '/' + yr;
+  return v('order-docno'); // hidden field (อัตโนมัติ)
+}
+
 function loadNextOrderSeq() {
   gasRun('getNextOrderSeqPreview')
     .withSuccessHandler(function(r) {
       if (r && r.success && r.nextSeq) {
         var el = document.getElementById('order-no-preview');
-        if (el) el.textContent = '🔢 เลขถัดไป: ' + r.nextSeq;
-        var inp = document.getElementById('order-docno');
-        if (inp && !inp.value) inp.placeholder = r.nextSeq + ' (อัตโนมัติ)';
+        if (el) el.textContent = '🔢 ถัดไป: ' + r.nextSeq;
+        var seqInp = document.getElementById('order-docno-seq');
+        if (seqInp && !seqInp.value) {
+          var parts = r.nextSeq.split('/');
+          seqInp.placeholder = parts[0] + ' (อัตโนมัติ)';
+          // เก็บ full seq ไว้ใน hidden field เผื่อไม่ได้กรอก
+          setVal('order-docno', r.nextSeq);
+        }
       }
     })
     .withFailureHandler(function(){})
@@ -4881,11 +4922,11 @@ function loadMissionGroups() {
       _orderMissions = r.missions || [];
       _orderMissionsLoaded = true;
       renderOrderOwnerDept(r.missions);
-      renderOrderCirculate(r.allLabel, r.missions);
+      renderOrderCirculateDept(r.allLabel, r.missions);
     })
     .withFailureHandler(function(){
-      var c = document.getElementById('order-circulate-container');
-      if (c) c.innerHTML = '<div style="padding:12px;color:var(--red);font-size:13px;">❌ โหลดรายชื่อหน่วยงานล้มเหลว</div>';
+      var sel = document.getElementById('order-circulate-dept');
+      if (sel) sel.innerHTML = '<option value="">❌ โหลดล้มเหลว</option>';
     })
     .call();
 }
@@ -4893,7 +4934,7 @@ function loadMissionGroups() {
 function renderOrderOwnerDept(missions) {
   var sel = document.getElementById('order-owner-dept');
   if (!sel) return;
-  var html = '<option value="">— เลือกหน่วยงานเจ้าของเรื่อง —</option>';
+  var html = '<option value="">— เลือกหน่วยงาน —</option>';
   missions.forEach(function(m) {
     html += '<optgroup label="' + esc(m.mission) + '">';
     m.groups.forEach(function(g) {
@@ -4904,80 +4945,36 @@ function renderOrderOwnerDept(missions) {
   sel.innerHTML = html;
 }
 
-function renderOrderCirculate(allLabel, missions) {
-  var c = document.getElementById('order-circulate-container');
-  if (!c) return;
-  var html = '';
-
-  html += '<div style="padding:10px 16px;background:var(--gray100);border-bottom:var(--line);display:flex;align-items:center;gap:10px;">' +
-    '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;color:var(--navy);font-size:13px;">' +
-    '<input type="checkbox" id="order-circ-all" onchange="orderCirculateToggleAll(this)" style="width:16px;height:16px;cursor:pointer;"> ' +
-    esc(allLabel) + '</label></div>';
-
-  missions.forEach(function(m, mi) {
-    html += '<div style="background:var(--navy);padding:7px 16px;">' +
-      '<span style="color:rgba(255,255,255,.9);font-size:12px;font-weight:700;letter-spacing:.3px;">' + esc(m.mission) + '</span></div>';
-    m.groups.forEach(function(g, gi) {
-      var cbId = 'order-circ-' + mi + '-' + gi;
-      html += '<div style="padding:6px 16px 6px 24px;border-bottom:1px solid var(--gray100);display:flex;align-items:center;gap:10px;">' +
-        '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--gray700);flex:1;">' +
-        '<input type="checkbox" id="' + cbId + '" class="order-circ-cb" value="' + esc(g) + '" onchange="orderCirculateUpdateSummary()" style="width:14px;height:14px;cursor:pointer;"> ' +
-        esc(g) + '</label></div>';
-    });
-  });
-
-  c.innerHTML = html;
-  orderCirculateUpdateSummary();
-}
-
-function orderCirculateToggleAll(cb) {
-  var cbs = document.querySelectorAll('.order-circ-cb');
-  cbs.forEach(function(el){ el.checked = cb.checked; });
-  orderCirculateUpdateSummary();
-}
-
-function orderCirculateSelectAll() {
-  var allCb = document.getElementById('order-circ-all');
-  if (allCb) { allCb.checked = true; orderCirculateToggleAll(allCb); }
-}
-
-function orderCirculateClear() {
-  var allCb = document.getElementById('order-circ-all');
-  if (allCb) { allCb.checked = false; orderCirculateToggleAll(allCb); }
-}
-
-function orderCirculateUpdateSummary() {
-  var cbs = document.querySelectorAll('.order-circ-cb:checked');
-  var count = cbs.length;
-  var summary = document.getElementById('order-circulate-summary');
-  var countEl = document.getElementById('order-circulate-count');
-  var allCb = document.getElementById('order-circ-all');
-  if (countEl) setText('order-circulate-count', count);
-  if (summary) summary.style.display = count > 0 ? 'block' : 'none';
-  if (allCb) {
-    var totalCbs = document.querySelectorAll('.order-circ-cb').length;
-    allCb.indeterminate = count > 0 && count < totalCbs;
-    if (count === totalCbs && totalCbs > 0) allCb.checked = true;
-    if (count === 0) allCb.checked = false;
+/** render เวียนถึง/หน่วยงาน เป็น dropdown grouped เหมือน เจ้าของเรื่อง */
+function renderOrderCirculateDept(allLabel, missions) {
+  var sel = document.getElementById('order-circulate-dept');
+  if (!sel) return;
+  var html = '<option value="">— เลือกหน่วยงาน —</option>';
+  if (allLabel) {
+    html += '<option value="' + esc(allLabel) + '">✅ ' + esc(allLabel) + '</option>';
   }
+  missions.forEach(function(m) {
+    html += '<optgroup label="' + esc(m.mission) + '">';
+    m.groups.forEach(function(g) {
+      html += '<option value="' + esc(g) + '">' + esc(g) + '</option>';
+    });
+    html += '</optgroup>';
+  });
+  sel.innerHTML = html;
 }
 
 function orderCirculateGetSelected() {
-  var allCb = document.getElementById('order-circ-all');
-  if (allCb && allCb.checked && !allCb.indeterminate) {
-    return 'ทุกกลุ่มงาน/งานในโรงพยาบาลสันทราย';
-  }
-  var cbs = document.querySelectorAll('.order-circ-cb:checked');
-  var names = [];
-  cbs.forEach(function(cb){ names.push(cb.value); });
-  return names.join(', ');
+  return v('order-circulate-dept');
 }
 
-// compat aliases (kept in case other code references old names)
-function orderSelectAllGroups()  { orderCirculateSelectAll(); }
-function orderClearGroups()      { orderCirculateClear(); }
-function orderUpdateSummary()    { orderCirculateUpdateSummary(); }
-function orderGetSelectedGroups(){ return orderCirculateGetSelected(); }
+// compat aliases
+function orderCirculateSelectAll()  {}
+function orderCirculateClear()      { setVal('order-circulate-dept',''); }
+function orderCirculateUpdateSummary() {}
+function orderSelectAllGroups()     {}
+function orderClearGroups()         { orderCirculateClear(); }
+function orderUpdateSummary()       {}
+function orderGetSelectedGroups()   { return orderCirculateGetSelected(); }
 
 function orderHandleFile(input) {
   var file = input.files[0];
@@ -5002,9 +4999,11 @@ function orderRemoveFile() {
 }
 
 function orderResetForm() {
-  ['order-docno','order-date-assigned','order-date','order-subject','order-detail','order-note'].forEach(function(id){ setVal(id,''); });
+  ['order-docno','order-docno-seq','order-send-no','order-date-assigned','order-date','order-subject','order-detail','order-note'].forEach(function(id){ setVal(id,''); });
   setVal('order-owner-dept','');
-  orderCirculateClear();
+  setVal('order-circulate-dept','');
+  var prevEl = document.getElementById('order-send-no-preview');
+  if (prevEl) prevEl.textContent = '';
   orderRemoveFile();
   hideAlerts(['order-alert-err','order-alert-ok']);
   setDefaultDate('order-date-assigned');
@@ -5020,18 +5019,26 @@ function submitOrder() {
   var dateAssigned = v('order-date-assigned');
   var ownerDept    = v('order-owner-dept');
   var circulateTo  = orderCirculateGetSelected();
-  var docno        = v('order-docno');
+  // เลขที่คำสั่ง: ถ้ากรอก seq ให้ประกอบ seq/year ไม่งั้นใช้ auto จาก hidden field
+  var seqVal = v('order-docno-seq').trim();
+  var yrEl   = document.getElementById('order-docno-year');
+  var yr     = yrEl ? yrEl.textContent.trim() : '2569';
+  var docno  = seqVal ? seqVal + '/' + yr : v('order-docno');
+  // เลขหนังสือส่ง ชม 0033.301/...
+  var sendNoSuffix = v('order-send-no').trim();
+  var sendNo = sendNoSuffix ? 'ชม 0033.301/' + sendNoSuffix : '';
 
   if (!dateAssigned){ showA('order-alert-err','❌ กรุณากรอก วันที่ลงเลขหนังสือคำสั่ง'); return; }
   if (!subject)     { showA('order-alert-err','❌ กรุณากรอก คำสั่งเรื่อง'); return; }
   if (!ownerDept)   { showA('order-alert-err','❌ กรุณาเลือก เจ้าของเรื่อง/หน่วยงาน'); return; }
-  if (!circulateTo) { showA('order-alert-err','❌ กรุณาเลือก เวียนถึง/หน่วยงาน อย่างน้อย 1 รายการ'); return; }
+  if (!circulateTo) { showA('order-alert-err','❌ กรุณาเลือก เวียนถึง/หน่วยงาน'); return; }
 
   setLoad('order-save-btn', true, '⏳ กำลังบันทึก...');
 
   function doSave(fileId) {
     var data = {
       docNumber:    docno,
+      sendNo:       sendNo,
       dateAssigned: dateAssigned,
       orderDate:    orderDate,
       ownerDept:    ownerDept,
