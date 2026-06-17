@@ -746,6 +746,8 @@ tbody tr:hover td { background: #f4f7fc; }
     <div class="nav-item"        data-page="history" onclick="gotoPage('history')"><span class="nav-icon">🗂</span> ประวัติทะเบียน</div>
     <div class="nav-item"        data-page="import"  onclick="gotoPage('import')"><span class="nav-icon">↧</span> นำเข้าข้อมูล</div>
     <div class="nav-item"        data-page="attach"  onclick="gotoPage('attach')"><span class="nav-icon">📎</span> แนบเอกสาร</div>
+    <div class="nav-item"        data-page="cert"    onclick="gotoPage('cert')"><span class="nav-icon">🏅</span> หนังสือรับรอง</div>
+    <div class="nav-item"        data-page="order"   onclick="gotoPage('order')"><span class="nav-icon">📋</span> หนังสือคำสั่ง</div>
   </div>
 </div>
 
@@ -841,6 +843,8 @@ tbody tr:hover td { background: #f4f7fc; }
             <div class="action-card" onclick="gotoPage('send')"><div class="a-icon">↑</div><div class="a-label">ส่งหนังสือออก</div></div>
             <div class="action-card" onclick="gotoPage('search')"><div class="a-icon">⊕</div><div class="a-label">ค้นหาหนังสือ</div></div>
             <div class="action-card" onclick="gotoPage('report')"><div class="a-icon">≡</div><div class="a-label">รายงานสรุป</div></div>
+            <div class="action-card" onclick="gotoPage('cert')"><div class="a-icon">🏅</div><div class="a-label">หนังสือรับรอง</div></div>
+            <div class="action-card" onclick="gotoPage('order')"><div class="a-icon">📋</div><div class="a-label">หนังสือคำสั่ง</div></div>
           </div>
         </div>
       </div>
@@ -1864,6 +1868,246 @@ tbody tr:hover td { background: #f4f7fc; }
     </div>
   </div>
 
+  <!-- ===== PAGE: หนังสือรับรอง ===== -->
+  <div id="page-cert" class="page">
+    <div class="content content-md">
+      <div class="ptb">
+        <div class="ptb-icon">🏅</div>
+        <div>
+          <h2>หนังสือรับรอง</h2>
+          <p>บันทึกและค้นหาหนังสือรับรองที่ออกโดยโรงพยาบาลสันทราย</p>
+        </div>
+      </div>
+
+      <div id="cert-alert-err" class="alert a-error"></div>
+      <div id="cert-alert-ok"  class="alert a-success"></div>
+
+      <!-- ฟอร์มบันทึก -->
+      <div class="card">
+        <div class="card-head" style="background:linear-gradient(135deg,var(--navy),var(--navy2));border-bottom:2px solid var(--gold);">
+          <span class="card-head-icon" style="color:var(--gold);">🏅</span>
+          <h3 style="color:white;">บันทึกหนังสือรับรองใหม่</h3>
+          <div id="cert-no-preview" style="margin-left:auto;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:4px;padding:4px 12px;font-size:12px;font-family:'IBM Plex Mono',monospace;color:var(--gold);font-weight:700;white-space:nowrap;"></div>
+        </div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="f-group">
+              <label class="f-label">เลขที่หนังสือส่ง <span class="req">*</span></label>
+              <input type="text" id="cert-docno" class="f-input" placeholder="OUT-2569-0001 (ระบบจะกำหนดให้อัตโนมัติ)">
+              <div class="f-hint">ปล่อยว่างเพื่อให้ระบบกำหนดเลขที่ถัดไปอัตโนมัติ</div>
+            </div>
+            <div class="f-group">
+              <label class="f-label">วันที่ลงเลขหนังสือส่ง <span class="req">*</span></label>
+              <input type="text" id="cert-date-assigned" class="f-input" placeholder="ว/ด/ป พ.ศ. เช่น 01/06/2569">
+            </div>
+            <div class="f-group">
+              <label class="f-label">วันที่หนังสือ <span class="req">*</span></label>
+              <input type="text" id="cert-docdate" class="f-input" placeholder="ว/ด/ป พ.ศ. เช่น 01/06/2569">
+            </div>
+            <div class="f-group">
+              <label class="f-label">หน่วยงานที่ขอ <span class="req">*</span></label>
+              <select id="cert-req-dept" class="f-select">
+                <option value="">— เลือกหน่วยงานที่ขอ —</option>
+              </select>
+            </div>
+          </div>
+          <div class="f-group">
+            <label class="f-label">เรื่อง <span class="req">*</span></label>
+            <input type="text" id="cert-subject" class="f-input" placeholder="เรื่องของหนังสือรับรอง เช่น รับรองการปฏิบัติงาน..." oninput="cnt('cert-subject','cert-subject-cnt')">
+            <div class="f-counter"><span id="cert-subject-cnt">0</span> ตัวอักษร</div>
+          </div>
+          <div class="form-grid">
+            <div class="f-group">
+              <label class="f-label">ส่งถึง / หน่วยงาน <span class="req">*</span></label>
+              <input type="text" id="cert-to-org" class="f-input" placeholder="ชื่อหน่วยงานปลายทาง">
+            </div>
+            <div class="f-group">
+              <label class="f-label">วัตถุประสงค์การขอ <span class="req">*</span></label>
+              <input type="text" id="cert-purpose" class="f-input" placeholder="เช่น เพื่อใช้ประกอบการยื่นขอสินเชื่อ">
+            </div>
+          </div>
+          <div class="f-group">
+            <label class="f-label">หมายเหตุ</label>
+            <textarea id="cert-note" class="f-textarea" rows="2" placeholder="หมายเหตุเพิ่มเติม (ถ้ามี)"></textarea>
+          </div>
+
+          <!-- Upload ไฟล์ -->
+          <div class="f-group">
+            <label class="f-label">แนบไฟล์ (ไม่บังคับ)</label>
+            <input type="file" id="cert-file-input" class="f-input"
+              accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.txt,.ppt,.pptx"
+              onchange="certHandleFile(this)">
+            <div class="f-hint">PDF, Word, Excel, Image — ขนาดสูงสุด 20 MB</div>
+            <div id="cert-file-box" style="display:none;margin-top:8px;background:var(--green-bg);border:1px solid #bbf7d0;border-radius:var(--r);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+              <span>📄 <strong id="cert-fname" style="color:var(--green);font-size:13px;"></strong> <span id="cert-fsize" style="color:var(--gray400);font-size:12px;"></span></span>
+              <button onclick="certRemoveFile()" style="background:var(--red-bg);color:var(--red);border:1px solid #fca5a5;border-radius:4px;padding:2px 9px;cursor:pointer;font-size:12px;">✕</button>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-secondary" onclick="certResetForm()">🔄 ล้างข้อมูล</button>
+            <button class="btn btn-primary"   id="cert-save-btn" onclick="submitCert()">💾 บันทึกหนังสือรับรอง</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- รายการล่าสุด -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-head-icon">📋</span>
+          <h3>รายการหนังสือรับรองล่าสุด</h3>
+          <button onclick="loadRecentCerts()" style="margin-left:auto;background:var(--gray100);border:var(--line);border-radius:4px;padding:4px 12px;cursor:pointer;font-size:12px;color:var(--gray600);">🔄 โหลดใหม่</button>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr>
+                <th>เลขที่</th>
+                <th>วันที่</th>
+                <th>หน่วยงานที่ขอ</th>
+                <th>เรื่อง</th>
+                <th>ส่งถึง</th>
+                <th>วัตถุประสงค์</th>
+                <th>ไฟล์</th>
+              </tr></thead>
+              <tbody id="cert-tbl-body">
+                <tr class="tbl-empty"><td colspan="7">⏳ กำลังโหลด...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div><!-- /page-cert -->
+
+  <!-- ===== PAGE: หนังสือคำสั่ง ===== -->
+  <div id="page-order" class="page">
+    <div class="content content-md">
+      <div class="ptb">
+        <div class="ptb-icon">📋</div>
+        <div>
+          <h2>หนังสือคำสั่ง</h2>
+          <p>บันทึกและค้นหาหนังสือคำสั่งของโรงพยาบาลสันทราย — กลุ่มภารกิจ 6</p>
+        </div>
+      </div>
+
+      <div id="order-alert-err" class="alert a-error"></div>
+      <div id="order-alert-ok"  class="alert a-success"></div>
+
+      <!-- ฟอร์มบันทึก -->
+      <div class="card">
+        <div class="card-head" style="background:linear-gradient(135deg,var(--navy),var(--navy2));border-bottom:2px solid var(--gold);">
+          <span class="card-head-icon" style="color:var(--gold);">📋</span>
+          <h3 style="color:white;">บันทึกหนังสือคำสั่งใหม่</h3>
+          <div id="order-no-preview" style="margin-left:auto;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:4px;padding:4px 12px;font-size:12px;font-family:'IBM Plex Mono',monospace;color:var(--gold);font-weight:700;white-space:nowrap;"></div>
+        </div>
+        <div class="card-body">
+          <div class="form-grid">
+            <div class="f-group">
+              <label class="f-label">เลขที่คำสั่ง <span class="req">*</span></label>
+              <input type="text" id="order-docno" class="f-input" placeholder="เช่น 12/2569 (ระบบจะกำหนดให้อัตโนมัติ)">
+              <div class="f-hint">ปล่อยว่างเพื่อให้ระบบกำหนดเลขที่ถัดไปอัตโนมัติ (รูปแบบ ลำดับ/ปีพ.ศ.)</div>
+            </div>
+            <div class="f-group">
+              <label class="f-label">วันที่คำสั่ง <span class="req">*</span></label>
+              <input type="text" id="order-date" class="f-input" placeholder="ว/ด/ป พ.ศ. เช่น 01/06/2569">
+            </div>
+          </div>
+          <div class="f-group">
+            <label class="f-label">เรื่อง <span class="req">*</span></label>
+            <input type="text" id="order-subject" class="f-input" placeholder="เรื่องของคำสั่ง เช่น แต่งตั้งคณะกรรมการ..." oninput="cnt('order-subject','order-subject-cnt')">
+            <div class="f-counter"><span id="order-subject-cnt">0</span> ตัวอักษร</div>
+          </div>
+          <div class="f-group">
+            <label class="f-label">รายละเอียด</label>
+            <textarea id="order-detail" class="f-textarea" rows="3" placeholder="รายละเอียดเพิ่มเติมของคำสั่ง (ถ้ามี)"></textarea>
+          </div>
+
+          <!-- กลุ่มงาน/หน่วยงานที่เกี่ยวข้อง -->
+          <div class="f-group">
+            <label class="f-label">กลุ่มงาน / หน่วยงานที่เกี่ยวข้อง <span class="req">*</span></label>
+
+            <!-- ปุ่มเลือกทั้งหมด -->
+            <div style="margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;">
+              <button type="button" onclick="orderSelectAllGroups()" style="background:var(--navy);color:white;border:none;border-radius:4px;padding:5px 14px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;">✅ เลือกทั้งหมด</button>
+              <button type="button" onclick="orderClearGroups()" style="background:var(--gray100);color:var(--gray600);border:var(--line);border-radius:4px;padding:5px 14px;cursor:pointer;font-size:12px;font-family:inherit;">✕ ล้างทั้งหมด</button>
+            </div>
+
+            <!-- Mission group checkboxes -->
+            <div id="order-missions-container" style="border:1px solid var(--gray200);border-radius:var(--r);overflow:hidden;">
+              <div style="padding:12px 16px;background:var(--gray50);text-align:center;color:var(--gray400);font-size:13px;" id="order-missions-loading">⏳ กำลังโหลดรายชื่อกลุ่มงาน...</div>
+            </div>
+
+            <!-- สรุปที่เลือก -->
+            <div id="order-groups-summary" style="display:none;margin-top:8px;background:var(--blue-bg);border:1px solid #bfdbfe;border-radius:var(--r);padding:9px 14px;font-size:12px;color:var(--blue);">
+              <strong>ที่เลือก: </strong><span id="order-groups-count">0</span> หน่วยงาน
+            </div>
+          </div>
+
+          <div class="form-grid">
+            <div class="f-group">
+              <label class="f-label">ผู้ลงนาม</label>
+              <input type="text" id="order-signed-by" class="f-input" placeholder="ชื่อ-นามสกุล ผู้ลงนาม">
+            </div>
+            <div class="f-group">
+              <label class="f-label">ตำแหน่งผู้ลงนาม</label>
+              <input type="text" id="order-signer-pos" class="f-input" placeholder="เช่น ผู้อำนวยการโรงพยาบาล">
+            </div>
+          </div>
+          <div class="f-group">
+            <label class="f-label">หมายเหตุ</label>
+            <textarea id="order-note" class="f-textarea" rows="2" placeholder="หมายเหตุเพิ่มเติม (ถ้ามี)"></textarea>
+          </div>
+
+          <!-- Upload ไฟล์ -->
+          <div class="f-group">
+            <label class="f-label">แนบไฟล์ (ไม่บังคับ)</label>
+            <input type="file" id="order-file-input" class="f-input"
+              accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.txt,.ppt,.pptx"
+              onchange="orderHandleFile(this)">
+            <div class="f-hint">PDF, Word, Excel, Image — ขนาดสูงสุด 20 MB</div>
+            <div id="order-file-box" style="display:none;margin-top:8px;background:var(--green-bg);border:1px solid #bbf7d0;border-radius:var(--r);padding:10px 14px;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+              <span>📄 <strong id="order-fname" style="color:var(--green);font-size:13px;"></strong> <span id="order-fsize" style="color:var(--gray400);font-size:12px;"></span></span>
+              <button onclick="orderRemoveFile()" style="background:var(--red-bg);color:var(--red);border:1px solid #fca5a5;border-radius:4px;padding:2px 9px;cursor:pointer;font-size:12px;">✕</button>
+            </div>
+          </div>
+
+          <div class="btn-row">
+            <button class="btn btn-secondary" onclick="orderResetForm()">🔄 ล้างข้อมูล</button>
+            <button class="btn btn-primary"   id="order-save-btn" onclick="submitOrder()">💾 บันทึกหนังสือคำสั่ง</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- รายการล่าสุด -->
+      <div class="card">
+        <div class="card-head">
+          <span class="card-head-icon">📋</span>
+          <h3>รายการหนังสือคำสั่งล่าสุด</h3>
+          <button onclick="loadRecentOrders()" style="margin-left:auto;background:var(--gray100);border:var(--line);border-radius:4px;padding:4px 12px;cursor:pointer;font-size:12px;color:var(--gray600);">🔄 โหลดใหม่</button>
+        </div>
+        <div class="card-body" style="padding:0;">
+          <div class="tbl-wrap">
+            <table>
+              <thead><tr>
+                <th>เลขที่คำสั่ง</th>
+                <th>วันที่</th>
+                <th>เรื่อง</th>
+                <th>หน่วยงาน</th>
+                <th>ผู้ลงนาม</th>
+                <th>ไฟล์</th>
+              </tr></thead>
+              <tbody id="order-tbl-body">
+                <tr class="tbl-empty"><td colspan="6">⏳ กำลังโหลด...</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div><!-- /page-order -->
+
 </div><!-- #main-content -->
 
 <!-- ===== SEARCH DETAIL MODAL ===== -->
@@ -2257,6 +2501,8 @@ function gotoPage(page) {
   if (page === 'report')  setReportDates();
   if (page === 'history') loadHistoryYears();
   if (page === 'import')  loadHistoryYears();
+  if (page === 'cert')    { loadNextCertSeq(); loadRecentCerts(); if (!_certDeptsLoaded) loadDepts('cert-req-dept'); _certDeptsLoaded = true; setDefaultDate('cert-date-assigned'); setDefaultDate('cert-docdate'); }
+  if (page === 'order')   { loadNextOrderSeq(); loadRecentOrders(); if (!_orderMissionsLoaded) loadMissionGroups(); setDefaultDate('order-date'); }
 }
 
 // ============================================================
@@ -4048,6 +4294,414 @@ function togglePinVisibility() {
   }
   inp.focus();
 }
+// ============================================================
+// CERT — หนังสือรับรอง
+// ============================================================
+var _certPendingFile  = null;  // { b64, name, mimeType, sizeKB }
+var _certDeptsLoaded  = false;
+
+function loadNextCertSeq() {
+  gasRun('getNextOutgoingSeqPreview')
+    .withSuccessHandler(function(r) {
+      if (r && r.success && r.nextSeq) {
+        var el = document.getElementById('cert-no-preview');
+        if (el) el.textContent = '🔢 เลขถัดไป: ' + r.nextSeq;
+        var inp = document.getElementById('cert-docno');
+        if (inp && !inp.value) inp.placeholder = r.nextSeq + ' (อัตโนมัติ)';
+      }
+    })
+    .withFailureHandler(function(){})
+    .call();
+}
+
+function certHandleFile(input) {
+  var file = input.files[0];
+  if (!file) return;
+  hideAlerts(['cert-alert-err','cert-alert-ok']);
+  if (file.size > 20*1024*1024) { showA('cert-alert-err','❌ ไฟล์ใหญ่เกิน 20 MB'); input.value=''; return; }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    _certPendingFile = { b64: e.target.result.split(',')[1], name: file.name,
+                         mimeType: file.type, sizeKB: Math.round(file.size/1024) };
+    setText('cert-fname', file.name);
+    setText('cert-fsize', Math.round(file.size/1024) + ' KB');
+    document.getElementById('cert-file-box').style.display = 'flex';
+  };
+  reader.readAsDataURL(file);
+}
+
+function certRemoveFile() {
+  _certPendingFile = null;
+  document.getElementById('cert-file-input').value = '';
+  document.getElementById('cert-file-box').style.display = 'none';
+}
+
+function certResetForm() {
+  ['cert-docno','cert-date-assigned','cert-docdate','cert-subject','cert-to-org','cert-purpose','cert-note'].forEach(function(id){ setVal(id,''); });
+  setVal('cert-req-dept','');
+  certRemoveFile();
+  hideAlerts(['cert-alert-err','cert-alert-ok']);
+  setDefaultDate('cert-date-assigned');
+  setDefaultDate('cert-docdate');
+  loadNextCertSeq();
+}
+
+function submitCert() {
+  hideAlerts(['cert-alert-err','cert-alert-ok']);
+
+  var subject  = v('cert-subject');
+  var toOrg    = v('cert-to-org');
+  var reqDept  = v('cert-req-dept');
+  var purpose  = v('cert-purpose');
+  var docno    = v('cert-docno');
+  var dateAsgn = v('cert-date-assigned');
+  var docDate  = v('cert-docdate');
+
+  if (!reqDept)  { showA('cert-alert-err','❌ กรุณาเลือก หน่วยงานที่ขอ'); return; }
+  if (!subject)  { showA('cert-alert-err','❌ กรุณากรอก เรื่อง'); return; }
+  if (!toOrg)    { showA('cert-alert-err','❌ กรุณากรอก ส่งถึง / หน่วยงาน'); return; }
+  if (!purpose)  { showA('cert-alert-err','❌ กรุณากรอก วัตถุประสงค์การขอ'); return; }
+  if (!dateAsgn) { showA('cert-alert-err','❌ กรุณากรอก วันที่ลงเลขหนังสือส่ง'); return; }
+  if (!docDate)  { showA('cert-alert-err','❌ กรุณากรอก วันที่หนังสือ'); return; }
+
+  setLoad('cert-save-btn', true, '⏳ กำลังบันทึก...');
+
+  function doSave(fileId) {
+    var data = {
+      docNumber:    docno,
+      dateAssigned: dateAsgn,
+      docDate:      docDate,
+      requestDept:  reqDept,
+      subject:      subject,
+      toOrg:        toOrg,
+      purpose:      purpose,
+      note:         v('cert-note'),
+      fileId:       fileId || '',
+      userName:     _user ? _user.name : ''
+    };
+    gasRun('saveCertificate')
+      .withSuccessHandler(function(r) {
+        setLoad('cert-save-btn', false, '💾 บันทึกหนังสือรับรอง');
+        if (r && r.success) {
+          showA('cert-alert-ok', '✅ บันทึกสำเร็จ เลขที่: <strong>' + esc(r.docNumber) + '</strong>');
+          toast('✅ บันทึกหนังสือรับรองสำเร็จ — ' + r.docNumber, 'ok', 4000);
+          certResetForm();
+          loadRecentCerts();
+        } else {
+          showA('cert-alert-err', '❌ ' + ((r&&r.message)||'เกิดข้อผิดพลาด'));
+        }
+      })
+      .withFailureHandler(function(e) {
+        setLoad('cert-save-btn', false, '💾 บันทึกหนังสือรับรอง');
+        showA('cert-alert-err', '❌ เชื่อมต่อล้มเหลว: ' + e);
+      })
+      .call(data);
+  }
+
+  // ถ้ามีไฟล์ → upload ก่อน แล้วค่อย save
+  if (_certPendingFile) {
+    var pf = _certPendingFile;
+    setLoad('cert-save-btn', true, '⏳ กำลังอัพโหลดไฟล์...');
+    gasRun('uploadFile')
+      .withSuccessHandler(function(ur) {
+        if (!ur || !ur.success) {
+          setLoad('cert-save-btn', false, '💾 บันทึกหนังสือรับรอง');
+          showA('cert-alert-err', '❌ อัพโหลดไฟล์ล้มเหลว: ' + ((ur&&ur.message)||''));
+          return;
+        }
+        setLoad('cert-save-btn', true, '⏳ กำลังบันทึก...');
+        doSave(ur.fileId);
+      })
+      .withFailureHandler(function(e) {
+        setLoad('cert-save-btn', false, '💾 บันทึกหนังสือรับรอง');
+        showA('cert-alert-err', '❌ อัพโหลดล้มเหลว: ' + e);
+      })
+      .call(pf.b64, pf.name, pf.mimeType, null, _user ? _user.name : '');
+  } else {
+    doSave('');
+  }
+}
+
+function loadRecentCerts() {
+  var tbody = document.getElementById('cert-tbl-body');
+  if (tbody) tbody.innerHTML = '<tr class="tbl-empty"><td colspan="7">⏳ กำลังโหลด...</td></tr>';
+  gasRun('getRecentCertificates')
+    .withSuccessHandler(function(r) {
+      if (!r || !r.success || !r.rows || r.rows.length === 0) {
+        tbody.innerHTML = '<tr class="tbl-empty"><td colspan="7">ยังไม่มีข้อมูลหนังสือรับรอง</td></tr>';
+        return;
+      }
+      tbody.innerHTML = r.rows.map(function(row) {
+        var subj = (row.subject||'').length > 50 ? (row.subject||'').substring(0,50)+'...' : (row.subject||'');
+        var fileLink = row.fileLink
+          ? (function(fl) {
+              var m = fl.match(/\/d\/([A-Za-z0-9_-]{20,})\//);
+              return m
+                ? ' <a href="https://drive.google.com/file/d/'+m[1]+'/view" target="_blank" style="color:var(--accent);">📎</a>'
+                : '';
+            })(row.fileLink)
+          : '<span style="color:var(--gray300);">—</span>';
+        return '<tr>' +
+          '<td><strong style="font-family:\'IBM Plex Mono\',monospace;color:var(--navy);">' + esc(row.docNumber||'—') + '</strong></td>' +
+          '<td style="white-space:nowrap;">' + fmtDate(row.dateAssigned) + '</td>' +
+          '<td style="font-size:12px;">' + esc(row.requestDept||'—') + '</td>' +
+          '<td>' + esc(subj) + '</td>' +
+          '<td style="font-size:12px;">' + esc(row.toOrg||'—') + '</td>' +
+          '<td style="font-size:12px;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(row.purpose||'—') + '</td>' +
+          '<td>' + fileLink + '</td>' +
+          '</tr>';
+      }).join('');
+    })
+    .withFailureHandler(function(e) {
+      if (tbody) tbody.innerHTML = '<tr class="tbl-empty"><td colspan="7">❌ โหลดล้มเหลว: ' + esc(e) + '</td></tr>';
+    })
+    .call(20);
+}
+
+// ============================================================
+// ORDER — หนังสือคำสั่ง
+// ============================================================
+var _orderPendingFile    = null;
+var _orderMissionsLoaded = false;
+var _orderMissions       = [];
+
+function loadNextOrderSeq() {
+  gasRun('getNextOrderSeqPreview')
+    .withSuccessHandler(function(r) {
+      if (r && r.success && r.nextSeq) {
+        var el = document.getElementById('order-no-preview');
+        if (el) el.textContent = '🔢 เลขถัดไป: ' + r.nextSeq;
+        var inp = document.getElementById('order-docno');
+        if (inp && !inp.value) inp.placeholder = r.nextSeq + ' (อัตโนมัติ)';
+      }
+    })
+    .withFailureHandler(function(){})
+    .call();
+}
+
+function loadMissionGroups() {
+  gasRun('getMissionGroups')
+    .withSuccessHandler(function(r) {
+      if (!r || !r.success) return;
+      _orderMissions = r.missions || [];
+      _orderMissionsLoaded = true;
+      renderMissionGroups(r.allLabel, r.missions);
+    })
+    .withFailureHandler(function(){
+      var c = document.getElementById('order-missions-container');
+      if (c) c.innerHTML = '<div style="padding:12px;color:var(--red);font-size:13px;">❌ โหลดรายชื่อกลุ่มงานล้มเหลว</div>';
+    })
+    .call();
+}
+
+function renderMissionGroups(allLabel, missions) {
+  var c = document.getElementById('order-missions-container');
+  if (!c) return;
+  var html = '';
+
+  // ตัวเลือก "ทั้งหมด"
+  html += '<div style="padding:10px 16px;background:var(--gray100);border-bottom:var(--line);display:flex;align-items:center;gap:10px;">' +
+    '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;color:var(--navy);font-size:13px;">' +
+    '<input type="checkbox" id="order-grp-all" onchange="orderToggleAll(this)" style="width:16px;height:16px;cursor:pointer;"> ' +
+    esc(allLabel) + '</label></div>';
+
+  missions.forEach(function(m, mi) {
+    html += '<div style="background:var(--navy);padding:7px 16px;">' +
+      '<span style="color:rgba(255,255,255,.9);font-size:12px;font-weight:700;letter-spacing:.3px;">' + esc(m.mission) + '</span></div>';
+    m.groups.forEach(function(g, gi) {
+      var cbId = 'order-grp-' + mi + '-' + gi;
+      html += '<div style="padding:6px 16px 6px 24px;border-bottom:1px solid var(--gray100);display:flex;align-items:center;gap:10px;">' +
+        '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--gray700);flex:1;">' +
+        '<input type="checkbox" id="' + cbId + '" class="order-grp-cb" value="' + esc(g) + '" onchange="orderUpdateSummary()" style="width:14px;height:14px;cursor:pointer;"> ' +
+        esc(g) + '</label></div>';
+    });
+  });
+
+  c.innerHTML = html;
+  orderUpdateSummary();
+}
+
+function orderToggleAll(cb) {
+  var cbs = document.querySelectorAll('.order-grp-cb');
+  cbs.forEach(function(el){ el.checked = cb.checked; });
+  orderUpdateSummary();
+}
+
+function orderSelectAllGroups() {
+  var allCb = document.getElementById('order-grp-all');
+  if (allCb) { allCb.checked = true; orderToggleAll(allCb); }
+}
+
+function orderClearGroups() {
+  var allCb = document.getElementById('order-grp-all');
+  if (allCb) { allCb.checked = false; orderToggleAll(allCb); }
+}
+
+function orderUpdateSummary() {
+  var cbs = document.querySelectorAll('.order-grp-cb:checked');
+  var count = cbs.length;
+  var summary = document.getElementById('order-groups-summary');
+  var countEl = document.getElementById('order-groups-count');
+  var allCb = document.getElementById('order-grp-all');
+  if (countEl) setText('order-groups-count', count);
+  if (summary) summary.style.display = count > 0 ? 'block' : 'none';
+
+  // ซิงค์ checkbox "ทั้งหมด"
+  if (allCb) {
+    var totalCbs = document.querySelectorAll('.order-grp-cb').length;
+    allCb.indeterminate = count > 0 && count < totalCbs;
+    if (count === totalCbs) allCb.checked = true;
+    if (count === 0) allCb.checked = false;
+  }
+}
+
+function orderGetSelectedGroups() {
+  var allCb = document.getElementById('order-grp-all');
+  if (allCb && allCb.checked && !allCb.indeterminate) {
+    return 'ทุกกลุ่มงาน/งานในโรงพยาบาลสันทราย';
+  }
+  var cbs = document.querySelectorAll('.order-grp-cb:checked');
+  var names = [];
+  cbs.forEach(function(cb){ names.push(cb.value); });
+  return names.join(', ');
+}
+
+function orderHandleFile(input) {
+  var file = input.files[0];
+  if (!file) return;
+  hideAlerts(['order-alert-err','order-alert-ok']);
+  if (file.size > 20*1024*1024) { showA('order-alert-err','❌ ไฟล์ใหญ่เกิน 20 MB'); input.value=''; return; }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    _orderPendingFile = { b64: e.target.result.split(',')[1], name: file.name,
+                          mimeType: file.type, sizeKB: Math.round(file.size/1024) };
+    setText('order-fname', file.name);
+    setText('order-fsize', Math.round(file.size/1024) + ' KB');
+    document.getElementById('order-file-box').style.display = 'flex';
+  };
+  reader.readAsDataURL(file);
+}
+
+function orderRemoveFile() {
+  _orderPendingFile = null;
+  document.getElementById('order-file-input').value = '';
+  document.getElementById('order-file-box').style.display = 'none';
+}
+
+function orderResetForm() {
+  ['order-docno','order-date','order-subject','order-detail','order-signed-by','order-signer-pos','order-note'].forEach(function(id){ setVal(id,''); });
+  orderClearGroups();
+  orderRemoveFile();
+  hideAlerts(['order-alert-err','order-alert-ok']);
+  setDefaultDate('order-date');
+  loadNextOrderSeq();
+}
+
+function submitOrder() {
+  hideAlerts(['order-alert-err','order-alert-ok']);
+
+  var subject  = v('order-subject');
+  var orderDate = v('order-date');
+  var groups   = orderGetSelectedGroups();
+  var docno    = v('order-docno');
+
+  if (!subject)   { showA('order-alert-err','❌ กรุณากรอก เรื่อง'); return; }
+  if (!orderDate) { showA('order-alert-err','❌ กรุณากรอก วันที่คำสั่ง'); return; }
+  if (!groups)    { showA('order-alert-err','❌ กรุณาเลือก กลุ่มงาน/หน่วยงานที่เกี่ยวข้อง อย่างน้อย 1 รายการ'); return; }
+
+  setLoad('order-save-btn', true, '⏳ กำลังบันทึก...');
+
+  function doSave(fileId) {
+    var data = {
+      docNumber:      docno,
+      orderDate:      orderDate,
+      subject:        subject,
+      detail:         v('order-detail'),
+      groups:         groups,
+      signedBy:       v('order-signed-by'),
+      signerPosition: v('order-signer-pos'),
+      note:           v('order-note'),
+      fileId:         fileId || '',
+      userName:       _user ? _user.name : ''
+    };
+    gasRun('saveOrderDocument')
+      .withSuccessHandler(function(r) {
+        setLoad('order-save-btn', false, '💾 บันทึกหนังสือคำสั่ง');
+        if (r && r.success) {
+          showA('order-alert-ok', '✅ บันทึกสำเร็จ เลขที่: <strong>' + esc(r.docNumber) + '</strong>');
+          toast('✅ บันทึกหนังสือคำสั่งสำเร็จ — ' + r.docNumber, 'ok', 4000);
+          orderResetForm();
+          loadRecentOrders();
+        } else {
+          showA('order-alert-err', '❌ ' + ((r&&r.message)||'เกิดข้อผิดพลาด'));
+        }
+      })
+      .withFailureHandler(function(e) {
+        setLoad('order-save-btn', false, '💾 บันทึกหนังสือคำสั่ง');
+        showA('order-alert-err', '❌ เชื่อมต่อล้มเหลว: ' + e);
+      })
+      .call(data);
+  }
+
+  if (_orderPendingFile) {
+    var pf = _orderPendingFile;
+    setLoad('order-save-btn', true, '⏳ กำลังอัพโหลดไฟล์...');
+    gasRun('uploadFile')
+      .withSuccessHandler(function(ur) {
+        if (!ur || !ur.success) {
+          setLoad('order-save-btn', false, '💾 บันทึกหนังสือคำสั่ง');
+          showA('order-alert-err', '❌ อัพโหลดไฟล์ล้มเหลว: ' + ((ur&&ur.message)||''));
+          return;
+        }
+        setLoad('order-save-btn', true, '⏳ กำลังบันทึก...');
+        doSave(ur.fileId);
+      })
+      .withFailureHandler(function(e) {
+        setLoad('order-save-btn', false, '💾 บันทึกหนังสือคำสั่ง');
+        showA('order-alert-err', '❌ อัพโหลดล้มเหลว: ' + e);
+      })
+      .call(pf.b64, pf.name, pf.mimeType, null, _user ? _user.name : '');
+  } else {
+    doSave('');
+  }
+}
+
+function loadRecentOrders() {
+  var tbody = document.getElementById('order-tbl-body');
+  if (tbody) tbody.innerHTML = '<tr class="tbl-empty"><td colspan="6">⏳ กำลังโหลด...</td></tr>';
+  gasRun('getRecentOrders')
+    .withSuccessHandler(function(r) {
+      if (!r || !r.success || !r.rows || r.rows.length === 0) {
+        tbody.innerHTML = '<tr class="tbl-empty"><td colspan="6">ยังไม่มีข้อมูลหนังสือคำสั่ง</td></tr>';
+        return;
+      }
+      tbody.innerHTML = r.rows.map(function(row) {
+        var subj = (row.subject||'').length > 55 ? (row.subject||'').substring(0,55)+'...' : (row.subject||'');
+        var grps = (row.groups||'').length > 45 ? (row.groups||'').substring(0,45)+'...' : (row.groups||'');
+        var fileLink = row.fileLink
+          ? (function(fl) {
+              var m = fl.match(/\/d\/([A-Za-z0-9_-]{20,})\//);
+              return m
+                ? '<a href="https://drive.google.com/file/d/'+m[1]+'/view" target="_blank" style="color:var(--accent);">📎</a>'
+                : '';
+            })(row.fileLink)
+          : '<span style="color:var(--gray300);">—</span>';
+        return '<tr>' +
+          '<td><strong style="font-family:\'IBM Plex Mono\',monospace;color:var(--navy);">' + esc(row.docNumber||'—') + '</strong></td>' +
+          '<td style="white-space:nowrap;">' + fmtDate(row.orderDate) + '</td>' +
+          '<td>' + esc(subj) + '</td>' +
+          '<td style="font-size:12px;max-width:180px;" title="' + esc(row.groups||'') + '">' + esc(grps) + '</td>' +
+          '<td style="font-size:12px;">' + esc(row.signedBy||'—') + '</td>' +
+          '<td>' + fileLink + '</td>' +
+          '</tr>';
+      }).join('');
+    })
+    .withFailureHandler(function(e) {
+      if (tbody) tbody.innerHTML = '<tr class="tbl-empty"><td colspan="6">❌ โหลดล้มเหลว: ' + esc(e) + '</td></tr>';
+    })
+    .call(20);
+}
+
 // ============================================================
 // INIT
 // ============================================================
