@@ -2913,17 +2913,26 @@ function gotoPage(page) {
     setDefaultDate('r-date');
     loadNextRecvSeq();
   }
-  if (page === 'send') {
-  loadDepts('s-sentby');
-  setDefaultDate('s-date-assigned');
-  setDefaultDate('s-docdate');
-  loadNextSendSeq();
-}    { loadDepts('s-sentby'); setDefaultDate('s-date'); }
+  if (page === 'send')    {
+  if (!_missionsLoaded) loadMissionGroups();
+  setDefaultDate('s-date');
+}   { loadDepts('s-sentby'); setDefaultDate('s-date'); }
   if (page === 'report')  setReportDates();
   if (page === 'history') loadHistoryYears();
   if (page === 'import')  loadHistoryYears();
-  if (page === 'cert')    { loadNextCertSeq(); loadRecentCerts(); if (!_certDeptsLoaded) loadDepts('cert-req-dept'); _certDeptsLoaded = true; setDefaultDate('cert-date-assigned'); setDefaultDate('cert-docdate'); }
-  if (page === 'order')   { loadNextOrderSeq(); loadRecentOrders(); if (!_orderMissionsLoaded) loadMissionGroups(); setDefaultDate('order-date-assigned'); setDefaultDate('order-date'); }
+  if (page === 'cert')    {
+  loadNextCertSeq();
+  loadRecentCerts();
+  if (!_missionsLoaded) loadMissionGroups();
+  setDefaultDate('cert-date-assigned');
+  setDefaultDate('cert-docdate');
+}
+  if (page === 'order')   {
+  loadNextOrderSeq();
+  loadRecentOrders();
+  if (!_missionsLoaded) loadMissionGroups();
+  setDefaultDate('order-date-assigned');
+  setDefaultDate('order-date');
 }
 // ============================================================
 // SEND — หนังสือส่งออก
@@ -4981,7 +4990,6 @@ function loadRecentCerts() {
 // ORDER — หนังสือคำสั่ง
 // ============================================================
 var _orderPendingFile    = null;
-var _orderMissionsLoaded = false;
 var _orderMissions       = [];
 
 /** อ่านเลขที่คำสั่ง (seq / year) จาก UI */
@@ -5010,16 +5018,31 @@ function loadNextOrderSeq() {
     .call();
 }
 
+var _missionsLoaded = false;   // เปลี่ยนชื่อจาก _orderMissionsLoaded
+
 function loadMissionGroups() {
+  if (_missionsLoaded && _orderMissions && _orderMissions.length > 0) {
+    // โหลดแล้ว → render ให้ครบทุก dropdown ที่ใช้ข้อมูลนี้
+    renderMissionGroupedSelect('order-owner-dept', _orderMissions);
+    renderMissionGroupedSelect('cert-req-dept',   _orderMissions);
+    renderMissionGroupedSelect('s-sentby',        _orderMissions);
+    renderOrderCirculate(ALL_GROUPS_LABEL, _orderMissions);
+    return;
+  }
+
   gasRun('getMissionGroups')
     .withSuccessHandler(function(r) {
       if (!r || !r.success) return;
-      _orderMissions = r.missions || [];
-      _orderMissionsLoaded = true;
-      renderOrderOwnerDept(r.missions);
+      _orderMissions    = r.missions || [];
+      _missionsLoaded   = true;
+
+      // render dropdown ทั้ง 3 จุดที่ใช้ข้อมูล mission groups
+      renderMissionGroupedSelect('order-owner-dept', r.missions);   // หนังสือคำสั่ง — เจ้าของเรื่อง
+      renderMissionGroupedSelect('cert-req-dept',    r.missions);   // หนังสือรับรอง — หน่วยงานที่ขอ
+      renderMissionGroupedSelect('s-sentby',         r.missions);   // หนังสือส่งออก — ผู้ส่ง/หน่วยงาน
+
+      // render panel checkbox เวียนถึง (หนังสือคำสั่ง)
       renderOrderCirculate(r.allLabel, r.missions);
-      // cert req-dept ใช้ข้อมูลเดียวกัน
-      renderMissionGroupedSelect('cert-req-dept', r.missions);
     })
     .withFailureHandler(function(){
       var c = document.getElementById('order-circulate-container');
@@ -5028,19 +5051,45 @@ function loadMissionGroups() {
     .call();
 }
 
-/** render <select> grouped จาก missions (ใช้ร่วมกับ cert-req-dept) */
+/**
+* renderMissionGroupedSelect — สร้าง <select> แบบ grouped ตามกลุ่มภารกิจ
+* ใช้ร่วมกันสำหรับ: order-owner-dept, cert-req-dept, s-sentby
+*/
 function renderMissionGroupedSelect(selId, missions) {
   var sel = document.getElementById(selId);
   if (!sel) return;
+
+  // เก็บค่าเดิมไว้ (ถ้ามี) เพื่อ restore หลัง render ใหม่
+  var prevVal = sel.value;
+
   var html = '<option value="">— เลือกหน่วยงาน —</option>';
-  missions.forEach(function(m) {
-    html += '<optgroup label="' + esc(m.mission) + '">';
-    m.groups.forEach(function(g) {
-      html += '<option value="' + esc(g) + '">' + esc(g) + '</option>';
-    });
+
+  // เพิ่ม option "ทุกกลุ่มงาน/งานในโรงพยาบาลสันทราย" เป็นตัวเลือกแรกในกลุ่มแรก
+  missions.forEach(function(m, mi) {
+    html += '<optgroup label="▸ ' + esc(m.mission) + '">';
+
+    // ถ้าเป็นภารกิจอำนวยการ → เพิ่ม "ทุกกลุ่มงานฯ" เป็นตัวเลือกแรก
+    if (mi === 0 && m.groups && m.groups.length > 0 &&
+        m.groups[0] === 'ทุกกลุ่มงาน/งานในโรงพยาบาลสันทราย') {
+      html += '<option value="' + esc(m.groups[0]) + '" style="font-weight:700;">'
+            + esc(m.groups[0]) + '</option>';
+      // ข้าม index 0 เพราะ render ไปแล้ว
+      for (var gi = 1; gi < m.groups.length; gi++) {
+        html += '<option value="' + esc(m.groups[gi]) + '">' + esc(m.groups[gi]) + '</option>';
+      }
+    } else {
+      m.groups.forEach(function(g) {
+        html += '<option value="' + esc(g) + '">' + esc(g) + '</option>';
+      });
+    }
+
     html += '</optgroup>';
   });
+
   sel.innerHTML = html;
+
+  // restore ค่าเดิม
+  if (prevVal) sel.value = prevVal;
 }
 
 function renderOrderOwnerDept(missions) {
