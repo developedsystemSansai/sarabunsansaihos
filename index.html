@@ -2381,150 +2381,128 @@ tbody tr:hover td { background: #f4f7fc; }
     </div>
   </div><!-- /page-cert -->
 
-  <!-- ===== PAGE: หนังสือคำสั่ง ===== -->
-  <div id="page-order" class="page">
-    <div class="content content-md">
-      <div class="ptb">
-        <div class="ptb-icon">📋</div>
-        <div>
-          <h2>หนังสือคำสั่ง</h2>
-          <p>บันทึกและค้นหาหนังสือคำสั่งของโรงพยาบาลสันทราย — กลุ่มภารกิจ 6</p>
-        </div>
+<!-- ===== PAGE: หนังสือคำสั่ง ===== -->
+<div id="page-order" class="page">
+  <div class="content content-md">
+    <div class="ptb">
+      <div class="ptb-icon">📋</div>
+      <div>
+        <h2>หนังสือคำสั่ง</h2>
+        <p>บันทึกและค้นหาหนังสือคำสั่งของโรงพยาบาลสันทราย</p>
       </div>
-
-      <div id="order-alert-err" class="alert a-error"></div>
-      <div id="order-alert-ok"  class="alert a-success"></div>
-
-      <!-- ฟอร์มบันทึก -->
-      <div class="card">
-        <div class="card-head" style="background:linear-gradient(135deg,var(--navy),var(--navy2));border-bottom:2px solid var(--gold);">
-          <span class="card-head-icon" style="color:var(--gold);">📋</span>
-          <h3 style="color:white;">บันทึกหนังสือคำสั่งใหม่</h3>
-          <div id="order-no-preview" style="margin-left:auto;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:4px;padding:4px 12px;font-size:12px;font-family:'IBM Plex Mono',monospace;color:var(--gold);font-weight:700;white-space:nowrap;"></div>
-        </div>
-        <div class="card-body">
-
-          <!-- แถว 1: วันที่ลงเลข + วันที่ออกคำสั่ง -->
-          <div class="form-grid">
-            <div class="f-group">
-              <label class="f-label">วันที่ลงเลขหนังสือคำสั่ง <span class="req">*</span></label>
-              <input type="text" id="order-date-assigned" class="f-input" placeholder="ว/ด/ป พ.ศ. เช่น 01/06/2569">
-            </div>
-            <div class="f-group">
-              <label class="f-label">วันที่ออกคำสั่ง <span class="req">*</span></label>
-              <input type="text" id="order-date" class="f-input" placeholder="ว/ด/ป พ.ศ. เช่น 01/06/2569">
-            </div>
-          </div>
-
-          <!-- แถว 2: เลขที่คำสั่ง (ลำดับ/2569) + เจ้าของเรื่อง -->
-          <div class="form-grid">
-            <div class="f-group">
-              <label class="f-label">เลขที่คำสั่ง <span class="req">*</span></label>
-              <div style="display:flex;align-items:center;gap:0;">
-                <input type="text" id="order-docno-seq" class="f-input" placeholder="เลขลำดับ" style="border-radius:var(--r) 0 0 var(--r);border-right:none;text-align:center;max-width:90px;">
-                <span style="background:var(--gray100);border:1px solid var(--gray300);border-left:none;border-right:none;padding:9px 10px;font-size:14px;color:var(--gray600);font-weight:700;">/</span>
-                <span id="order-docno-year" style="background:var(--gray100);border:1px solid var(--gray300);border-left:none;border-radius:0 var(--r) var(--r) 0;padding:9px 12px;font-size:13px;color:var(--navy);font-weight:700;white-space:nowrap;">2569</span>
-              </div>
-              <div class="f-hint">ปล่อยว่างเพื่อให้ระบบกำหนดเลขถัดไปอัตโนมัติ</div>
-              <input type="hidden" id="order-docno">
-            </div>
-            <div class="f-group">
-              <label class="f-label" style="background:#3d9970;color:white;padding:4px 10px;border-radius:var(--r);display:inline-block;margin-bottom:6px;">เจ้าของเรื่อง / หน่วยงาน <span style="color:#ffeb80;">*</span></label>
-              <select id="order-owner-dept" class="f-select">
-                <option value="">— เลือกหน่วยงาน —</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- คำสั่งเรื่อง เต็มแถว -->
-          <div class="f-group">
-            <label class="f-label">คำสั่งเรื่อง <span class="req">*</span></label>
-            <input type="text" id="order-subject" class="f-input" placeholder="— เรื่องของคำสั่ง" oninput="cnt('order-subject','order-subject-cnt')">
-            <div class="f-counter"><span id="order-subject-cnt">0</span> ตัวอักษร</div>
-          </div>
-
-          <!-- เวียนถึง/หน่วยงาน — panel เลือกได้ทั้งกลุ่มภารกิจ และรายกลุ่มงาน -->
-          <div class="f-group">
-            <label class="f-label" style="background:#3d9970;color:white;padding:4px 10px;border-radius:var(--r);display:inline-block;margin-bottom:8px;">เวียนถึง / หน่วยงาน <span style="color:#ffeb80;">*</span></label>
-
-            <!-- ปุ่มลัด -->
-            <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;">
-              <button type="button" onclick="orderCirculateSelectAll()" style="background:var(--navy);color:white;border:none;border-radius:4px;padding:5px 14px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;">✅ ทุกหน่วยงาน</button>
-              <button type="button" onclick="orderCirculateClear()" style="background:var(--gray100);color:var(--gray600);border:var(--line);border-radius:4px;padding:5px 14px;cursor:pointer;font-size:12px;font-family:inherit;">✕ ล้างทั้งหมด</button>
-            </div>
-
-            <!-- panel -->
-            <div id="order-circulate-container" style="border:1px solid var(--gray200);border-radius:var(--r);overflow:hidden;max-height:420px;overflow-y:auto;">
-              <div style="padding:14px 16px;background:var(--gray50);text-align:center;color:var(--gray400);font-size:13px;">⏳ กำลังโหลดรายชื่อหน่วยงาน...</div>
-            </div>
-
-            <!-- สรุปที่เลือก -->
-            <div id="order-circulate-summary" style="display:none;margin-top:8px;background:var(--blue-bg);border:1px solid #bfdbfe;border-radius:var(--r);padding:9px 14px;font-size:12px;color:var(--blue);">
-              <strong>ที่เลือก: </strong><span id="order-circulate-count">0</span> หน่วยงาน
-              — <span id="order-circulate-names" style="color:var(--gray600);"></span>
-            </div>
-          </div>
-
-          <!-- รายละเอียด + หมายเหตุ + ไฟล์แนบ -->
-          <div class="form-grid">
-            <div class="f-group" style="margin-bottom:0;">
-              <label class="f-label">รายละเอียด</label>
-              <textarea id="order-detail" class="f-textarea" rows="3" placeholder="— สรุปเนื้อหาโดยย่อ"></textarea>
-            </div>
-            <div class="f-group" style="margin-bottom:0;">
-              <label class="f-label">หมายเหตุ</label>
-              <textarea id="order-note" class="f-textarea" rows="2" placeholder="ข้อมูลเพิ่มเติม..."></textarea>
-              <div style="margin-top:10px;">
-                <label class="f-label">ไฟล์แนบ</label>
-                <input type="file" id="order-file-input" class="f-input"
-                  accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.txt,.ppt,.pptx"
-                  onchange="orderHandleFile(this)">
-                <div class="f-hint">PDF, Word, Excel, JPG, PNG — ขนาดสูงสุด 20 MB</div>
-                <div id="order-file-box" style="display:none;margin-top:8px;background:var(--green-bg);border:1px solid #bbf7d0;border-radius:var(--r);padding:10px 14px;align-items:center;justify-content:space-between;gap:10px;">
-                  <span>📄 <strong id="order-fname" style="color:var(--green);font-size:13px;"></strong> <span id="order-fsize" style="color:var(--gray400);font-size:12px;"></span></span>
-                  <button onclick="orderRemoveFile()" style="background:var(--red-bg);color:var(--red);border:1px solid #fca5a5;border-radius:4px;padding:2px 9px;cursor:pointer;font-size:12px;">✕</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="btn-row">
-            <button class="btn btn-secondary" onclick="orderResetForm()">🔄 ล้างข้อมูล</button>
-            <button class="btn btn-primary"   id="order-save-btn" onclick="submitOrder()">💾 บันทึกหนังสือคำสั่ง</button>
-          </div>
-        </div>
-      </div>
-
-      <!-- รายการล่าสุด -->
-      <div class="card">
-        <div class="card-head">
-          <span class="card-head-icon">📋</span>
-          <h3>รายการหนังสือคำสั่งล่าสุด</h3>
-          <button onclick="loadRecentOrders()" style="margin-left:auto;background:var(--gray100);border:var(--line);border-radius:4px;padding:4px 12px;cursor:pointer;font-size:12px;color:var(--gray600);">🔄 โหลดใหม่</button>
-        </div>
-        <div class="card-body" style="padding:0;">
-          <div class="tbl-wrap">
-            <table>
-              <thead><tr>
-                <th>เลขที่คำสั่ง</th>
-                <th>วันที่ออกคำสั่ง</th>
-                <th>คำสั่งเรื่อง</th>
-                <th>เจ้าของเรื่อง</th>
-                <th>เวียนถึง</th>
-                <th>ไฟล์</th>
-              </tr></thead>
-              <tbody id="order-tbl-body">
-                <tr class="tbl-empty"><td colspan="6">⏳ กำลังโหลด...</td></tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
     </div>
-  </div><!-- /page-order -->
-
-</div><!-- #main-content -->
+    
+    <div id="order-alert-err" class="alert a-error"></div>
+    <div id="order-alert-ok" class="alert a-success"></div>
+    
+    <!-- ฟอร์มบันทึก -->
+    <div class="card">
+      <div class="card-head" style="background:linear-gradient(135deg,var(--navy),var(--navy2));border-bottom:2px solid var(--gold);">
+        <span class="card-head-icon" style="color:var(--gold);">📋</span>
+        <h3 style="color:white;">บันทึกหนังสือคำสั่งใหม่</h3>
+      </div>
+      <div class="card-body">
+        <!-- แถว 1: วันที่ลงเลข + วันที่ออกคำสั่ง -->
+        <div class="form-grid">
+          <div class="f-group">
+            <label class="f-label">วันที่ลงเลขหนังสือคำสั่ง <span class="req">*</span></label>
+            <input type="text" id="order-date-assigned" class="f-input" placeholder="ว/ด/ป พ.ศ. เช่น 01/06/2569">
+          </div>
+          <div class="f-group">
+            <label class="f-label">วันที่ออกคำสั่ง <span class="req">*</span></label>
+            <input type="text" id="order-date" class="f-input" placeholder="ว/ด/ป พ.ศ. เช่น 01/06/2569">
+          </div>
+        </div>
+        
+        <!-- แถว 2: เลขที่คำสั่ง (ชม 0033.301/...) + หน่วยงานที่ขอ -->
+        <div class="form-grid">
+          <div class="f-group">
+            <label class="f-label">เลขที่คำสั่ง <span class="req">*</span></label>
+            <div style="display:flex;align-items:center;gap:0;">
+              <span style="background:var(--gray100);border:1px solid var(--gray300);border-right:none;border-radius:var(--r) 0 0 var(--r);padding:9px 12px;font-size:13px;color:var(--gray600);white-space:nowrap;font-weight:600;">ชม 0033.301/</span>
+              <input type="text" id="order-docno" class="f-input" placeholder="กรอกเลขที่คำสั่ง (เช่น 123)" style="border-radius:0 var(--r) var(--r) 0;border-left:none;">
+            </div>
+            <div class="f-hint">กรอกเฉพาะตัวเลขหลังเครื่องหมาย /</div>
+          </div>
+          
+          <div class="f-group">
+            <label class="f-label" style="background:#3d9970;color:white;padding:4px 10px;border-radius:var(--r);display:inline-block;margin-bottom:6px;">หน่วยงานที่ขอ <span style="color:#ffeb80;">*</span></label>
+            <select id="order-owner-dept" class="f-select">
+              <option value="">— เลือกหน่วยงาน —</option>
+            </select>
+          </div>
+        </div>
+        
+        <!-- คำสั่งเรื่อง เต็มแถว -->
+        <div class="f-group">
+          <label class="f-label">คำสั่งเรื่อง <span class="req">*</span></label>
+          <input type="text" id="order-subject" class="f-input" placeholder="เรื่อง ของคำสั่ง" oninput="cnt('order-subject','order-subject-cnt')">
+          <div class="f-counter"><span id="order-subject-cnt">0</span> ตัวอักษร</div>
+        </div>
+        
+        <!-- เวียนถึง/หน่วยงาน -->
+        <div class="f-group">
+          <label class="f-label">เวียนถึง / หน่วยงาน</label>
+          <textarea id="order-circulate" class="f-textarea" rows="2" placeholder="ระบุหน่วยงานที่รับทราบคำสั่ง..."></textarea>
+        </div>
+        
+        <!-- รายละเอียด + หมายเหตุ + ไฟล์แนบ -->
+        <div class="form-grid">
+          <div class="f-group" style="margin-bottom:0;">
+            <label class="f-label">รายละเอียด</label>
+            <textarea id="order-detail" class="f-textarea" rows="3" placeholder="รายละเอียดคำสั่ง..."></textarea>
+          </div>
+          <div class="f-group" style="margin-bottom:0;">
+            <label class="f-label">หมายเหตุ</label>
+            <textarea id="order-note" class="f-textarea" rows="2" placeholder="ข้อมูลเพิ่มเติม..."></textarea>
+            <div style="margin-top:10px;">
+              <label class="f-label">ไฟล์แนบ</label>
+              <input type="file" id="order-file-input" class="f-input"
+                accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.txt,.ppt,.pptx"
+                onchange="orderHandleFile(this)">
+              <div class="f-hint">PDF, Word, Excel, JPG, PNG — ขนาดสูงสุด 20 MB</div>
+              <div id="order-file-box" style="display:none;margin-top:8px;background:var(--green-bg);border:1px solid #bbf7d0;border-radius:var(--r);padding:10px 14px;">
+                <span>📄 <strong id="order-fname" style="color:var(--green);font-size:13px;"></strong> <span id="order-fsize" style="color:var(--gray400);font-size:12px;"></span></span>
+                <button onclick="orderRemoveFile()" style="background:var(--red-bg);color:var(--red);border:1px solid #fca5a5;border-radius:4px;padding:2px 9px;cursor:pointer;font-size:12px;">✕</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="btn-row">
+          <button class="btn btn-secondary" onclick="orderResetForm()">🔄 ล้างข้อมูล</button>
+          <button class="btn btn-primary" id="order-save-btn" onclick="submitOrder()">💾 บันทึกหนังสือคำสั่ง</button>
+        </div>
+      </div>
+    </div>
+    
+    <!-- รายการล่าสุด -->
+    <div class="card">
+      <div class="card-head">
+        <span class="card-head-icon">📋</span>
+        <h3>รายการหนังสือคำสั่งล่าสุด</h3>
+        <button onclick="loadRecentOrders()" style="margin-left:auto;background:var(--gray100);border:var(--line);border-radius:4px;padding:4px 12px;cursor:pointer;font-size:12px;color:var(--gray600);">🔄 โหลดใหม่</button>
+      </div>
+      <div class="card-body" style="padding:0;">
+        <div class="tbl-wrap">
+          <table>
+            <thead><tr>
+              <th>เลขที่คำสั่ง</th>
+              <th>วันที่ออกคำสั่ง</th>
+              <th>คำสั่งเรื่อง</th>
+              <th>หน่วยงานที่ขอ</th>
+              <th>เวียนถึง</th>
+              <th>ไฟล์</th>
+            </tr></thead>
+            <tbody id="order-tbl-body">
+              <tr class="tbl-empty"><td colspan="6">⏳ กำลังโหลด...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- ===== SEARCH DETAIL MODAL ===== -->
 <div id="q-detail-overlay" onclick="closeSearchDetail(event)" style="display:none;position:fixed;inset:0;z-index:700;background:rgba(11,37,69,.55);backdrop-filter:blur(3px);align-items:center;justify-content:center;padding:20px;">
@@ -2899,6 +2877,10 @@ function showOnlyPage(pageId) {
 }
 
 function gotoPage(page) {
+    if (page === 'order') {
+    loadOrderDepartments();
+    setDefaultDate('order-date-assigned');
+    setDefaultDate('order-date');}
   if (!_user && page !== 'home') { openLogin(); return; }
   document.querySelectorAll('.page').forEach(function(el){ el.classList.remove('active'); });
   document.querySelectorAll('.nav-item').forEach(function(el){ el.classList.remove('active'); });
@@ -5094,16 +5076,52 @@ function orderClearGroups()         { orderCirculateClear(); }
 function orderUpdateSummary()       { orderCirculateUpdateSummary(); }
 function orderGetSelectedGroups()   { return orderCirculateGetSelected(); }
 function renderOrderCirculateDept() {}  // compat stub
-
+function loadOrderDepartments() {
+  if (_orderMissionsLoaded) return;
+  
+  gasRun('getMissionGroups')
+    .withSuccessHandler(function(r) {
+      if (!r || !r.success) return;
+      
+      _orderMissionsLoaded = true;
+      var sel = document.getElementById('order-owner-dept');
+      if (!sel) return;
+      
+      var html = '<option value="">— เลือกหน่วยงาน —</option>';
+      
+      r.missions.forEach(function(m) {
+        html += '<optgroup label="' + esc(m.mission) + '">';
+        m.groups.forEach(function(g) {
+          html += '<option value="' + esc(g) + '">' + esc(g) + '</option>';
+        });
+        html += '</optgroup>';
+      });
+      
+      sel.innerHTML = html;
+    })
+    .withFailureHandler(function() {})
+    .call();
+}
 function orderHandleFile(input) {
   var file = input.files[0];
   if (!file) return;
+  
   hideAlerts(['order-alert-err','order-alert-ok']);
-  if (file.size > 20*1024*1024) { showA('order-alert-err','❌ ไฟล์ใหญ่เกิน 20 MB'); input.value=''; return; }
+  
+  if (file.size > 20*1024*1024) { 
+    showA('order-alert-err','❌ ไฟล์ใหญ่เกิน 20 MB'); 
+    input.value=''; 
+    return; 
+  }
+  
   var reader = new FileReader();
   reader.onload = function(e) {
-    _orderPendingFile = { b64: e.target.result.split(',')[1], name: file.name,
-                          mimeType: file.type, sizeKB: Math.round(file.size/1024) };
+    _orderPendingFile = { 
+      b64: e.target.result.split(',')[1], 
+      name: file.name,
+      mimeType: file.type, 
+      sizeKB: Math.round(file.size/1024) 
+    };
     setText('order-fname', file.name);
     setText('order-fsize', Math.round(file.size/1024) + ' KB');
     document.getElementById('order-file-box').style.display = 'flex';
@@ -5118,46 +5136,53 @@ function orderRemoveFile() {
 }
 
 function orderResetForm() {
-  ['order-docno','order-docno-seq','order-send-no','order-date-assigned','order-date','order-subject','order-detail','order-note'].forEach(function(id){ setVal(id,''); });
+  ['order-docno','order-date-assigned','order-date','order-subject',
+   'order-circulate','order-detail','order-note'].forEach(function(id){ 
+    setVal(id,''); 
+  });
   setVal('order-owner-dept','');
-  setVal('order-circulate-dept','');
-  var prevEl = document.getElementById('order-send-no-preview');
-  if (prevEl) prevEl.textContent = '';
   orderRemoveFile();
   hideAlerts(['order-alert-err','order-alert-ok']);
   setDefaultDate('order-date-assigned');
   setDefaultDate('order-date');
-  loadNextOrderSeq();
 }
 
 function submitOrder() {
   hideAlerts(['order-alert-err','order-alert-ok']);
-
-  var subject      = v('order-subject');
-  var orderDate    = v('order-date');
+  
+  var docNumber = v('order-docno').trim();
   var dateAssigned = v('order-date-assigned');
-  var ownerDept    = v('order-owner-dept');
-  var circulateTo  = orderCirculateGetSelected();
-  // เลขที่คำสั่ง: ถ้ากรอก seq ให้ประกอบ seq/year ไม่งั้นใช้ auto จาก hidden field
-  var seqVal = v('order-docno-seq').trim();
-  var yrEl   = document.getElementById('order-docno-year');
-  var yr     = yrEl ? yrEl.textContent.trim() : '2569';
-  var docno  = seqVal ? seqVal + '/' + yr : v('order-docno');
-  // เลขหนังสือส่ง ชม 0033.301/...
-  var sendNoSuffix = v('order-send-no').trim();
-  var sendNo = sendNoSuffix ? 'ชม 0033.301/' + sendNoSuffix : '';
-
-  if (!dateAssigned){ showA('order-alert-err','❌ กรุณากรอก วันที่ลงเลขหนังสือคำสั่ง'); return; }
-  if (!subject)     { showA('order-alert-err','❌ กรุณากรอก คำสั่งเรื่อง'); return; }
-  if (!ownerDept)   { showA('order-alert-err','❌ กรุณาเลือก เจ้าของเรื่อง/หน่วยงาน'); return; }
-  if (!circulateTo) { showA('order-alert-err','❌ กรุณาเลือก เวียนถึง/หน่วยงาน'); return; }
-
+  var orderDate = v('order-date');
+  var subject = v('order-subject');
+  var ownerDept = v('order-owner-dept');
+  var circulateTo = v('order-circulate');
+  
+  if (!docNumber) { 
+    showA('order-alert-err','❌ กรุณากรอกเลขที่คำสั่ง'); 
+    return; 
+  }
+  if (!dateAssigned) { 
+    showA('order-alert-err','❌ กรุณากรอกวันที่ลงเลข'); 
+    return; 
+  }
+  if (!orderDate) { 
+    showA('order-alert-err','❌ กรุณากรอกวันที่ออกคำสั่ง'); 
+    return; 
+  }
+  if (!subject) { 
+    showA('order-alert-err','❌ กรุณากรอกคำสั่งเรื่อง'); 
+    return; 
+  }
+  if (!ownerDept) { 
+    showA('order-alert-err','❌ กรุณาเลือกหน่วยงานที่ขอ'); 
+    return; 
+  }
+  
   setLoad('order-save-btn', true, '⏳ กำลังบันทึก...');
-
+  
   function doSave(fileId) {
     var data = {
-      docNumber:    docno,
-      sendNo:       sendNo,
+      docNumber:    docNumber,
       dateAssigned: dateAssigned,
       orderDate:    orderDate,
       ownerDept:    ownerDept,
@@ -5168,6 +5193,7 @@ function submitOrder() {
       fileId:       fileId || '',
       userName:     _user ? _user.name : ''
     };
+    
     gasRun('saveOrderDocument')
       .withSuccessHandler(function(r) {
         setLoad('order-save-btn', false, '💾 บันทึกหนังสือคำสั่ง');
@@ -5186,7 +5212,7 @@ function submitOrder() {
       })
       .call(data);
   }
-
+  
   if (_orderPendingFile) {
     var pf = _orderPendingFile;
     setLoad('order-save-btn', true, '⏳ กำลังอัพโหลดไฟล์...');
@@ -5213,15 +5239,18 @@ function submitOrder() {
 function loadRecentOrders() {
   var tbody = document.getElementById('order-tbl-body');
   if (tbody) tbody.innerHTML = '<tr class="tbl-empty"><td colspan="6">⏳ กำลังโหลด...</td></tr>';
+  
   gasRun('getRecentOrders')
     .withSuccessHandler(function(r) {
       if (!r || !r.success || !r.rows || r.rows.length === 0) {
         tbody.innerHTML = '<tr class="tbl-empty"><td colspan="6">ยังไม่มีข้อมูลหนังสือคำสั่ง</td></tr>';
         return;
       }
+      
       tbody.innerHTML = r.rows.map(function(row) {
         var subj = (row.subject||'').length > 55 ? (row.subject||'').substring(0,55)+'...' : (row.subject||'');
         var circ = (row.circulateTo||'').length > 45 ? (row.circulateTo||'').substring(0,45)+'...' : (row.circulateTo||'');
+        
         var fileLink = row.fileLink
           ? (function(fl) {
               var m = fl.match(/\/d\/([A-Za-z0-9_-]{20,})\//);
@@ -5230,6 +5259,7 @@ function loadRecentOrders() {
                 : '';
             })(row.fileLink)
           : '<span style="color:var(--gray300);">—</span>';
+        
         return '<tr>' +
           '<td><strong style="font-family:\'IBM Plex Mono\',monospace;color:var(--navy);">' + esc(row.docNumber||'—') + '</strong></td>' +
           '<td style="white-space:nowrap;">' + fmtDate(row.orderDate) + '</td>' +
