@@ -1282,57 +1282,68 @@ tbody tr:hover td { background: #f4f7fc; }
       <div class="card">
         <div class="card-head"><span class="card-head-icon">📋</span><h3>ข้อมูลหนังสือส่งออก</h3></div>
         <div class="card-body">
+          <!-- แถว 1: วันที่ลงเลขหนังสือส่ง (เต็มแถว) -->
+          <div class="f-group">
+            <label class="f-label">วันที่ลงเลขหนังสือส่ง <span class="req">*</span></label>
+            <input type="text" id="s-regdate" class="f-input" placeholder="DD/MM/YYYY" style="max-width:220px;">
+          </div>
+          <!-- แถว 2: ความเร่งด่วน + ชั้นความลับ -->
           <div class="form-grid">
             <div class="f-group">
-              <label class="f-label">วันที่ส่ง</label>
+              <label class="f-label">ความเร่งด่วน <span class="req">*</span></label>
+              <select id="s-urgency" class="f-select">
+                <option value="ปกติ" selected>–ปกติ–</option>
+                <option value="ด่วน">ด่วน</option>
+                <option value="ด่วนมาก">ด่วนมาก</option>
+                <option value="ด่วนที่สุด">ด่วนที่สุด</option>
+              </select>
+            </div>
+            <div class="f-group">
+              <label class="f-label">ชั้นความลับ <span class="req">*</span></label>
+              <select id="s-secret" class="f-select">
+                <option value="ไม่มีชั้น" selected>–ปกติ–</option>
+                <option value="ลับ">ลับ</option>
+                <option value="ลับมาก">ลับมาก</option>
+                <option value="ลับที่สุด">ลับที่สุด</option>
+              </select>
+            </div>
+          </div>
+          <!-- แถว 3: เลขที่หนังสือ + วันที่หนังสือ -->
+          <div class="form-grid">
+            <div class="f-group">
+              <label class="f-label">เลขที่หนังสือ <span class="req">*</span></label>
+              <input type="text" id="s-docnum" class="f-input" placeholder="เช่น สธ 0032.201/1234">
+            </div>
+            <div class="f-group">
+              <label class="f-label">วันที่หนังสือ <span class="req">*</span></label>
               <input type="text" id="s-date" class="f-input" placeholder="DD/MM/YYYY">
             </div>
-            <div class="f-group">
-              <label class="f-label">ถึงหน่วยงาน <span class="req">*</span></label>
-              <input type="text" id="s-to" class="f-input" placeholder="ชื่อหน่วยงานผู้รับ">
-            </div>
           </div>
-          <div class="form-grid">
-            <div class="f-group">
-              <label class="f-label">เลขที่อ้างอิง</label>
-              <input type="text" id="s-ref" class="f-input" placeholder="เลขที่อ้างอิง">
-            </div>
-            <div class="f-group">
-              <label class="f-label">ผู้ส่ง / หน่วยงาน</label>
-              <select id="s-sentby" class="f-select"><option value="">-- เลือกหน่วยงาน --</option></select>
-            </div>
+          <!-- แถว 4: ผู้ส่ง/หน่วยงาน (dropdown ดึงจาก getDepartments) -->
+          <div class="f-group">
+            <label class="f-label">ผู้ส่ง / หน่วยงาน <span class="req">*</span></label>
+            <select id="s-sentby" class="f-select"><option value="">–เลือกหน่วยงาน–</option></select>
           </div>
+          <!-- แถว 5: เรื่อง -->
           <div class="f-group">
             <label class="f-label">เรื่อง <span class="req">*</span></label>
             <input type="text" id="s-subj" class="f-input" placeholder="ระบุหัวข้อ/เรื่องของหนังสือ" maxlength="200"
               oninput="cnt('s-subj','s-subj-cnt')">
             <div class="f-counter"><span id="s-subj-cnt">0</span> / 200</div>
           </div>
+          <!-- แถว 6: ส่งถึง/หน่วยงาน -->
+          <div class="f-group">
+            <label class="f-label">ส่งถึง / หน่วยงาน <span class="req">*</span></label>
+            <input type="text" id="s-to" class="f-input" placeholder="ชื่อหน่วยงานผู้รับ (ภายนอก)">
+          </div>
+          <!-- แถว 7: รายละเอียด -->
           <div class="f-group">
             <label class="f-label">รายละเอียด</label>
             <textarea id="s-detail" class="f-textarea" placeholder="สรุปเนื้อหาโดยย่อ..." maxlength="500"
               oninput="cnt('s-detail','s-detail-cnt')"></textarea>
             <div class="f-counter"><span id="s-detail-cnt">0</span> / 500</div>
           </div>
-          <div class="form-grid">
-            <div class="f-group">
-              <label class="f-label">ประเภท <span class="req">*</span></label>
-              <select id="s-cat" class="f-select">
-                <option value="">-- เลือกประเภท --</option>
-                <option>หนังสือราชการ</option><option>บันทึกข้อความ</option>
-                <option>คำสั่ง</option><option>ประกาศ</option><option>อื่น</option>
-              </select>
-            </div>
-            <div class="f-group">
-              <label class="f-label">ความเร่งด่วน</label>
-              <select id="s-urgency" class="f-select">
-                <option value="ปกติ" selected>ปกติ</option>
-                <option value="ด่วน">ด่วน</option>
-                <option value="ด่วนมาก">ด่วนมาก</option>
-                <option value="ด่วนที่สุด">ด่วนที่สุด</option>
-              </select>
-            </div>
-          </div>
+          <!-- แถว 8: หมายเหตุ + ไฟล์แนบ -->
           <div class="form-grid">
             <div class="f-group">
               <label class="f-label">หมายเหตุ</label>
@@ -1892,13 +1903,13 @@ tbody tr:hover td { background: #f4f7fc; }
         <div class="card-body">
           <div class="form-grid">
             <div class="f-group">
-              <label class="f-label">เลขที่หนังสือส่ง <span class="req">*</span></label>
-              <input type="text" id="cert-docno" class="f-input" placeholder="OUT-2569-0001 (ระบบจะกำหนดให้อัตโนมัติ)">
-              <div class="f-hint">ปล่อยว่างเพื่อให้ระบบกำหนดเลขที่ถัดไปอัตโนมัติ</div>
-            </div>
-            <div class="f-group">
               <label class="f-label">วันที่ลงเลขหนังสือส่ง <span class="req">*</span></label>
               <input type="text" id="cert-date-assigned" class="f-input" placeholder="ว/ด/ป พ.ศ. เช่น 01/06/2569">
+            </div>
+            <div class="f-group">
+              <label class="f-label">เลขที่หนังสือส่ง <span class="req">*</span></label>
+              <input type="text" id="cert-docno" class="f-input" placeholder="ชม 0033.301/1 (ระบบจะกำหนดให้อัตโนมัติ)">
+              <div class="f-hint">ปล่อยว่างเพื่อให้ระบบกำหนดเลขที่ถัดไปอัตโนมัติ</div>
             </div>
             <div class="f-group">
               <label class="f-label">วันที่หนังสือ <span class="req">*</span></label>
@@ -1918,8 +1929,8 @@ tbody tr:hover td { background: #f4f7fc; }
           </div>
           <div class="form-grid">
             <div class="f-group">
-              <label class="f-label">ส่งถึง / หน่วยงาน <span class="req">*</span></label>
-              <input type="text" id="cert-to-org" class="f-input" placeholder="ชื่อหน่วยงานปลายทาง">
+              <label class="f-label">ส่งถึง / หน่วยงาน <span class="req">*</span> <span style="font-size:11px;color:var(--gray400);font-weight:400;">(หน่วยงานภายนอก)</span></label>
+              <input type="text" id="cert-to-org" class="f-input" placeholder="ชื่อหน่วยงานภายนอก">
             </div>
             <div class="f-group">
               <label class="f-label">วัตถุประสงค์การขอ <span class="req">*</span></label>
@@ -2004,55 +2015,48 @@ tbody tr:hover td { background: #f4f7fc; }
         <div class="card-body">
           <div class="form-grid">
             <div class="f-group">
+              <label class="f-label">วันที่ลงเลขหนังสือคำสั่ง <span class="req">*</span></label>
+              <input type="text" id="order-date-assigned" class="f-input" placeholder="ว/ด/ป พ.ศ. เช่น 01/06/2569">
+            </div>
+            <div class="f-group">
               <label class="f-label">เลขที่คำสั่ง <span class="req">*</span></label>
               <input type="text" id="order-docno" class="f-input" placeholder="เช่น 12/2569 (ระบบจะกำหนดให้อัตโนมัติ)">
               <div class="f-hint">ปล่อยว่างเพื่อให้ระบบกำหนดเลขที่ถัดไปอัตโนมัติ (รูปแบบ ลำดับ/ปีพ.ศ.)</div>
             </div>
+          </div>
+          <div class="form-grid">
             <div class="f-group">
-              <label class="f-label">วันที่คำสั่ง <span class="req">*</span></label>
+              <label class="f-label">วันที่ออกคำสั่ง <span class="req">*</span></label>
               <input type="text" id="order-date" class="f-input" placeholder="ว/ด/ป พ.ศ. เช่น 01/06/2569">
+            </div>
+            <div class="f-group">
+              <label class="f-label">เจ้าของเรื่อง / หน่วยงาน <span class="req">*</span></label>
+              <select id="order-owner-dept" class="f-select">
+                <option value="">— เลือกหน่วยงานเจ้าของเรื่อง —</option>
+              </select>
             </div>
           </div>
           <div class="f-group">
-            <label class="f-label">เรื่อง <span class="req">*</span></label>
+            <label class="f-label">คำสั่งเรื่อง <span class="req">*</span></label>
             <input type="text" id="order-subject" class="f-input" placeholder="เรื่องของคำสั่ง เช่น แต่งตั้งคณะกรรมการ..." oninput="cnt('order-subject','order-subject-cnt')">
             <div class="f-counter"><span id="order-subject-cnt">0</span> ตัวอักษร</div>
           </div>
           <div class="f-group">
+            <label class="f-label">เวียนถึง / หน่วยงาน <span class="req">*</span></label>
+            <div style="margin-bottom:8px;">
+              <button type="button" onclick="orderCirculateSelectAll()" style="background:var(--navy);color:white;border:none;border-radius:4px;padding:5px 14px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;">✅ เลือกทั้งหมด</button>
+              <button type="button" onclick="orderCirculateClear()" style="background:var(--gray100);color:var(--gray600);border:var(--line);border-radius:4px;padding:5px 14px;cursor:pointer;font-size:12px;font-family:inherit;margin-left:6px;">✕ ล้างทั้งหมด</button>
+            </div>
+            <div id="order-circulate-container" style="border:1px solid var(--gray200);border-radius:var(--r);overflow:hidden;">
+              <div style="padding:12px 16px;background:var(--gray50);text-align:center;color:var(--gray400);font-size:13px;" id="order-circulate-loading">⏳ กำลังโหลดรายชื่อหน่วยงาน...</div>
+            </div>
+            <div id="order-circulate-summary" style="display:none;margin-top:8px;background:var(--blue-bg);border:1px solid #bfdbfe;border-radius:var(--r);padding:9px 14px;font-size:12px;color:var(--blue);">
+              <strong>ที่เลือก: </strong><span id="order-circulate-count">0</span> หน่วยงาน
+            </div>
+          </div>
+          <div class="f-group">
             <label class="f-label">รายละเอียด</label>
             <textarea id="order-detail" class="f-textarea" rows="3" placeholder="รายละเอียดเพิ่มเติมของคำสั่ง (ถ้ามี)"></textarea>
-          </div>
-
-          <!-- กลุ่มงาน/หน่วยงานที่เกี่ยวข้อง -->
-          <div class="f-group">
-            <label class="f-label">กลุ่มงาน / หน่วยงานที่เกี่ยวข้อง <span class="req">*</span></label>
-
-            <!-- ปุ่มเลือกทั้งหมด -->
-            <div style="margin-bottom:10px;display:flex;gap:8px;flex-wrap:wrap;">
-              <button type="button" onclick="orderSelectAllGroups()" style="background:var(--navy);color:white;border:none;border-radius:4px;padding:5px 14px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;">✅ เลือกทั้งหมด</button>
-              <button type="button" onclick="orderClearGroups()" style="background:var(--gray100);color:var(--gray600);border:var(--line);border-radius:4px;padding:5px 14px;cursor:pointer;font-size:12px;font-family:inherit;">✕ ล้างทั้งหมด</button>
-            </div>
-
-            <!-- Mission group checkboxes -->
-            <div id="order-missions-container" style="border:1px solid var(--gray200);border-radius:var(--r);overflow:hidden;">
-              <div style="padding:12px 16px;background:var(--gray50);text-align:center;color:var(--gray400);font-size:13px;" id="order-missions-loading">⏳ กำลังโหลดรายชื่อกลุ่มงาน...</div>
-            </div>
-
-            <!-- สรุปที่เลือก -->
-            <div id="order-groups-summary" style="display:none;margin-top:8px;background:var(--blue-bg);border:1px solid #bfdbfe;border-radius:var(--r);padding:9px 14px;font-size:12px;color:var(--blue);">
-              <strong>ที่เลือก: </strong><span id="order-groups-count">0</span> หน่วยงาน
-            </div>
-          </div>
-
-          <div class="form-grid">
-            <div class="f-group">
-              <label class="f-label">ผู้ลงนาม</label>
-              <input type="text" id="order-signed-by" class="f-input" placeholder="ชื่อ-นามสกุล ผู้ลงนาม">
-            </div>
-            <div class="f-group">
-              <label class="f-label">ตำแหน่งผู้ลงนาม</label>
-              <input type="text" id="order-signer-pos" class="f-input" placeholder="เช่น ผู้อำนวยการโรงพยาบาล">
-            </div>
           </div>
           <div class="f-group">
             <label class="f-label">หมายเหตุ</label>
@@ -2091,10 +2095,10 @@ tbody tr:hover td { background: #f4f7fc; }
             <table>
               <thead><tr>
                 <th>เลขที่คำสั่ง</th>
-                <th>วันที่</th>
-                <th>เรื่อง</th>
-                <th>หน่วยงาน</th>
-                <th>ผู้ลงนาม</th>
+                <th>วันที่ออกคำสั่ง</th>
+                <th>คำสั่งเรื่อง</th>
+                <th>เจ้าของเรื่อง</th>
+                <th>เวียนถึง</th>
                 <th>ไฟล์</th>
               </tr></thead>
               <tbody id="order-tbl-body">
@@ -2497,12 +2501,12 @@ function gotoPage(page) {
     setDefaultDate('r-date');
     loadNextRecvSeq();
   }
-  if (page === 'send')    { loadDepts('s-sentby'); setDefaultDate('s-date'); }
+  if (page === 'send')    { loadDepts('s-sentby'); setDefaultDate('s-regdate'); setDefaultDate('s-date'); }
   if (page === 'report')  setReportDates();
   if (page === 'history') loadHistoryYears();
   if (page === 'import')  loadHistoryYears();
   if (page === 'cert')    { loadNextCertSeq(); loadRecentCerts(); if (!_certDeptsLoaded) loadDepts('cert-req-dept'); _certDeptsLoaded = true; setDefaultDate('cert-date-assigned'); setDefaultDate('cert-docdate'); }
-  if (page === 'order')   { loadNextOrderSeq(); loadRecentOrders(); if (!_orderMissionsLoaded) loadMissionGroups(); setDefaultDate('order-date'); }
+  if (page === 'order')   { loadNextOrderSeq(); loadRecentOrders(); if (!_orderMissionsLoaded) loadMissionGroups(); setDefaultDate('order-date-assigned'); setDefaultDate('order-date'); }
 }
 
 // ============================================================
@@ -3371,16 +3375,20 @@ function handleFile(input) {
 function submitSend() {
   hideAlerts(['s-alert-err','s-alert-ok','s-alert-info']);
   var data = {
-    sendDate: v('s-date'), toOrg: v('s-to'), refNumber: v('s-ref'),
+    regDate: v('s-regdate'), sendDate: v('s-date'), toOrg: v('s-to'),
+    docNumber: v('s-docnum'),
     sentBy: v('s-sentby'), subject: v('s-subj'), detail: v('s-detail'),
-    category: v('s-cat'), urgency: v('s-urgency') || 'ปกติ',
-    confidential: 'ไม่มีชั้น',
+    urgency: v('s-urgency') || 'ปกติ',
+    confidential: v('s-secret') || 'ไม่มีชั้น',
     fileId: v('s-fileid'), note: v('s-note'),
     userName: _user ? _user.name : ''
   };
-  if (!data.toOrg)    return showA('s-alert-err','❌ กรุณากรอก ถึงหน่วยงาน');
+  if (!data.regDate)  return showA('s-alert-err','❌ กรุณากรอก วันที่ลงเลขหนังสือส่ง');
+  if (!data.docNumber) return showA('s-alert-err','❌ กรุณากรอก เลขที่หนังสือ');
+  if (!data.date)     {} // optional
+  if (!data.sentBy)   return showA('s-alert-err','❌ กรุณาเลือก ผู้ส่ง/หน่วยงาน');
   if (!data.subject)  return showA('s-alert-err','❌ กรุณากรอก เรื่อง');
-  if (!data.category) return showA('s-alert-err','❌ กรุณาเลือก ประเภท');
+  if (!data.toOrg)    return showA('s-alert-err','❌ กรุณากรอก ส่งถึง/หน่วยงาน');
   setLoad('s-btn',true,'💾 กำลังบันทึก...');
 
   // ถ้ามีไฟล์รอ → อัพโหลดก่อน
@@ -3436,8 +3444,8 @@ function _doSaveSend(data) {
 
 function resetSend() {
   _sendPendingFile = null;
-  ['s-date','s-to','s-ref','s-subj','s-detail','s-note','s-fileid'].forEach(clr);
-  setVal('s-sentby',''); setVal('s-cat',''); setVal('s-urgency','ปกติ');
+  ['s-regdate','s-date','s-docnum','s-to','s-subj','s-detail','s-note','s-fileid'].forEach(clr);
+  setVal('s-sentby',''); setVal('s-urgency','ปกติ'); setVal('s-secret','ไม่มีชั้น');
   setText('s-subj-cnt','0'); setText('s-detail-cnt','0');
   document.getElementById('s-file-box').style.display='none';
   document.getElementById('s-file').value='';
@@ -4485,86 +4493,104 @@ function loadMissionGroups() {
       if (!r || !r.success) return;
       _orderMissions = r.missions || [];
       _orderMissionsLoaded = true;
-      renderMissionGroups(r.allLabel, r.missions);
+      renderOrderOwnerDept(r.missions);
+      renderOrderCirculate(r.allLabel, r.missions);
     })
     .withFailureHandler(function(){
-      var c = document.getElementById('order-missions-container');
-      if (c) c.innerHTML = '<div style="padding:12px;color:var(--red);font-size:13px;">❌ โหลดรายชื่อกลุ่มงานล้มเหลว</div>';
+      var c = document.getElementById('order-circulate-container');
+      if (c) c.innerHTML = '<div style="padding:12px;color:var(--red);font-size:13px;">❌ โหลดรายชื่อหน่วยงานล้มเหลว</div>';
     })
     .call();
 }
 
-function renderMissionGroups(allLabel, missions) {
-  var c = document.getElementById('order-missions-container');
+function renderOrderOwnerDept(missions) {
+  var sel = document.getElementById('order-owner-dept');
+  if (!sel) return;
+  var html = '<option value="">— เลือกหน่วยงานเจ้าของเรื่อง —</option>';
+  missions.forEach(function(m) {
+    html += '<optgroup label="' + esc(m.mission) + '">';
+    m.groups.forEach(function(g) {
+      html += '<option value="' + esc(g) + '">' + esc(g) + '</option>';
+    });
+    html += '</optgroup>';
+  });
+  sel.innerHTML = html;
+}
+
+function renderOrderCirculate(allLabel, missions) {
+  var c = document.getElementById('order-circulate-container');
   if (!c) return;
   var html = '';
 
-  // ตัวเลือก "ทั้งหมด"
   html += '<div style="padding:10px 16px;background:var(--gray100);border-bottom:var(--line);display:flex;align-items:center;gap:10px;">' +
     '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-weight:700;color:var(--navy);font-size:13px;">' +
-    '<input type="checkbox" id="order-grp-all" onchange="orderToggleAll(this)" style="width:16px;height:16px;cursor:pointer;"> ' +
+    '<input type="checkbox" id="order-circ-all" onchange="orderCirculateToggleAll(this)" style="width:16px;height:16px;cursor:pointer;"> ' +
     esc(allLabel) + '</label></div>';
 
   missions.forEach(function(m, mi) {
     html += '<div style="background:var(--navy);padding:7px 16px;">' +
       '<span style="color:rgba(255,255,255,.9);font-size:12px;font-weight:700;letter-spacing:.3px;">' + esc(m.mission) + '</span></div>';
     m.groups.forEach(function(g, gi) {
-      var cbId = 'order-grp-' + mi + '-' + gi;
+      var cbId = 'order-circ-' + mi + '-' + gi;
       html += '<div style="padding:6px 16px 6px 24px;border-bottom:1px solid var(--gray100);display:flex;align-items:center;gap:10px;">' +
         '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;font-size:13px;color:var(--gray700);flex:1;">' +
-        '<input type="checkbox" id="' + cbId + '" class="order-grp-cb" value="' + esc(g) + '" onchange="orderUpdateSummary()" style="width:14px;height:14px;cursor:pointer;"> ' +
+        '<input type="checkbox" id="' + cbId + '" class="order-circ-cb" value="' + esc(g) + '" onchange="orderCirculateUpdateSummary()" style="width:14px;height:14px;cursor:pointer;"> ' +
         esc(g) + '</label></div>';
     });
   });
 
   c.innerHTML = html;
-  orderUpdateSummary();
+  orderCirculateUpdateSummary();
 }
 
-function orderToggleAll(cb) {
-  var cbs = document.querySelectorAll('.order-grp-cb');
+function orderCirculateToggleAll(cb) {
+  var cbs = document.querySelectorAll('.order-circ-cb');
   cbs.forEach(function(el){ el.checked = cb.checked; });
-  orderUpdateSummary();
+  orderCirculateUpdateSummary();
 }
 
-function orderSelectAllGroups() {
-  var allCb = document.getElementById('order-grp-all');
-  if (allCb) { allCb.checked = true; orderToggleAll(allCb); }
+function orderCirculateSelectAll() {
+  var allCb = document.getElementById('order-circ-all');
+  if (allCb) { allCb.checked = true; orderCirculateToggleAll(allCb); }
 }
 
-function orderClearGroups() {
-  var allCb = document.getElementById('order-grp-all');
-  if (allCb) { allCb.checked = false; orderToggleAll(allCb); }
+function orderCirculateClear() {
+  var allCb = document.getElementById('order-circ-all');
+  if (allCb) { allCb.checked = false; orderCirculateToggleAll(allCb); }
 }
 
-function orderUpdateSummary() {
-  var cbs = document.querySelectorAll('.order-grp-cb:checked');
+function orderCirculateUpdateSummary() {
+  var cbs = document.querySelectorAll('.order-circ-cb:checked');
   var count = cbs.length;
-  var summary = document.getElementById('order-groups-summary');
-  var countEl = document.getElementById('order-groups-count');
-  var allCb = document.getElementById('order-grp-all');
-  if (countEl) setText('order-groups-count', count);
+  var summary = document.getElementById('order-circulate-summary');
+  var countEl = document.getElementById('order-circulate-count');
+  var allCb = document.getElementById('order-circ-all');
+  if (countEl) setText('order-circulate-count', count);
   if (summary) summary.style.display = count > 0 ? 'block' : 'none';
-
-  // ซิงค์ checkbox "ทั้งหมด"
   if (allCb) {
-    var totalCbs = document.querySelectorAll('.order-grp-cb').length;
+    var totalCbs = document.querySelectorAll('.order-circ-cb').length;
     allCb.indeterminate = count > 0 && count < totalCbs;
-    if (count === totalCbs) allCb.checked = true;
+    if (count === totalCbs && totalCbs > 0) allCb.checked = true;
     if (count === 0) allCb.checked = false;
   }
 }
 
-function orderGetSelectedGroups() {
-  var allCb = document.getElementById('order-grp-all');
+function orderCirculateGetSelected() {
+  var allCb = document.getElementById('order-circ-all');
   if (allCb && allCb.checked && !allCb.indeterminate) {
     return 'ทุกกลุ่มงาน/งานในโรงพยาบาลสันทราย';
   }
-  var cbs = document.querySelectorAll('.order-grp-cb:checked');
+  var cbs = document.querySelectorAll('.order-circ-cb:checked');
   var names = [];
   cbs.forEach(function(cb){ names.push(cb.value); });
   return names.join(', ');
 }
+
+// compat aliases (kept in case other code references old names)
+function orderSelectAllGroups()  { orderCirculateSelectAll(); }
+function orderClearGroups()      { orderCirculateClear(); }
+function orderUpdateSummary()    { orderCirculateUpdateSummary(); }
+function orderGetSelectedGroups(){ return orderCirculateGetSelected(); }
 
 function orderHandleFile(input) {
   var file = input.files[0];
@@ -4589,10 +4615,12 @@ function orderRemoveFile() {
 }
 
 function orderResetForm() {
-  ['order-docno','order-date','order-subject','order-detail','order-signed-by','order-signer-pos','order-note'].forEach(function(id){ setVal(id,''); });
-  orderClearGroups();
+  ['order-docno','order-date-assigned','order-date','order-subject','order-detail','order-note'].forEach(function(id){ setVal(id,''); });
+  setVal('order-owner-dept','');
+  orderCirculateClear();
   orderRemoveFile();
   hideAlerts(['order-alert-err','order-alert-ok']);
+  setDefaultDate('order-date-assigned');
   setDefaultDate('order-date');
   loadNextOrderSeq();
 }
@@ -4600,29 +4628,32 @@ function orderResetForm() {
 function submitOrder() {
   hideAlerts(['order-alert-err','order-alert-ok']);
 
-  var subject  = v('order-subject');
-  var orderDate = v('order-date');
-  var groups   = orderGetSelectedGroups();
-  var docno    = v('order-docno');
+  var subject      = v('order-subject');
+  var orderDate    = v('order-date');
+  var dateAssigned = v('order-date-assigned');
+  var ownerDept    = v('order-owner-dept');
+  var circulateTo  = orderCirculateGetSelected();
+  var docno        = v('order-docno');
 
-  if (!subject)   { showA('order-alert-err','❌ กรุณากรอก เรื่อง'); return; }
-  if (!orderDate) { showA('order-alert-err','❌ กรุณากรอก วันที่คำสั่ง'); return; }
-  if (!groups)    { showA('order-alert-err','❌ กรุณาเลือก กลุ่มงาน/หน่วยงานที่เกี่ยวข้อง อย่างน้อย 1 รายการ'); return; }
+  if (!dateAssigned){ showA('order-alert-err','❌ กรุณากรอก วันที่ลงเลขหนังสือคำสั่ง'); return; }
+  if (!subject)     { showA('order-alert-err','❌ กรุณากรอก คำสั่งเรื่อง'); return; }
+  if (!ownerDept)   { showA('order-alert-err','❌ กรุณาเลือก เจ้าของเรื่อง/หน่วยงาน'); return; }
+  if (!circulateTo) { showA('order-alert-err','❌ กรุณาเลือก เวียนถึง/หน่วยงาน อย่างน้อย 1 รายการ'); return; }
 
   setLoad('order-save-btn', true, '⏳ กำลังบันทึก...');
 
   function doSave(fileId) {
     var data = {
-      docNumber:      docno,
-      orderDate:      orderDate,
-      subject:        subject,
-      detail:         v('order-detail'),
-      groups:         groups,
-      signedBy:       v('order-signed-by'),
-      signerPosition: v('order-signer-pos'),
-      note:           v('order-note'),
-      fileId:         fileId || '',
-      userName:       _user ? _user.name : ''
+      docNumber:    docno,
+      dateAssigned: dateAssigned,
+      orderDate:    orderDate,
+      ownerDept:    ownerDept,
+      subject:      subject,
+      circulateTo:  circulateTo,
+      detail:       v('order-detail'),
+      note:         v('order-note'),
+      fileId:       fileId || '',
+      userName:     _user ? _user.name : ''
     };
     gasRun('saveOrderDocument')
       .withSuccessHandler(function(r) {
@@ -4677,7 +4708,7 @@ function loadRecentOrders() {
       }
       tbody.innerHTML = r.rows.map(function(row) {
         var subj = (row.subject||'').length > 55 ? (row.subject||'').substring(0,55)+'...' : (row.subject||'');
-        var grps = (row.groups||'').length > 45 ? (row.groups||'').substring(0,45)+'...' : (row.groups||'');
+        var circ = (row.circulateTo||'').length > 45 ? (row.circulateTo||'').substring(0,45)+'...' : (row.circulateTo||'');
         var fileLink = row.fileLink
           ? (function(fl) {
               var m = fl.match(/\/d\/([A-Za-z0-9_-]{20,})\//);
@@ -4690,8 +4721,8 @@ function loadRecentOrders() {
           '<td><strong style="font-family:\'IBM Plex Mono\',monospace;color:var(--navy);">' + esc(row.docNumber||'—') + '</strong></td>' +
           '<td style="white-space:nowrap;">' + fmtDate(row.orderDate) + '</td>' +
           '<td>' + esc(subj) + '</td>' +
-          '<td style="font-size:12px;max-width:180px;" title="' + esc(row.groups||'') + '">' + esc(grps) + '</td>' +
-          '<td style="font-size:12px;">' + esc(row.signedBy||'—') + '</td>' +
+          '<td style="font-size:12px;">' + esc(row.ownerDept||'—') + '</td>' +
+          '<td style="font-size:12px;max-width:180px;" title="' + esc(row.circulateTo||'') + '">' + esc(circ) + '</td>' +
           '<td>' + fileLink + '</td>' +
           '</tr>';
       }).join('');
