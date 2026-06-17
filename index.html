@@ -1637,113 +1637,131 @@ tbody tr:hover td { background: #f4f7fc; }
   </div>
 
 
-  <!-- ===== PAGE: SEND ===== -->
-  <div id="page-send" class="page">
-    <div class="content content-md">
-      <div class="ptb">
-        <div class="ptb-icon">↑</div>
-        <div><h2>บันทึกหนังสือส่งออก</h2><p>กรอกข้อมูลหนังสือที่ส่งออกไปยังหน่วยงานภายนอก</p></div>
+<!-- ===== PAGE: SEND (หนังสือส่งออก) ===== -->
+<div id="page-send" class="page">
+  <div class="content content-md">
+    <div class="ptb">
+      <div class="ptb-icon">↑</div>
+      <div>
+        <h2>บันทึกหนังสือส่งออก</h2>
+        <p>กรอกข้อมูลหนังสือที่ส่งออกไปยังหน่วยงานภายนอก</p>
       </div>
-      <div id="s-alert-err"  class="alert a-error"></div>
-      <div id="s-alert-ok"   class="alert a-success"></div>
-      <div id="s-alert-info" class="alert a-info"></div>
-      <div class="card">
-        <div class="card-head" style="background:linear-gradient(135deg,var(--navy),var(--navy2));border-bottom:2px solid var(--gold);">
-          <span class="card-head-icon" style="color:var(--gold);">📋</span>
-          <h3 style="color:white;">ข้อมูลหนังสือส่งออก</h3>
+    </div>
+    <div id="s-alert-err"  class="alert a-error"></div>
+    <div id="s-alert-ok"   class="alert a-success"></div>
+    <div id="s-alert-info" class="alert a-info"></div>
+
+    <div class="card">
+      <div class="card-head" style="background:linear-gradient(135deg,var(--navy),var(--navy2));border-bottom:2px solid var(--gold);">
+        <span class="card-head-icon" style="color:var(--gold);">📋</span>
+        <h3 style="color:white;">ข้อมูลหนังสือส่งออก</h3>
+        <div id="send-no-preview" style="margin-left:auto;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:4px;padding:4px 12px;font-size:12px;font-family:'IBM Plex Mono',monospace;color:var(--gold);font-weight:700;white-space:nowrap;"></div>
+      </div>
+      <div class="card-body">
+
+        <!-- แถว 1: วันที่ลงเลขหนังสือส่ง — เต็มแถว -->
+        <div class="f-group">
+          <label class="f-label">วันที่ลงเลขหนังสือส่ง <span class="req">*</span></label>
+          <input type="text" id="s-date-assigned" class="f-input" placeholder="ว/ด/ป พ.ศ. เช่น 01/06/2569" style="max-width:260px;">
         </div>
-        <div class="card-body">
 
-          <!-- แถว 1: วันที่ส่ง + ผู้ส่ง/หน่วยงาน -->
-          <div class="form-grid">
-            <div class="f-group">
-              <label class="f-label">วันที่ส่ง <span class="req">*</span></label>
-              <input type="text" id="s-date" class="f-input" placeholder="ว/ด/ป พ.ศ. เช่น 01/06/2569">
-            </div>
-            <div class="f-group">
-              <label class="f-label">ผู้ส่ง / หน่วยงาน</label>
-              <select id="s-sentby" class="f-select"><option value="">— เลือกหน่วยงาน —</option></select>
-            </div>
-          </div>
-
-          <!-- แถว 2: ถึงหน่วยงาน + เลขที่อ้างอิง -->
-          <div class="form-grid">
-            <div class="f-group">
-              <label class="f-label">ถึงหน่วยงาน <span class="req">*</span></label>
-              <input type="text" id="s-to" class="f-input" placeholder="ชื่อหน่วยงานผู้รับ">
-            </div>
-            <div class="f-group">
-              <label class="f-label">เลขที่อ้างอิง</label>
-              <input type="text" id="s-ref" class="f-input" placeholder="เลขที่อ้างอิง (ถ้ามี)">
-            </div>
-          </div>
-
-          <!-- แถว 3: เรื่อง เต็มแถว -->
+        <!-- แถว 2: ความเร่งด่วน + ชั้นความลับ -->
+        <div class="form-grid" style="grid-template-columns:1fr 1fr;">
           <div class="f-group">
-            <label class="f-label">เรื่อง <span class="req">*</span></label>
-            <input type="text" id="s-subj" class="f-input" placeholder="ระบุหัวข้อ/เรื่องของหนังสือ" maxlength="200"
-              oninput="cnt('s-subj','s-subj-cnt')">
-            <div class="f-counter"><span id="s-subj-cnt">0</span> / 200</div>
+            <label class="f-label" style="color:var(--red);font-size:12px;">⚡ ความเร่งด่วน <span class="req">*</span></label>
+            <select id="s-urgency" class="f-select" style="font-weight:600;">
+              <option value="ปกติ" selected>–ปกติ–</option>
+              <option value="ด่วน">ด่วน</option>
+              <option value="ด่วนมาก">ด่วนมาก</option>
+              <option value="ด่วนที่สุด">ด่วนที่สุด</option>
+            </select>
           </div>
-
-          <!-- แถว 4: รายละเอียด เต็มแถว -->
           <div class="f-group">
-            <label class="f-label">รายละเอียด</label>
-            <textarea id="s-detail" class="f-textarea" rows="3" placeholder="สรุปเนื้อหาโดยย่อ..." maxlength="500"
-              oninput="cnt('s-detail','s-detail-cnt')"></textarea>
-            <div class="f-counter"><span id="s-detail-cnt">0</span> / 500</div>
-          </div>
-
-          <!-- แถว 5: ประเภท + ความเร่งด่วน -->
-          <div class="form-grid">
-            <div class="f-group">
-              <label class="f-label">ประเภท <span class="req">*</span></label>
-              <select id="s-cat" class="f-select">
-                <option value="">— เลือกประเภท —</option>
-                <option>หนังสือราชการ</option><option>บันทึกข้อความ</option>
-                <option>คำสั่ง</option><option>ประกาศ</option><option>อื่น</option>
-              </select>
-            </div>
-            <div class="f-group">
-              <label class="f-label">ความเร่งด่วน</label>
-              <select id="s-urgency" class="f-select">
-                <option value="ปกติ" selected>ปกติ</option>
-                <option value="ด่วน">ด่วน</option>
-                <option value="ด่วนมาก">ด่วนมาก</option>
-                <option value="ด่วนที่สุด">ด่วนที่สุด</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- แถว 6: หมายเหตุ + ไฟล์แนบ -->
-          <div class="form-grid">
-            <div class="f-group" style="margin-bottom:0;">
-              <label class="f-label">หมายเหตุ</label>
-              <input type="text" id="s-note" class="f-input" placeholder="ข้อมูลเพิ่มเติม..." maxlength="200">
-            </div>
-            <div class="f-group" style="margin-bottom:0;">
-              <label class="f-label">ไฟล์แนบ</label>
-              <input type="file" id="s-file" class="f-input"
-                accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.png"
-                onchange="handleFile(this)">
-              <div class="f-hint">PDF, Word, Excel, JPG, PNG — ขนาดสูงสุด 20 MB</div>
-            </div>
-          </div>
-
-          <div class="file-box" id="s-file-box" style="margin-top:10px;">
-            <div class="fb-row">📄 <strong id="s-fname"></strong></div>
-            <div class="fb-row">ขนาด: <strong id="s-fsize"></strong></div>
-            <input type="hidden" id="s-fileid">
-          </div>
-
-          <div class="btn-row">
-            <button class="btn btn-secondary" onclick="resetSend()">🔄 ล้างข้อมูล</button>
-            <button class="btn btn-primary" id="s-btn" onclick="submitSend()">💾 บันทึกหนังสือส่งออก</button>
+            <label class="f-label">ชั้นความลับ <span class="req">*</span></label>
+            <select id="s-conf" class="f-select">
+              <option value="ไม่มีชั้น" selected>–ไม่มีชั้น–</option>
+              <option value="ลับ">ลับ</option>
+              <option value="ลับมาก">ลับมาก</option>
+              <option value="ลับที่สุด">ลับที่สุด</option>
+            </select>
           </div>
         </div>
+
+        <!-- แถว 3: เลขที่หนังสือส่ง (ชม 0033.301/...) + วันที่หนังสือส่ง -->
+        <div class="form-grid" style="grid-template-columns:1fr 1fr;">
+          <div class="f-group">
+            <label class="f-label">เลขที่หนังสือส่ง <span class="req">*</span></label>
+            <div style="display:flex;align-items:center;gap:0;">
+              <span style="background:var(--gray100);border:1px solid var(--gray300);border-right:none;border-radius:var(--r) 0 0 var(--r);padding:9px 12px;font-size:13px;color:var(--gray600);white-space:nowrap;font-weight:600;">ชม 0033.301/</span>
+              <input type="text" id="s-docno" class="f-input" placeholder="เลขที่ (อัตโนมัติ)" style="border-radius:0 var(--r) var(--r) 0;border-left:none;" oninput="sendUpdateDocNoPreview()">
+            </div>
+            <div class="f-hint" id="s-docno-preview" style="color:var(--navy);font-weight:600;font-family:'IBM Plex Mono',monospace;"></div>
+            <div class="f-hint" style="margin-top:2px;">ปล่อยว่างเพื่อให้ระบบกำหนดเลขที่ถัดไปอัตโนมัติ</div>
+          </div>
+          <div class="f-group">
+            <label class="f-label">วันที่หนังสือส่ง <span class="req">*</span></label>
+            <input type="text" id="s-docdate" class="f-input" placeholder="ว/ด/ป พ.ศ. เช่น 01/06/2569">
+          </div>
+        </div>
+
+        <!-- แถว 4: ผู้ส่ง/หน่วยงาน (dropdown) — เต็มแถว -->
+        <div class="f-group">
+          <label class="f-label" style="background:#3d9970;color:white;padding:4px 10px;border-radius:var(--r);display:inline-block;margin-bottom:6px;">ผู้ส่ง / หน่วยงาน <span style="color:#ffeb80;">*</span></label>
+          <select id="s-sentby" class="f-select">
+            <option value="">— เลือกหน่วยงาน —</option>
+          </select>
+        </div>
+
+        <!-- แถว 5: เรื่อง — เต็มแถว -->
+        <div class="f-group">
+          <label class="f-label">เรื่อง <span class="req">*</span></label>
+          <input type="text" id="s-subj" class="f-input" placeholder="ระบุหัวข้อ/เรื่องของหนังสือ" maxlength="200"
+            oninput="cnt('s-subj','s-subj-cnt')">
+          <div class="f-counter"><span id="s-subj-cnt">0</span> / 200</div>
+        </div>
+
+        <!-- แถว 6: ส่งถึง/หน่วยงาน — เต็มแถว -->
+        <div class="f-group">
+          <label class="f-label">ส่งถึง / หน่วยงาน <span class="req">*</span> <span style="font-size:11px;color:var(--gray400);font-weight:400;">(หน่วยงานภายนอก)</span></label>
+          <input type="text" id="s-to" class="f-input" placeholder="ชื่อหน่วยงานภายนอก">
+        </div>
+
+        <!-- แถว 7: รายละเอียด — เต็มแถว -->
+        <div class="f-group">
+          <label class="f-label">รายละเอียด</label>
+          <textarea id="s-detail" class="f-textarea" rows="3" placeholder="สรุปเนื้อหาโดยย่อ..." maxlength="500"
+            oninput="cnt('s-detail','s-detail-cnt')"></textarea>
+          <div class="f-counter"><span id="s-detail-cnt">0</span> / 500</div>
+        </div>
+
+        <!-- แถว 8: หมายเหตุ + ไฟล์แนบ -->
+        <div class="form-grid" style="grid-template-columns:1fr 1fr;align-items:start;">
+          <div class="f-group" style="margin-bottom:0;">
+            <label class="f-label">หมายเหตุ</label>
+            <input type="text" id="s-note" class="f-input" placeholder="ข้อมูลเพิ่มเติม..." maxlength="200">
+          </div>
+          <div class="f-group" style="margin-bottom:0;">
+            <label class="f-label">ไฟล์แนบ</label>
+            <input type="file" id="s-file" class="f-input"
+              accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif,.txt,.ppt,.pptx"
+              onchange="handleSendFile(this)">
+            <div class="f-hint">PDF, Word, Excel, JPG, PNG — ขนาดสูงสุด 20 MB</div>
+            <div id="s-file-box" style="display:none;margin-top:8px;background:var(--green-bg);border:1px solid #bbf7d0;border-radius:var(--r);padding:8px 12px;align-items:center;justify-content:space-between;gap:8px;">
+              <span style="font-size:12px;">📄 <strong id="s-fname" style="color:var(--green);"></strong> <span id="s-fsize" style="color:var(--gray400);"></span></span>
+              <button onclick="removeSendFile()" style="background:var(--red-bg);color:var(--red);border:1px solid #fca5a5;border-radius:4px;padding:2px 9px;cursor:pointer;font-size:12px;">✕</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-row" style="margin-top:18px;">
+          <button class="btn btn-secondary" onclick="resetSend()">🔄 ล้างข้อมูล</button>
+          <button class="btn btn-primary" id="s-btn" onclick="submitSend()">💾 บันทึกหนังสือส่งออก</button>
+        </div>
+
       </div>
     </div>
   </div>
+</div>
 
   <!-- ===== PAGE: SEARCH ===== -->
   <div id="page-search" class="page">
@@ -2895,14 +2913,167 @@ function gotoPage(page) {
     setDefaultDate('r-date');
     loadNextRecvSeq();
   }
-  if (page === 'send')    { loadDepts('s-sentby'); setDefaultDate('s-date'); }
+  if (page === 'send') {
+  loadDepts('s-sentby');
+  setDefaultDate('s-date-assigned');
+  setDefaultDate('s-docdate');
+  loadNextSendSeq();
+}    { loadDepts('s-sentby'); setDefaultDate('s-date'); }
   if (page === 'report')  setReportDates();
   if (page === 'history') loadHistoryYears();
   if (page === 'import')  loadHistoryYears();
   if (page === 'cert')    { loadNextCertSeq(); loadRecentCerts(); if (!_certDeptsLoaded) loadDepts('cert-req-dept'); _certDeptsLoaded = true; setDefaultDate('cert-date-assigned'); setDefaultDate('cert-docdate'); }
   if (page === 'order')   { loadNextOrderSeq(); loadRecentOrders(); if (!_orderMissionsLoaded) loadMissionGroups(); setDefaultDate('order-date-assigned'); setDefaultDate('order-date'); }
 }
+// ============================================================
+// SEND — หนังสือส่งออก
+// ============================================================
+var _sendPendingFile = null;
 
+function loadNextSendSeq() {
+  gasRun('getNextOutgoingSeqPreview')
+    .withSuccessHandler(function(r) {
+      if (r && r.success && r.nextSeq) {
+        var el = document.getElementById('send-no-preview');
+        if (el) el.textContent = '🔢 เลขถัดไป: ' + r.nextSeq;
+        var inp = document.getElementById('s-docno');
+        if (inp && !inp.value) inp.placeholder = r.nextSeq + ' (อัตโนมัติ)';
+      }
+    })
+    .withFailureHandler(function(){})
+    .call();
+}
+
+function sendUpdateDocNoPreview() {
+  var docno = v('s-docno').trim();
+  var el = document.getElementById('s-docno-preview');
+  if (el) {
+    el.textContent = docno ? ('ชม 0033.301/' + docno) : '';
+  }
+}
+
+function handleSendFile(input) {
+  var file = input.files[0];
+  if (!file) return;
+  hideAlerts(['s-alert-err','s-alert-ok','s-alert-info']);
+  if (file.size > 20*1024*1024) {
+    showA('s-alert-err','❌ ไฟล์ใหญ่เกิน 20 MB'); input.value=''; return;
+  }
+  var allowed = ['application/pdf','application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+    'application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'image/jpeg','image/png','image/gif','text/plain',
+    'application/vnd.ms-powerpoint',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation'];
+  if (!allowed.includes(file.type)) {
+    showA('s-alert-err','❌ ประเภทไฟล์ไม่รองรับ'); input.value=''; return;
+  }
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    _sendPendingFile = { b64: e.target.result.split(',')[1], name: file.name,
+      mimeType: file.type, sizeKB: Math.round(file.size/1024) };
+    setText('s-fname', file.name);
+    setText('s-fsize', Math.round(file.size/1024) + ' KB');
+    document.getElementById('s-file-box').style.display = 'flex';
+    showA('s-alert-info', '📎 เลือกไฟล์แล้ว: ' + file.name + ' — จะอัพโหลดเมื่อกดบันทึก');
+    hide('s-alert-err');
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeSendFile() {
+  _sendPendingFile = null;
+  document.getElementById('s-file').value = '';
+  document.getElementById('s-file-box').style.display = 'none';
+  hide('s-alert-info');
+}
+
+function submitSend() {
+  hideAlerts(['s-alert-err','s-alert-ok','s-alert-info']);
+  var docno    = v('s-docno');
+  var dateAsgn = v('s-date-assigned');
+  var docDate  = v('s-docdate');
+  var subject  = v('s-subj');
+  var toOrg    = v('s-to');
+  var sender   = v('s-sentby');
+
+  if (!dateAsgn) { showA('s-alert-err','❌ กรุณากรอก วันที่ลงเลขหนังสือส่ง'); return; }
+  if (!docDate)  { showA('s-alert-err','❌ กรุณากรอก วันที่หนังสือส่ง'); return; }
+  if (!sender)   { showA('s-alert-err','❌ กรุณาเลือก ผู้ส่ง/หน่วยงาน'); return; }
+  if (!subject)  { showA('s-alert-err','❌ กรุณากรอก เรื่อง'); return; }
+  if (!toOrg)    { showA('s-alert-err',' กรุณากรอก ส่งถึง/หน่วยงาน'); return; }
+
+  setLoad('s-btn', true, '⏳ กำลังบันทึก...');
+
+  function doSave(fileId) {
+    var data = {
+      docNumber:    docno,
+      dateAssigned: dateAsgn,
+      docDate:      docDate,
+      sentBy:       sender,
+      toOrg:        toOrg,
+      subject:      subject,
+      detail:       v('s-detail'),
+      category:     'หนังสือราชการ',
+      urgency:      v('s-urgency') || 'ปกติ',
+      confidential: v('s-conf') || 'ไม่มีชั้น',
+      note:         v('s-note'),
+      fileId:       fileId || '',
+      userName:     _user ? _user.name : ''
+    };
+    gasRun('sendDocument')
+      .withSuccessHandler(function(r) {
+        setLoad('s-btn', false, '💾 บันทึกหนังสือส่งออก');
+        if (r && r.success) {
+          showA('s-alert-ok', '✅ บันทึกสำเร็จ เลขที่: <strong>' + esc(r.docNumber) + '</strong>');
+          toast('✅ บันทึกหนังสือส่งออกสำเร็จ — ' + r.docNumber, 'ok', 4000);
+          resetSend();
+        } else {
+          showA('s-alert-err', '❌ ' + ((r&&r.message)||'เกิดข้อผิดพลาด'));
+        }
+      })
+      .withFailureHandler(function(e) {
+        setLoad('s-btn', false, '💾 บันทึกหนังสือส่งออก');
+        showA('s-alert-err', '❌ เชื่อมต่อล้มเหลว: ' + e);
+      })
+      .call(data);
+  }
+
+  if (_sendPendingFile) {
+    var pf = _sendPendingFile;
+    setLoad('s-btn', true, '⏳ กำลังอัพโหลดไฟล์...');
+    gasRun('uploadFile')
+      .withSuccessHandler(function(ur) {
+        if (!ur || !ur.success) {
+          setLoad('s-btn', false, '💾 บันทึกหนังสือส่งออก');
+          showA('s-alert-err', '❌ อัพโหลดไฟล์ล้มเหลว: ' + ((ur&&ur.message)||''));
+          return;
+        }
+        setLoad('s-btn', true, '⏳ กำลังบันทึก...');
+        doSave(ur.fileId);
+      })
+      .withFailureHandler(function(e) {
+        setLoad('s-btn', false, '💾 บันทึกหนังสือส่งออก');
+        showA('s-alert-err', '❌ อัพโหลดล้มเหลว: ' + e);
+      })
+      .call(pf.b64, pf.name, pf.mimeType, null, _user ? _user.name : '');
+  } else {
+    doSave('');
+  }
+}
+
+function resetSend() {
+  _sendPendingFile = null;
+  ['s-docno','s-date-assigned','s-docdate','s-to','s-subj','s-detail','s-note'].forEach(clr);
+  setVal('s-sentby',''); setVal('s-urgency','ปกติ'); setVal('s-conf','ไม่มีชั้น');
+  setText('s-subj-cnt','0'); setText('s-detail-cnt','0');
+  document.getElementById('s-file-box').style.display = 'none';
+  document.getElementById('s-file').value = '';
+  hideAlerts(['s-alert-err','s-alert-ok','s-alert-info']);
+  setDefaultDate('s-date-assigned');
+  setDefaultDate('s-docdate');
+  loadNextSendSeq();
+}
 // ============================================================
 // DASHBOARD
 // ============================================================
@@ -3765,69 +3936,7 @@ function resetRecv() {
 // ============================================================
 var _sendPendingFile = null; // เก็บไฟล์หนังสือส่งออกไว้รอบันทึก
 
-function handleFile(input) {
-  var file = input.files[0];
-  if (!file) return;
-  if (file.size > 20*1024*1024) { showA('s-alert-err','❌ ไฟล์ใหญ่เกิน 20 MB'); input.value=''; return; }
-  var allowed=['application/pdf','application/msword',
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-    'application/vnd.ms-excel','application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-    'image/jpeg','image/png','image/gif','text/plain'];
-  if (!allowed.includes(file.type)) { showA('s-alert-err','❌ ประเภทไฟล์ไม่รองรับ'); input.value=''; return; }
-  // เก็บไว้ก่อน ยังไม่อัพโหลด
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    _sendPendingFile = { b64: e.target.result.split(',')[1], name: file.name, type: file.type };
-    var sizeKB = Math.round(file.size / 1024);
-    setText('s-fname', file.name);
-    setText('s-fsize', sizeKB + ' KB');
-    document.getElementById('s-file-box').style.display = 'block';
-    showA('s-alert-info', '📎 เลือกไฟล์แล้ว: ' + file.name + ' (' + sizeKB + ' KB) — จะอัพโหลดเมื่อกดบันทึก');
-    hide('s-alert-err');
-  };
-  reader.readAsDataURL(file);
-}
 
-function submitSend() {
-  hideAlerts(['s-alert-err','s-alert-ok','s-alert-info']);
-  var data = {
-    sendDate: v('s-date'), toOrg: v('s-to'), refNumber: v('s-ref'),
-    sentBy: v('s-sentby'), subject: v('s-subj'), detail: v('s-detail'),
-    category: v('s-cat'), urgency: v('s-urgency') || 'ปกติ',
-    confidential: 'ไม่มีชั้น',
-    fileId: v('s-fileid'), note: v('s-note'),
-    userName: _user ? _user.name : ''
-  };
-  if (!data.toOrg)    return showA('s-alert-err','❌ กรุณากรอก ถึงหน่วยงาน');
-  if (!data.subject)  return showA('s-alert-err','❌ กรุณากรอก เรื่อง');
-  if (!data.category) return showA('s-alert-err','❌ กรุณาเลือก ประเภท');
-  setLoad('s-btn',true,'💾 กำลังบันทึก...');
-
-  // ถ้ามีไฟล์รอ → อัพโหลดก่อน
-  if (_sendPendingFile) {
-    showA('s-alert-info', '⏳ กำลังอัพโหลดไฟล์ ' + _sendPendingFile.name + ' ...');
-    var pf = _sendPendingFile;
-    gasRun('uploadFile')
-      .withSuccessHandler(function(uploadResult) {
-        hide('s-alert-info');
-        if (uploadResult && uploadResult.success) {
-          data.fileId = uploadResult.fileId;
-          _sendPendingFile = null;
-          _doSaveSend(data);
-        } else {
-          setLoad('s-btn', false, '💾 บันทึกหนังสือส่งออก');
-          showA('s-alert-err', '❌ อัพโหลดไฟล์ล้มเหลว: ' + ((uploadResult && uploadResult.message) || 'ไม่ทราบสาเหตุ'));
-        }
-      })
-      .withFailureHandler(function(e) {
-        setLoad('s-btn', false, '💾 บันทึกหนังสือส่งออก');
-        showA('s-alert-err','❌ อัพโหลดล้มเหลว: ' + e);
-      })
-      .call(pf.b64, pf.name, pf.type, null, _user ? _user.name : '');
-  } else {
-    _doSaveSend(data);
-  }
-}
 
 function _doSaveSend(data) {
   gasRun('sendDocument')
@@ -3854,16 +3963,6 @@ function _doSaveSend(data) {
     .call(data);
 }
 
-function resetSend() {
-  _sendPendingFile = null;
-  ['s-date','s-to','s-ref','s-subj','s-detail','s-note','s-fileid'].forEach(clr);
-  setVal('s-sentby',''); setVal('s-cat',''); setVal('s-urgency','ปกติ');
-  setText('s-subj-cnt','0'); setText('s-detail-cnt','0');
-  document.getElementById('s-file-box').style.display='none';
-  document.getElementById('s-file').value='';
-  hideAlerts(['s-alert-err','s-alert-ok','s-alert-info']);
-  setDefaultDate('s-date');
-}
 
 // ============================================================
 // SEARCH
