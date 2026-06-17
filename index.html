@@ -963,7 +963,7 @@ tbody tr:hover td { background: #f4f7fc; }
       <div id="r-alert-ok"   class="alert a-success"></div>
       <div id="r-alert-info" class="alert a-info"></div>
 
-      <!-- ── แถบเลขรับที่ (ซ่อน — ระบบกำหนดเลขอัตโนมัติ เริ่มที่ 1874) ── -->
+      <!-- ── แถบเลขรับที่ (ซ่อน — ระบบกำหนดเลขอัตโนมัติ) ── -->
       <div class="recv-no-bar" style="display:none;">
         <span class="rnb-label">เลขรับที่</span>
         <input type="text" id="r-recvno" placeholder="(ใหม่)" style="max-width:110px;">
@@ -1100,6 +1100,10 @@ tbody tr:hover td { background: #f4f7fc; }
                   <label><input type="checkbox" id="r-chk-dir"> ผู้อำนวยการ</label>
                   <input type="text" id="r-date-dir" class="dir-date" placeholder="ว/ด/ป" disabled>
                 </div>
+                <div class="dir-row c-ret">
+                  <label style="min-width:120px;cursor:default;">ว/ด/ป คืนธุรการ</label>
+                  <input type="text" id="r-date-return" class="dir-date" placeholder="ว/ด/ป">
+                </div>
                 <div class="dir-row c-med">
                   <label><input type="checkbox" id="r-chk-med"> รองแพทย์</label>
                   <input type="text" id="r-date-med" class="dir-date" placeholder="ว/ด/ป" disabled>
@@ -1131,10 +1135,6 @@ tbody tr:hover td { background: #f4f7fc; }
                 <div class="dir-row c-cfo">
                   <label><input type="checkbox" id="r-chk-cfo"> ผช.CFO</label>
                   <input type="text" id="r-date-cfo" class="dir-date" placeholder="ว/ด/ป" disabled>
-                </div>
-                <div class="dir-row c-ret">
-                  <label style="min-width:120px;cursor:default;">ว/ด/ป คืนธุรการ</label>
-                  <input type="text" id="r-date-return" class="dir-date" placeholder="ว/ด/ป">
                 </div>
               </div>
             </div>
@@ -1316,6 +1316,7 @@ tbody tr:hover td { background: #f4f7fc; }
                       <option value="5.4.3">5.4.3 คำสั่งการเลื่อนระดับผู้สอบคัดเลือกได้</option>
                       <option value="5.4.4">5.4.4 หนังสือที่เกี่ยวข้องกับการเลื่อนขั้นเงินเดือน</option>
                       <option value="5.4.5">5.4.5 คำสั่งเปลี่ยนสายงานตำแหน่ง</option>
+                      <option value="5.4.6">5.4.6 การเปลี่ยนสายงานตำแหน่ง</option>
                       <option value="5.4.7">5.4.7 การปรับวุฒิ, เพิ่มวุฒิ</option>
                       <option value="5.4.8">5.4.8 คำสั่งการบรรจุกลับ ผู้ไปรับราชการทหาร</option>
                       <option value="5.4.9">5.4.9 คำสั่งบรรจุกลับผู้ขอเข้ารับราชการ</option>
@@ -1327,7 +1328,7 @@ tbody tr:hover td { background: #f4f7fc; }
                       <option value="5.5.2">5.5.2 โอนย้ายต่างกระทรวง กรม</option>
                       <option value="5.5.3">5.5.3 ย้ายระหว่างจังหวัด</option>
                       <option value="5.5.4">5.5.4 ยืมตัวภายในจังหวัด</option>
-                      <option value="5.5.5">5.5.5 คำสั่งอนุญาตให้ข้าราชการและลูกจ้างลาออก</option>
+                      <option value="5.5.5">5.5.5 คำสั่งอนุญาตให้ข้าราชการและลูกจ้างประจำลาออก</option>
                       <option value="5.5.6">5.5.6 ผ่อนผันรับราชการ</option>
                       <option value="5.5.7">5.5.7 ย้ายภายในจังหวัด</option>
                     </optgroup>
@@ -1341,7 +1342,7 @@ tbody tr:hover td { background: #f4f7fc; }
                       <option value="5.7.2">5.7.2 วินัยของลูกจ้าง</option>
                     </optgroup>
                     <optgroup label="5.8 ประวัติเจ้าหน้าที่">
-                      <option value="5.8.1">5.8.1 การเปลี่ยนชื่อ–สกุล ของเจ้าหน้าที่</option>
+                      <option value="5.8.1">5.8.1 การเปลี่ยนชื่อ-สกุล ของเจ้าหน้าที่</option>
                       <option value="5.8.2">5.8.2 การทำบัตรประจำตัวต่างๆ</option>
                     </optgroup>
                     <optgroup label="5.9 เกษียณ บำเหน็จ บำนาญ">
@@ -1366,10 +1367,14 @@ tbody tr:hover td { background: #f4f7fc; }
                     </optgroup>
                   </optgroup>
                   <optgroup label="หมวด 6 เบ็ดเตล็ด">
-                    <option value="6.1.1">6.1.1 การขอและให้ความร่วมมือในกิจการสาธารณสุขกุศล</option>
-                    <option value="6.1.2">6.1.2 งานพิธีต่างๆ</option>
-                    <option value="6.2.1">6.2.1 การจัดกิจกรรมร่วมกับจังหวัด</option>
-                    <option value="6.2.2">6.2.2 การบริจาค</option>
+                    <optgroup label="6.1 เบ็ดเตล็ดภายใน">
+                      <option value="6.1.1">6.1.1 การขอและให้ความร่วมมือในกิจการสาธารณสุขกุศล</option>
+                      <option value="6.1.2">6.1.2 งานพิธีต่างๆ</option>
+                    </optgroup>
+                    <optgroup label="6.2 เบ็ดเตล็ดภายนอก">
+                      <option value="6.2.1">6.2.1 การจัดกิจกรรมร่วมกับจังหวัด</option>
+                      <option value="6.2.2">6.2.2 การบริจาค</option>
+                    </optgroup>
                   </optgroup>
                   <optgroup label="หมวด 7 การประชุมสัมมนา">
                     <optgroup label="7.1 การประชุมภายนอก">
@@ -1391,28 +1396,36 @@ tbody tr:hover td { background: #f4f7fc; }
                       <option value="7.3.2">7.3.2 สัมมนาภายนอก</option>
                     </optgroup>
                   </optgroup>
-                  <optgroup label="หมวด 8 การฝึกอบรม ทุนดูงานและลาศึกษาต่อ">
+                  <optgroup label="หมวด 8 การฝึกอบรม ทุนดูงาน และลาศึกษาต่อ">
                     <option value="8.1.1">8.1.1 ระเบียบการฝึกอบรมและลาศึกษาต่อ</option>
-                    <option value="8.2.1">8.2.1 อบรม จังหวัด</option>
-                    <option value="8.2.2">8.2.2 อบรม สสจ.</option>
-                    <option value="8.2.3">8.2.3 อบรมอื่นๆ ภายในจังหวัด</option>
-                    <option value="8.2.4">8.2.4 อบรมอื่นๆ ภายนอกจังหวัด</option>
-                    <option value="8.2.5">8.2.5 ศึกษาดูงานภายในและภายนอก รพ.</option>
-                    <option value="8.2.6">8.2.6 การบรรยายวิชาการ / การเป็นวิทยากร</option>
-                    <option value="8.2.7">8.2.7 การลาศึกษาต่อ/ดูงานของเจ้าหน้าที่</option>
-                    <option value="8.2.8">8.2.8 ประกาศรับสมัครอบรมศึกษาดูงานต่างๆ</option>
+                    <optgroup label="8.2 อบรม ดูงาน ลาศึกษาต่อระยะสั้น">
+                      <option value="8.2.1">8.2.1 อบรม จังหวัด</option>
+                      <option value="8.2.2">8.2.2 อบรม สสจ.</option>
+                      <option value="8.2.3">8.2.3 อบรมอื่นๆ ภายในจังหวัด</option>
+                      <option value="8.2.4">8.2.4 อบรมอื่นๆ ภายนอกจังหวัด</option>
+                      <option value="8.2.5">8.2.5 ศึกษาดูงานภายในและภายนอก รพ.</option>
+                      <option value="8.2.6">8.2.6 การบรรยายวิชาการ</option>
+                      <option value="8.2.7">8.2.7 การเป็นวิทยากร</option>
+                      <option value="8.2.8">8.2.8 การลาศึกษาต่อ/ดูงานของเจ้าหน้าที่</option>
+                    </optgroup>
                   </optgroup>
                   <optgroup label="หมวด 9 วัสดุครุภัณฑ์ ที่ดินและสิ่งก่อสร้าง">
-                    <option value="9.1.1">9.1.1 มติ ครม.เกี่ยวกับพัสดุ ครุภัณฑ์ที่ดินสิ่งก่อสร้าง (1)</option>
-                    <option value="9.1.2">9.1.2 มติ ครม.เกี่ยวกับพัสดุ ครุภัณฑ์ที่ดินสิ่งก่อสร้าง (2)</option>
-                    <option value="9.2.1">9.2.1 ประวัติครุภัณฑ์</option>
-                    <option value="9.2.2">9.2.2 ทะเบียนคุมสำนักงาน</option>
-                    <option value="9.2.3">9.2.3 ทะเบียนคุมครุภัณฑ์ทางการแพทย์</option>
-                    <option value="9.2.4">9.2.4 ทะเบียนคุมครุภัณฑ์</option>
-                    <option value="9.2.5">9.2.5 การขอยืมครุภัณฑ์ทุกชนิด</option>
-                    <option value="9.3.1">9.3.1 ทะเบียนราชพัสดุ</option>
-                    <option value="9.3.2">9.3.2 เอกสาร/หนังสือที่เกี่ยวข้องกับที่ดินและสิ่งก่อสร้าง</option>
-                    <option value="9.3.3">9.3.3 หนังสือโต้ตอบการขอและการใช้ที่ดินราชพัสดุ</option>
+                    <optgroup label="9.1 ระเบียบวัสดุครุภัณฑ์ที่ดินและสิ่งก่อสร้าง">
+                      <option value="9.1.1">9.1.1 มติ ครม.เกี่ยวกับพัสดุ ครุภัณฑ์ที่ดินสิ่งก่อสร้าง (1)</option>
+                      <option value="9.1.2">9.1.2 มติ ครม.เกี่ยวกับพัสดุ ครุภัณฑ์ที่ดินสิ่งก่อสร้าง (2)</option>
+                    </optgroup>
+                    <optgroup label="9.2 การควบคุมและเก็บรักษา">
+                      <option value="9.2.1">9.2.1 ประวัติครุภัณฑ์</option>
+                      <option value="9.2.2">9.2.2 ทะเบียนคุมสำนักงาน</option>
+                      <option value="9.2.3">9.2.3 ทะเบียนคุมครุภัณฑ์ทางการแพทย์</option>
+                      <option value="9.2.4">9.2.4 ทะเบียนคุมครุภัณฑ์</option>
+                      <option value="9.2.5">9.2.5 การขอยืมครุภัณฑ์ทุกชนิด</option>
+                    </optgroup>
+                    <optgroup label="9.3 ที่ดินและสิ่งก่อสร้าง">
+                      <option value="9.3.1">9.3.1 ทะเบียนราชพัสดุ</option>
+                      <option value="9.3.2">9.3.2 เอกสาร/หนังสือที่เกี่ยวข้องกับที่ดินและสิ่งก่อสร้าง</option>
+                      <option value="9.3.3">9.3.3 หนังสือโต้ตอบการขอและการใช้ที่ดินราชพัสดุ</option>
+                    </optgroup>
                   </optgroup>
                   <optgroup label="หมวด 10 สถิติรายงาน แบบสอบถาม">
                     <option value="10.1.1">10.1.1 รายงานรังสีการแพทย์</option>
@@ -1622,6 +1635,7 @@ tbody tr:hover td { background: #f4f7fc; }
       </div><!-- /recv-layout -->
     </div>
   </div>
+
 
   <!-- ===== PAGE: SEND ===== -->
   <div id="page-send" class="page">
