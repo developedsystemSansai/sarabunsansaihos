@@ -463,15 +463,36 @@ tbody tr:hover td { background: #f4f7fc; }
 .public-notice strong { font-weight: 700; }
 
 /* ============================================================
-   RECEIVE — 2-COLUMN LAYOUT
+   RECEIVE — 2-COLUMN LAYOUT (redesigned)
 ============================================================ */
 .recv-layout {
   display: grid;
-  grid-template-columns: minmax(0,1.1fr) minmax(0,.9fr);
-  gap: 14px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
   align-items: start;
 }
-@media (max-width: 960px) { .recv-layout { grid-template-columns: 1fr; } }
+@media (max-width: 1024px) { .recv-layout { grid-template-columns: minmax(0,1.1fr) minmax(0,.9fr); } }
+@media (max-width: 860px)  { .recv-layout { grid-template-columns: 1fr; } }
+
+/* step label badge */
+.step-badge {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 50%;
+  background: var(--gold2); color: var(--navy);
+  font-size: 11px; font-weight: 800; flex-shrink: 0;
+  box-shadow: 0 1px 4px rgba(0,0,0,.15);
+}
+.recv-section-title {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; font-weight: 700; color: var(--gray500);
+  text-transform: uppercase; letter-spacing: .5px;
+  margin: 14px 0 8px;
+  padding-bottom: 5px; border-bottom: 1px solid var(--gray200);
+}
+.recv-section-title:first-child { margin-top: 0; }
+/* inline 2-col inside card */
+.recv-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 480px) { .recv-row { grid-template-columns: 1fr; } }
 
 /* เลขรับที่ bar */
 .recv-no-bar {
@@ -964,16 +985,23 @@ tbody tr:hover td { background: #f4f7fc; }
 
   <!-- ===== PAGE: RECEIVE ===== -->
   <div id="page-receive" class="page">
-    <div class="content" style="max-width:1380px;">
+    <div class="content" style="max-width:1400px;">
+
+      <!-- Page title -->
       <div class="ptb">
         <div class="ptb-icon">↓</div>
-        <div><h2>บันทึกหนังสือรับเข้า</h2><p>กรอกข้อมูลหนังสือที่รับเข้าจากหน่วยงานภายนอก</p></div>
+        <div>
+          <h2>บันทึกหนังสือรับเข้า</h2>
+          <p>กรอกข้อมูลหนังสือที่รับเข้าจากหน่วยงานภายนอก ครบทุกขั้นตอน</p>
+        </div>
       </div>
+
+      <!-- Alerts -->
       <div id="r-alert-err"  class="alert a-error"></div>
       <div id="r-alert-ok"   class="alert a-success"></div>
       <div id="r-alert-info" class="alert a-info"></div>
 
-      <!-- ── แถบเลขรับที่ (ซ่อน — ระบบกำหนดเลขอัตโนมัติ) ── -->
+      <!-- เลขรับที่ bar (ซ่อน — ระบบกำหนดอัตโนมัติ) -->
       <div class="recv-no-bar" style="display:none;">
         <span class="rnb-label">เลขรับที่</span>
         <input type="text" id="r-recvno" placeholder="(ใหม่)" style="max-width:110px;">
@@ -982,24 +1010,28 @@ tbody tr:hover td { background: #f4f7fc; }
         <span class="rnb-badge">ใหม่</span>
       </div>
 
-      <!-- ── MAIN 2-COLUMN LAYOUT ── -->
+      <!-- ══════ MAIN 2-COLUMN LAYOUT ══════ -->
       <div class="recv-layout">
 
-        <!-- ════ LEFT COLUMN ════ -->
-        <div>
+        <!-- ════════════════════ LEFT COLUMN ════════════════════ -->
+        <div style="display:flex;flex-direction:column;gap:14px;">
 
-          <!-- ข้อมูลหนังสือ -->
-          <div class="card">
-            <div class="card-head"><span class="card-head-icon">📋</span><h3>ข้อมูลหนังสือรับเข้า</h3></div>
-            <div class="card-body">
+          <!-- ── CARD 1: ข้อมูลพื้นฐาน ── -->
+          <div class="card" style="margin:0;">
+            <div class="card-head" style="background:linear-gradient(135deg,var(--navy),var(--navy2));border-bottom:2px solid var(--gold);">
+              <span class="card-head-icon" style="color:var(--gold);">📋</span>
+              <h3 style="color:white;">① ข้อมูลหนังสือรับเข้า</h3>
+            </div>
+            <div class="card-body" style="padding:16px 18px;">
 
-              <!-- แถว 1: วันที่รับหนังสือ + เวลาลงรับ -->
-              <div class="form-grid" style="grid-template-columns:1fr 1fr;">
-                <div class="f-group">
+              <!-- วันที่ + เวลา -->
+              <div class="recv-section-title"><span class="step-badge">1</span> วันเวลาที่รับ</div>
+              <div class="recv-row">
+                <div class="f-group" style="margin-bottom:10px;">
                   <label class="f-label">วันที่รับหนังสือ <span class="req">*</span></label>
                   <input type="text" id="r-date" class="f-input" placeholder="DD/MM/YYYY">
                 </div>
-                <div class="f-group">
+                <div class="f-group" style="margin-bottom:10px;">
                   <label class="f-label">เวลาลงรับ <span class="req">*</span></label>
                   <input type="text" id="r-recv-time" class="f-input"
                     placeholder="เช่น 09:30"
@@ -1010,43 +1042,48 @@ tbody tr:hover td { background: #f4f7fc; }
                 </div>
               </div>
 
-              <div class="f-group">
-  <label class="f-label" style="color:var(--red);font-size:12px;">⚡ ความเร่งด่วน <span class="req">*</span></label>
-<select id="r-urgency" class="f-select" style="font-weight:600;">
-  <option value="" disabled selected>– เลือกระดับความเร่งด่วน –</option>
-  <option value="ด่วนที่สุด">🔴 ด่วนที่สุด — ให้ปฏิบัติทันทีที่ได้รับหนังสือ</option>
-  <option value="ด่วนมาก">🟠 ด่วนมาก — ให้ปฏิบัติโดยเร็ว</option>
-  <option value="ด่วน">🟡 ด่วน — ให้ปฏิบัติเร็วกว่าปกติเท่าที่จะทำได้</option>
-  <option value="ปกติ">⚪ ปกติ</option>
-</select>
-</div>
-<div class="f-group">
-  <label class="f-label">ชั้นความลับ <span class="req">*</span></label>
-<select id="r-conf" class="f-select">
-  <option value="" disabled selected>– เลือกระดับชั้นความลับ –</option>
-  <option value="ลับที่สุด">🔴 ลับที่สุด — เปิดเผยไม่ได้เด็ดขาด</option>
-  <option value="ลับมาก">🟠 ลับมาก — เปิดเผยเฉพาะผู้จำเป็น</option>
-  <option value="ลับ">🟡 ลับ — เปิดเผยเฉพาะผู้เกี่ยวข้อง</option>
-  <option value="ไม่มีชั้น">⚪ ไม่มีชั้นความลับ</option>
-</select>
-</div>
+              <!-- ความเร่งด่วน + ชั้นความลับ -->
+              <div class="recv-section-title"><span class="step-badge">2</span> ระดับความเร่งด่วน & ชั้นความลับ</div>
+              <div class="recv-row">
+                <div class="f-group" style="margin-bottom:10px;">
+                  <label class="f-label" style="color:var(--red);font-size:12px;">⚡ ความเร่งด่วน <span class="req">*</span></label>
+                  <select id="r-urgency" class="f-select" style="font-weight:600;">
+                    <option value="" disabled selected>– เลือกระดับ –</option>
+                    <option value="ด่วนที่สุด">🔴 ด่วนที่สุด</option>
+                    <option value="ด่วนมาก">🟠 ด่วนมาก</option>
+                    <option value="ด่วน">🟡 ด่วน</option>
+                    <option value="ปกติ">⚪ ปกติ</option>
+                  </select>
+                </div>
+                <div class="f-group" style="margin-bottom:10px;">
+                  <label class="f-label">ชั้นความลับ <span class="req">*</span></label>
+                  <select id="r-conf" class="f-select">
+                    <option value="" disabled selected>– เลือกระดับ –</option>
+                    <option value="ลับที่สุด">🔴 ลับที่สุด</option>
+                    <option value="ลับมาก">🟠 ลับมาก</option>
+                    <option value="ลับ">🟡 ลับ</option>
+                    <option value="ไม่มีชั้น">⚪ ไม่มีชั้นความลับ</option>
+                  </select>
+                </div>
               </div>
 
-              <!-- แถว 3: เลขที่หนังสือ + วันที่หนังสือรับ -->
-              <div class="form-grid" style="grid-template-columns:1fr 1fr;">
-                <div class="f-group">
+              <!-- เลขที่หนังสือ + วันที่หนังสือ -->
+              <div class="recv-section-title"><span class="step-badge">3</span> เลขที่หนังสือ</div>
+              <div class="recv-row">
+                <div class="f-group" style="margin-bottom:10px;">
                   <label class="f-label">เลขที่หนังสือ <span class="req">*</span></label>
-                  <input type="text" id="r-ref" class="f-input" placeholder="เลขที่หนังสือจากต้นเรื่อง"
-                    style="font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:14px;">
+                  <input type="text" id="r-ref" class="f-input" placeholder="เลขที่หนังสือต้นเรื่อง"
+                    style="font-family:'IBM Plex Mono',monospace;font-weight:600;font-size:13px;">
                 </div>
-                <div class="f-group">
-                  <label class="f-label">วันที่หนังสือรับ</label>
+                <div class="f-group" style="margin-bottom:10px;">
+                  <label class="f-label">วันที่หนังสือ</label>
                   <input type="text" id="r-docrefdate" class="f-input" placeholder="DD/MM/YYYY">
                 </div>
               </div>
 
-              <!-- แถว 4: จากหน่วยงาน (autocomplete) เต็มแถว -->
-              <div class="f-group">
+              <!-- จากหน่วยงาน -->
+              <div class="recv-section-title"><span class="step-badge">4</span> ต้นเรื่อง & เนื้อหา</div>
+              <div class="f-group" style="margin-bottom:10px;">
                 <label class="f-label">จากหน่วยงาน <span class="req">*</span></label>
                 <div class="autocomplete-wrap">
                   <input type="text" id="r-from" class="f-input" placeholder="พิมพ์ชื่อหน่วยงาน..."
@@ -1058,23 +1095,37 @@ tbody tr:hover td { background: #f4f7fc; }
                 </div>
               </div>
 
-              <!-- แถว 5: เรื่อง -->
-              <div class="f-group">
+              <!-- เรื่อง -->
+              <div class="f-group" style="margin-bottom:10px;">
                 <label class="f-label">เรื่อง <span class="req">*</span></label>
                 <input type="text" id="r-subj" class="f-input" placeholder="ระบุหัวข้อ/เรื่องของหนังสือ" maxlength="200"
                   oninput="cnt('r-subj','r-subj-cnt')">
                 <div class="f-counter"><span id="r-subj-cnt">0</span> / 200</div>
               </div>
 
-              <!-- แถว 6: อ้างถึงหนังสือ -->
-              <div class="f-group">
-                <label class="f-label">อ้างถึงหนังสือ <span style="font-size:11px;font-weight:400;color:var(--gray500);">(เรื่องที่อ้างถึงในหนังสือราชการ)</span></label>
+              <!-- อ้างถึงหนังสือ -->
+              <div class="f-group" style="margin-bottom:10px;">
+                <label class="f-label">อ้างถึงหนังสือ <span style="font-size:11px;font-weight:400;color:var(--gray500);">(ถ้ามี)</span></label>
                 <input type="text" id="r-docref" class="f-input" placeholder="เลขที่/เรื่องที่อ้างถึง" maxlength="200">
               </div>
 
-              <!-- แถว 7: เลขานุการกลุ่มภารกิจรับหนังสือ + ว/ด/ป ส่ง -->
-              <div class="form-grid" style="grid-template-columns:1fr 1fr;">
-                <div class="f-group">
+              <!-- ข้อสั่งการ -->
+              <div class="recv-section-title"><span class="step-badge">5</span> ข้อสั่งการและการปฏิบัติ</div>
+              <div class="f-group" style="margin-bottom:10px;">
+                <label class="f-label">ข้อสั่งการในหนังสือราชการ <span class="req">*</span></label>
+                <textarea id="r-detail" class="f-textarea" rows="3" placeholder="ระบุข้อสั่งการที่ระบุในหนังสือ..." maxlength="500"
+                  oninput="cnt('r-detail','r-detail-cnt')"></textarea>
+                <div class="f-counter"><span id="r-detail-cnt">0</span> / 500</div>
+              </div>
+              <div class="f-group" style="margin-bottom:10px;">
+                <label class="f-label">การปฏิบัติ <span class="req">*</span></label>
+                <input type="text" id="r-action" class="f-input" placeholder="การปฏิบัติที่ต้องดำเนินการ" maxlength="200">
+              </div>
+
+              <!-- เลขา + ว/ด/ป ส่ง -->
+              <div class="recv-section-title"><span class="step-badge">6</span> เลขานุการและวันที่ส่ง</div>
+              <div class="recv-row">
+                <div class="f-group" style="margin-bottom:10px;">
                   <label class="f-label">เลขากลุ่มภารกิจรับหนังสือ</label>
                   <select id="r-by" class="f-select">
                     <option value="">–เลขานุการ–</option>
@@ -1088,7 +1139,7 @@ tbody tr:hover td { background: #f4f7fc; }
                     <option value="เลขานุการ ผช.พัฒนาคุณภาพ">เลขานุการ ผช.พัฒนาคุณภาพ</option>
                   </select>
                 </div>
-                <div class="f-group">
+                <div class="f-group" style="margin-bottom:10px;">
                   <label class="f-label">ว/ด/ป ส่ง</label>
                   <input type="text" id="r-recvno-main" class="f-input" placeholder="ว/ด/ป">
                 </div>
@@ -1097,83 +1148,15 @@ tbody tr:hover td { background: #f4f7fc; }
             </div>
           </div>
 
-          <!-- หนังสือราชการผ่านผู้บริหาร -->
-          <div class="card">
-            <div class="card-head" style="background:linear-gradient(90deg,#1e3a5f 0%,#2d5a8e 100%);border-bottom:none;">
-              <span class="card-head-icon" style="color:#ffd700;">✅</span>
-              <h3 style="color:white;">หนังสือราชการผ่านผู้บริหาร</h3>
+          <!-- ── CARD 2: การจัดเก็บ ── -->
+          <div class="card" style="margin:0;">
+            <div class="card-head">
+              <span class="card-head-icon">🗂️</span>
+              <h3>② การจัดเก็บหนังสือ</h3>
             </div>
-            <div class="card-body">
-              <p style="font-size:11.5px;color:var(--gray500);margin-bottom:12px;">งานเลขาแต่ละภารกิจเป็นผู้บันทึก — เลือกได้หลายท่าน พร้อมระบุ ว/ด/ป ที่ผ่าน</p>
-<div class="dir-grid" style="grid-template-columns:1fr 1fr;">
-  <div class="dir-row c-dir">
-    <label><input type="checkbox" id="r-chk-dir"> ผู้อำนวยการ</label>
-    <input type="text" id="r-date-dir" class="dir-date" placeholder="ว/ด/ป" disabled>
-  </div>
-  <div class="dir-row c-med">
-    <label><input type="checkbox" id="r-chk-med"> รองแพทย์</label>
-    <input type="text" id="r-date-med" class="dir-date" placeholder="ว/ด/ป" disabled>
-  </div>
-  <div class="dir-row c-prs">
-    <label><input type="checkbox" id="r-chk-prs"> รองพรส.</label>
-    <input type="text" id="r-date-prs" class="dir-date" placeholder="ว/ด/ป" disabled>
-  </div>
-  <div class="dir-row c-adm">
-    <label><input type="checkbox" id="r-chk-adm"> รองบริหาร</label>
-    <input type="text" id="r-date-adm" class="dir-date" placeholder="ว/ด/ป" disabled>
-  </div>
-  <div class="dir-row c-dig">
-    <label><input type="checkbox" id="r-chk-dig"> รองดิจิทัล</label>
-    <input type="text" id="r-date-dig" class="dir-date" placeholder="ว/ด/ป" disabled>
-  </div>
-  <div class="dir-row c-pri">
-    <label><input type="checkbox" id="r-chk-pri"> รองปฐมภูมิ</label>
-    <input type="text" id="r-date-pri" class="dir-date" placeholder="ว/ด/ป" disabled>
-  </div>
-  <div class="dir-row c-nur">
-    <label><input type="checkbox" id="r-chk-nur"> รองฝ่ายการพยาบาล</label>
-    <input type="text" id="r-date-nur" class="dir-date" placeholder="ว/ด/ป" disabled>
-  </div>
-  <div class="dir-row c-qa">
-    <label><input type="checkbox" id="r-chk-qa"> ผช.พัฒนาคุณภาพ</label>
-    <input type="text" id="r-date-qa" class="dir-date" placeholder="ว/ด/ป" disabled>
-  </div>
-  <div class="dir-row c-cfo">
-    <label><input type="checkbox" id="r-chk-cfo"> ผช.CFO</label>
-    <input type="text" id="r-date-cfo" class="dir-date" placeholder="ว/ด/ป" disabled>
-  </div>
-  <!-- ▼▼▼ ย้ายมาไว้ท้ายสุด ▼▼▼ -->
-  <div class="dir-row c-ret" style="grid-column:1/-1;">
-    <label style="min-width:130px;cursor:default;">📋 ว/ด/ป คืนธุรการ</label>
-    <input type="text" id="r-date-return" class="dir-date" placeholder="ว/ด/ป">
-  </div>
-</div>
-            </div>
-<!-- ═══ จบกลุ่มงานย่อย ═══ -->
-          </div>
-
-          <!-- ข้อสั่งการ + การปฏิบัติ -->
-          <div class="card">
-            <div class="card-head"><span class="card-head-icon">📝</span><h3>ข้อสั่งการและการปฏิบัติ</h3></div>
-            <div class="card-body">
-              <div class="f-group">
-                <label class="f-label">ข้อสั่งการในหนังสือราชการ <span class="req">*</span></label>
-                <textarea id="r-detail" class="f-textarea" placeholder="ระบุข้อสั่งการที่ระบุในหนังสือ..." maxlength="500"
-                  oninput="cnt('r-detail','r-detail-cnt')"></textarea>
-                <div class="f-counter"><span id="r-detail-cnt">0</span> / 500</div>
-              </div>
-              <div class="f-group">
-                <label class="f-label">การปฏิบัติ <span class="req">*</span></label>
-                <input type="text" id="r-action" class="f-input" placeholder="การปฏิบัติที่ต้องดำเนินการ" maxlength="200">
-              </div>
-            </div>
-          </div>
-
-          <!-- รหัสแฟ้ม + หน่วยงานที่เก็บ -->
-          <div class="card">
-            <div class="card-head"><span class="card-head-icon">🗂️</span><h3>การจัดเก็บหนังสือ</h3></div>
-            <div class="card-body">
-              <div class="f-group">
+            <div class="card-body" style="padding:16px 18px;">
+              <div class="recv-section-title" style="margin-top:0;"><span class="step-badge">7</span> รหัสแฟ้มและหน่วยงาน</div>
+              <div class="f-group" style="margin-bottom:10px;">
                 <label class="f-label">รหัสแฟ้ม</label>
                 <select id="r-taskstored" class="f-select">
                   <option value="">–เลือกรหัสแฟ้ม–</option>
