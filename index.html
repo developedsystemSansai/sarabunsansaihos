@@ -1697,7 +1697,6 @@ tbody tr:hover td { background: #f4f7fc; }
                   <label><input type="checkbox" id="r-chk-cfo"> ผช.CFO</label>
                   <input type="text" id="r-date-cfo" class="dir-date" placeholder="ว/ด/ป" disabled>
                 </div>
-                <!-- ว/ด/ป คืนธุรการ — เต็มแถว -->
                 <div class="dir-row c-ret" style="grid-column:1/-1;">
                   <label style="min-width:130px;cursor:default;">📋 ว/ด/ป คืนธุรการ</label>
                   <input type="text" id="r-date-return" class="dir-date" placeholder="ว/ด/ป">
@@ -1713,7 +1712,6 @@ tbody tr:hover td { background: #f4f7fc; }
   </div>
 
 
-<!-- ===== PAGE: SEND (หนังสือส่งออก) ===== -->
 <!-- ===== PAGE: SEND (หนังสือส่งออก) ===== -->
 <div id="page-send" class="page">
   <div class="content content-md">
@@ -1732,63 +1730,54 @@ tbody tr:hover td { background: #f4f7fc; }
       <div class="card-head" style="background:linear-gradient(135deg,var(--navy),var(--navy2));border-bottom:2px solid var(--gold);">
         <span class="card-head-icon" style="color:var(--gold);">📋</span>
         <h3 style="color:white;">ข้อมูลหนังสือส่งออก</h3>
-        <div class="f-group">
-  <label class="f-label">เลขที่หนังสือส่ง <span class="req">*</span></label>
-  <div style="display:flex;align-items:center;gap:0;">
-    <span style="background:var(--gray100);border:1px solid var(--gray300);border-right:none;border-radius:var(--r) 0 0 var(--r);padding:9px 12px;font-size:13px;color:var(--gray600);white-space:nowrap;font-weight:600;">ชม 0033.301/</span>
-    <input type="text" id="s-docno" class="f-input" placeholder="กรอกเฉพาะเลขลำดับ เช่น 0002" style="border-radius:0 var(--r) var(--r) 0;border-left:none;" oninput="sendUpdateDocNoPreview()">
-  </div>
-  <div class="f-hint" id="s-docno-preview" style="color:var(--navy);font-weight:600;font-family:'IBM Plex Mono',monospace;"></div>
-  <div class="f-hint" style="margin-top:2px;">กรอกเฉพาะตัวเลขหลังเครื่องหมาย / ระบบจะเติม "ชม 0033.301/" ให้เอง</div>
-</div>
+      </div>
       <div class="card-body">
 
-        <!-- แถว 1: วันที่ลงเลขหนังสือส่ง — เต็มแถว -->
-        <div class="f-group">
-          <label class="f-label">วันที่ลงเลขหนังสือส่ง <span class="req">*</span></label>
-          <input type="text" id="s-date-assigned" class="f-input" placeholder="ว/ด/ป พ.ศ. เช่น 01/06/2569" style="max-width:260px;">
-        </div>
-
-        <!-- แถว 2: ความเร่งด่วน + ชั้นความลับ -->
+        <!-- แถว 1: ความเร่งด่วน + ชั้นความลับ -->
         <div class="form-grid" style="grid-template-columns:1fr 1fr;">
           <div class="f-group">
             <label class="f-label" style="color:var(--red);font-size:12px;">⚡ ความเร่งด่วน <span class="req">*</span></label>
             <select id="s-urgency" class="f-select" style="font-weight:600;">
-  <option value="" disabled selected>– เลือกระดับความเร่งด่วน –</option>
-  <option value="ด่วนที่สุด">🔴 ด่วนที่สุด — ให้ปฏิบัติทันทีที่ได้รับหนังสือ</option>
-  <option value="ด่วนมาก">🟠 ด่วนมาก — ให้ปฏิบัติโดยเร็ว</option>
-  <option value="ด่วน">🟡 ด่วน — ให้ปฏิบัติเร็วกว่าปกติเท่าที่จะทำได้</option>
-  <option value="ปกติ">⚪ ปกติ</option>
-</select>
+              <option value="" disabled selected>– เลือกระดับความเร่งด่วน –</option>
+              <option value="ด่วนที่สุด">🔴 ด่วนที่สุด — ให้ปฏิบัติทันทีที่ได้รับหนังสือ</option>
+              <option value="ด่วนมาก">🟠 ด่วนมาก — ให้ปฏิบัติโดยเร็ว</option>
+              <option value="ด่วน">🟡 ด่วน — ให้ปฏิบัติเร็วกว่าปกติเท่าที่จะทำได้</option>
+              <option value="ปกติ">⚪ ปกติ</option>
             </select>
           </div>
           <div class="f-group">
             <label class="f-label">ชั้นความลับ <span class="req">*</span></label>
             <select id="s-conf" class="f-select">
-  <option value="" disabled selected>– เลือกระดับชั้นความลับ –</option>
-  <option value="ลับที่สุด">🔴 ลับที่สุด — เปิดเผยไม่ได้เด็ดขาด</option>
-  <option value="ลับมาก">🟠 ลับมาก — เปิดเผยเฉพาะผู้จำเป็น</option>
-  <option value="ลับ">🟡 ลับ — เปิดเผยเฉพาะผู้เกี่ยวข้อง</option>
-  <option value="ไม่มีชั้น">⚪ ไม่มีชั้นความลับ</option>
-</select>
+              <option value="" disabled selected>– เลือกระดับชั้นความลับ –</option>
+              <option value="ลับที่สุด">🔴 ลับที่สุด — เปิดเผยไม่ได้เด็ดขาด</option>
+              <option value="ลับมาก">🟠 ลับมาก — เปิดเผยเฉพาะผู้จำเป็น</option>
+              <option value="ลับ">🟡 ลับ — เปิดเผยเฉพาะผู้เกี่ยวข้อง</option>
+              <option value="ไม่มีชั้น">⚪ ไม่มีชั้นความลับ</option>
+            </select>
           </div>
         </div>
 
-        <!-- แถว 3: เลขที่หนังสือส่ง (ชม 0033.301/...) + วันที่หนังสือส่ง -->
+        <!-- แถว 2: วันที่ลงเลข + วันที่หนังสือส่ง -->
         <div class="form-grid" style="grid-template-columns:1fr 1fr;">
           <div class="f-group">
-            <label class="f-label">เลขที่หนังสือส่ง <span class="req">*</span></label>
-            <div style="display:flex;align-items:center;gap:0;">
-              <span style="background:var(--gray100);border:1px solid var(--gray300);border-right:none;border-radius:var(--r) 0 0 var(--r);padding:9px 12px;font-size:13px;color:var(--gray600);white-space:nowrap;font-weight:600;">ชม 0033.301/</span>
-              <input type="text" id="s-docno" class="f-input" placeholder="เลขที่ (อัตโนมัติ)" style="border-radius:0 var(--r) var(--r) 0;border-left:none;" oninput="sendUpdateDocNoPreview()">
-            </div>
-            <div class="f-hint" id="s-docno-preview" style="color:var(--navy);font-weight:600;font-family:'IBM Plex Mono',monospace;"></div>
-            <div class="f-hint" style="margin-top:2px;">ปล่อยว่างเพื่อให้ระบบกำหนดเลขที่ถัดไปอัตโนมัติ</div>
+            <label class="f-label">วันที่ลงเลขหนังสือส่ง <span class="req">*</span></label>
+            <input type="text" id="s-date-assigned" class="f-input" placeholder="ว/ด/ป พ.ศ. เช่น 01/06/2569">
           </div>
           <div class="f-group">
             <label class="f-label">วันที่หนังสือส่ง <span class="req">*</span></label>
             <input type="text" id="s-docdate" class="f-input" placeholder="ว/ด/ป พ.ศ. เช่น 01/06/2569">
           </div>
+        </div>
+
+        <!-- แถว 3: เลขที่หนังสือส่ง (ชม 0033.301/...) -->
+        <div class="f-group">
+          <label class="f-label">เลขที่หนังสือส่ง <span class="req">*</span></label>
+          <div style="display:flex;align-items:center;gap:0;">
+            <span style="background:var(--gray100);border:1px solid var(--gray300);border-right:none;border-radius:var(--r) 0 0 var(--r);padding:9px 12px;font-size:13px;color:var(--gray600);white-space:nowrap;font-weight:600;">ชม 0033.301/</span>
+            <input type="text" id="s-docno" class="f-input" placeholder="ปล่อยว่าง = อัตโนมัติ" style="border-radius:0 var(--r) var(--r) 0;border-left:none;" oninput="sendUpdateDocNoPreview()">
+          </div>
+          <div class="f-hint" id="s-docno-preview" style="color:var(--navy);font-weight:600;font-family:'IBM Plex Mono',monospace;"></div>
+          <div class="f-hint" style="margin-top:2px;">ปล่อยว่างเพื่อให้ระบบกำหนดเลขที่ถัดไปอัตโนมัติ</div>
         </div>
 
         <!-- แถว 4: ผู้ส่ง/หน่วยงาน (grouped dropdown จาก getMissionGroups) — เต็มแถว -->
@@ -1851,8 +1840,8 @@ tbody tr:hover td { background: #f4f7fc; }
   </div>
 </div>
 
-  <!-- ===== PAGE: SEARCH ===== -->
-  <div id="page-search" class="page">
+<!-- ===== PAGE: SEARCH ===== -->
+<div id="page-search" class="page">
     <div class="content" style="max-width:1100px;">
       <div class="ptb">
         <div class="ptb-icon">⊕</div>
@@ -2057,8 +2046,8 @@ tbody tr:hover td { background: #f4f7fc; }
     </div>
   </div>
 
-  <!-- ===== PAGE: HISTORY ===== -->
-  <div id="page-history" class="page">
+<!-- ===== PAGE: HISTORY ===== -->
+<div id="page-history" class="page">
     <div class="content">
       <div class="ptb">
         <div class="ptb-icon">🗂</div>
@@ -2180,8 +2169,8 @@ tbody tr:hover td { background: #f4f7fc; }
     </div>
   </div>
 
-  <!-- ===== PAGE: IMPORT ===== -->
-  <div id="page-import" class="page">
+<!-- ===== PAGE: IMPORT ===== -->
+<div id="page-import" class="page">
     <div class="content content-md">
       <div class="ptb">
         <div class="ptb-icon">↧</div>
@@ -2400,38 +2389,30 @@ tbody tr:hover td { background: #f4f7fc; }
         <div class="card-head" style="background:linear-gradient(135deg,var(--navy),var(--navy2));border-bottom:2px solid var(--gold);">
           <span class="card-head-icon" style="color:var(--gold);font-size:18px;">&#9670;</span>
           <h3 style="color:white;">บันทึกหนังสือรับรองใหม่</h3>
-          <div class="f-group">
-  <label class="f-label">เลขที่หนังสือส่ง <span class="req">*</span></label>
-  <div style="display:flex;align-items:center;gap:0;">
-    <span style="background:var(--gray100);border:1px solid var(--gray300);border-right:none;border-radius:var(--r) 0 0 var(--r);padding:9px 12px;font-size:13px;color:var(--gray600);white-space:nowrap;font-weight:600;">ชม 0033.301/</span>
-    <input type="text" id="cert-docno" class="f-input" placeholder="กรอกเฉพาะเลขลำดับ เช่น 0002" style="border-radius:0 var(--r) var(--r) 0;border-left:none;" oninput="certUpdateDocNoPreview()">
-  </div>
-  <div class="f-hint" id="cert-docno-preview" style="color:var(--navy);font-weight:600;font-family:'IBM Plex Mono',monospace;"></div>
-  <div class="f-hint" style="margin-top:2px;">กรอกเฉพาะตัวเลขหลังเครื่องหมาย / ระบบจะเติม "ชม 0033.301/" ให้เอง</div>
-</div>
+        </div>
         <div class="card-body">
 
-          <!-- แถว 1: วันที่ลงเลขหนังสือส่ง — เต็มแถว -->
-          <div class="f-group">
-            <label class="f-label">วันที่ลงเลขหนังสือส่ง <span class="req">*</span></label>
-            <input type="text" id="cert-date-assigned" class="f-input" placeholder="ว/ด/ป พ.ศ. เช่น 01/06/2569" style="max-width:260px;">
-          </div>
-
-          <!-- แถว 2: เลขที่หนังสือส่ง (ชม 0033.301/...) + วันที่หนังสือ -->
+          <!-- แถว 1: วันที่ลงเลข + วันที่หนังสือ -->
           <div class="form-grid" style="grid-template-columns:1fr 1fr;">
             <div class="f-group">
-              <label class="f-label">เลขที่หนังสือส่ง <span class="req">*</span></label>
-              <div style="display:flex;align-items:center;gap:0;">
-                <span style="background:var(--gray100);border:1px solid var(--gray300);border-right:none;border-radius:var(--r) 0 0 var(--r);padding:9px 12px;font-size:13px;color:var(--gray600);white-space:nowrap;font-weight:600;">ชม 0033.301/</span>
-                <input type="text" id="cert-docno" class="f-input" placeholder="เลขที่ (อัตโนมัติ)" style="border-radius:0 var(--r) var(--r) 0;border-left:none;" oninput="certUpdateDocNoPreview()">
-              </div>
-              <div class="f-hint" id="cert-docno-preview" style="color:var(--navy);font-weight:600;font-family:'IBM Plex Mono',monospace;"></div>
-              <div class="f-hint" style="margin-top:2px;">ปล่อยว่างเพื่อให้ระบบกำหนดเลขที่ถัดไปอัตโนมัติ</div>
+              <label class="f-label">วันที่ลงเลขหนังสือส่ง <span class="req">*</span></label>
+              <input type="text" id="cert-date-assigned" class="f-input" placeholder="ว/ด/ป พ.ศ. เช่น 01/06/2569">
             </div>
             <div class="f-group">
               <label class="f-label">วันที่หนังสือ <span class="req">*</span></label>
               <input type="text" id="cert-docdate" class="f-input" placeholder="ว/ด/ป พ.ศ. เช่น 01/06/2569">
             </div>
+          </div>
+
+          <!-- แถว 2: เลขที่หนังสือส่ง (ชม 0033.301/...) -->
+          <div class="f-group">
+            <label class="f-label">เลขที่หนังสือส่ง <span class="req">*</span></label>
+            <div style="display:flex;align-items:center;gap:0;">
+              <span style="background:var(--gray100);border:1px solid var(--gray300);border-right:none;border-radius:var(--r) 0 0 var(--r);padding:9px 12px;font-size:13px;color:var(--gray600);white-space:nowrap;font-weight:600;">ชม 0033.301/</span>
+              <input type="text" id="cert-docno" class="f-input" placeholder="ปล่อยว่าง = อัตโนมัติ" style="border-radius:0 var(--r) var(--r) 0;border-left:none;" oninput="certUpdateDocNoPreview()">
+            </div>
+            <div class="f-hint" id="cert-docno-preview" style="color:var(--navy);font-weight:600;font-family:'IBM Plex Mono',monospace;"></div>
+            <div class="f-hint" style="margin-top:2px;">ปล่อยว่างเพื่อให้ระบบกำหนดเลขที่ถัดไปอัตโนมัติ</div>
           </div>
 
           <!-- แถว 3: หน่วยงานที่ขอ (grouped dropdown จาก getMissionGroups) -->
