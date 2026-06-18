@@ -1871,6 +1871,8 @@ tbody tr:hover td { background: #f4f7fc; }
                 <option value="both">ทั้งรับและส่ง</option>
                 <option value="incoming">รับเข้า</option>
                 <option value="outgoing">ส่งออก</option>
+                <option value="certificate">หนังสือรับรอง</option>
+                <option value="order">หนังสือคำสั่ง</option>
               </select>
             </div>
 
@@ -1909,8 +1911,8 @@ tbody tr:hover td { background: #f4f7fc; }
         <!-- stat cards -->
         <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:16px;">
           <div class="rpt-card c-blue">  <div class="rpt-label">รวม</div><div class="rpt-val" id="rp-total">0</div><div style="font-size:10px;color:var(--gray400);">ฉบับ</div></div>
-          <div class="rpt-card" style="border-top-color:#0891b2;"><div class="rpt-label">รับเข้า</div><div class="rpt-val" id="rp-in" style="color:#0891b2;">0</div><div style="font-size:10px;color:var(--gray400);">ฉบับ</div></div>
-          <div class="rpt-card" style="border-top-color:#7c3aed;"><div class="rpt-label">ส่งออก</div><div class="rpt-val" id="rp-out" style="color:#7c3aed;">0</div><div style="font-size:10px;color:var(--gray400);">ฉบับ</div></div>
+          <div class="rpt-card" id="rp-in-card"  style="border-top-color:#0891b2;"><div class="rpt-label">รับเข้า</div><div class="rpt-val" id="rp-in" style="color:#0891b2;">0</div><div style="font-size:10px;color:var(--gray400);">ฉบับ</div></div>
+          <div class="rpt-card" id="rp-out-card" style="border-top-color:#7c3aed;"><div class="rpt-label" id="rp-out-label">ส่งออก</div><div class="rpt-val" id="rp-out" style="color:#7c3aed;">0</div><div style="font-size:10px;color:var(--gray400);">ฉบับ</div></div>
           <div class="rpt-card c-red">   <div class="rpt-label">ด่วนที่สุด</div><div class="rpt-val" id="rp-urg1">0</div><div style="font-size:10px;color:var(--gray400);">ฉบับ</div></div>
           <div class="rpt-card c-yellow"><div class="rpt-label">ด่วน+ด่วนมาก</div><div class="rpt-val" id="rp-urg2">0</div><div style="font-size:10px;color:var(--gray400);">ฉบับ</div></div>
           <div class="rpt-card c-green"> <div class="rpt-label">ปกติ</div><div class="rpt-val" id="rp-norm">0</div><div style="font-size:10px;color:var(--gray400);">ฉบับ</div></div>
@@ -4238,8 +4240,16 @@ function doReport() {
       }
       _rpParams = { s:s, e:e, type:tp, label:label };
       setText('rp-period-txt', label);
-      var typeLabel = { both:'ทั้งรับและส่ง', incoming:'รับเข้า', outgoing:'ส่งออก' };
+      var typeLabel = { both:'ทั้งรับและส่ง', incoming:'รับเข้า', outgoing:'ส่งออก',
+                         certificate:'หนังสือรับรอง', order:'หนังสือคำสั่ง' };
       setText('rp-type-txt', typeLabel[tp] || '');
+
+      // ── การ์ด "รับเข้า"/"ส่งออก" มีความหมายเฉพาะตอนดูแบบ รับ/ส่ง เท่านั้น ──
+      // เมื่อเลือก หนังสือรับรอง/หนังสือคำสั่ง ซ่อนการ์ดทั้งสองนี้ (ดูยอดรวมที่การ์ด "รวม" แทน)
+      var showInOut = (tp !== 'certificate' && tp !== 'order');
+      document.getElementById('rp-in-card').style.display  = showInOut ? '' : 'none';
+      document.getElementById('rp-out-card').style.display = showInOut ? '' : 'none';
+
       renderReport(r.report||{});
       show('rp-results');
       if (!r.report || r.report.total === 0) {
@@ -4357,11 +4367,12 @@ function loadHistoryYears() {
           var sName = (r.sheetNames && r.sheetNames[i]) ? r.sheetNames[i] : '';
           if (selYear) {
             var o = document.createElement('option');
-            // ใช้ sheetName เป็น value เพื่อให้ searchHistory กรองถูก Sheet
-            o.value = String(y);
+            // ใช้ sheetName เป็น value เพื่อให้ searchHistory ค้น Sheet ที่ถูกต้อง
+            // ปีปัจจุบัน (2569) → value = ชื่อชีท รับเข้า2569 เพื่อให้ searchHistory รู้ว่าต้องค้น Sheet ใด
+            o.value = (y === currentYear && sName) ? sName : String(y);
             // label: ระบุชื่อ Sheet ให้ชัดเจน
             if (y === currentYear) {
-              o.textContent = 'ปี ' + y + ' (Sheet รับเข้า)';
+              o.textContent = 'ปี ' + y + ' (ชีทปัจจุบัน: ' + (sName || 'รับเข้า2569') + ')';
             } else if (sName.startsWith('ประวัติหนังสือ')) {
               o.textContent = 'ปี ' + y + ' (' + sName + ')';
             } else {
@@ -4480,42 +4491,52 @@ function historyNextPage() {
 function showHistoryDetail(idx) {
   var d = _histResults[idx];
   if (!d) return;
+
+  // แสดงวันที่รับ + เวลาลงรับ (recvTime หรือดึงจาก recordTime)
+  var dateRecvDisplay = fmtDate(d.dateReceive || d.dateDoc);
+  var recvTimeStr = d.recvTime || extractTime(d.recordTime || '');
+  if (recvTimeStr) {
+    dateRecvDisplay += ' &nbsp;<span style="background:var(--gray100);color:var(--navy);font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:4px;border:1px solid var(--gray200);">🕐 '+esc(recvTimeStr)+' น.</span>';
+  }
+
+  var fileDisplay = d.fileId
+    ? '<a href="https://drive.google.com/file/d/'+esc(d.fileId)+'/view" target="_blank" style="display:inline-flex;align-items:center;gap:5px;background:var(--green-bg);color:var(--green);border:1px solid #86efac;border-radius:4px;padding:4px 10px;font-weight:700;text-decoration:none;font-size:12px;">📎 ดูไฟล์</a>'
+    : '<span style="color:var(--gray400);">— ไม่มีไฟล์แนบ</span>';
+
   var rows = [
-    ['เลขที่รับ',        d.recvNo || '—'],
-    ['ที่ / เลขอ้างอิง', d.refNum || '—'],
-    ['วันที่ / เวลารับ',  (function(){
-        var t = extractTime(d.recordTime || '');
-        return fmtDate(d.dateReceive) + (t
-          ? ' &nbsp;<span style="background:var(--gray100);color:var(--navy);font-family:\'IBM Plex Mono\',monospace;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:4px;border:1px solid var(--gray200);">🕐 ' + esc(t) + ' น.</span>'
-          : '');
-      })()],
-    ['วันที่หนังสือ',    d.dateDoc ? fmtDate(d.dateDoc) : '—'],
-    ['รับจาก',           d.fromOrg || '—'],
-    ['เรื่อง',           '<strong>' + esc(d.subject || '') + '</strong>'],
-    ['ความเร่งด่วน',     urgBadge(d.urgency)],
-    ['วันที่เสนอ',       d.dateSubmit || '—'],
-    ['หนังสือเสนอ',      esc(d.assignTo || '—')],
-    ['ผ่าน ผอก.',        esc(d.passThru || '—')],
-    ['ว/ด/ป คืนธุรการ 1', d.dateReturn1 || '—'],
-    ['ผ่านรองแพทย์',    esc(d.passDoc || '—')],
-    ['ว/ด/ป คืนธุรการ 2', d.dateReturn2 || '—'],
-    ['ผ่านรองพรส.',     esc(d.passDoc2 || '—')],
-    ['ว/ด/ป คืนธุรการ 3', d.dateReturn3 || '—'],
-    ['ผ่านรองบริหาร',   esc(d.passDoc3 || '—')],
-    ['ว/ด/ป คืนธุรการ 4', d.dateReturn4 || '—'],
-    ['Sheet ที่เก็บ',    '<span class="badge b-progress">' + esc(d.sheetName) + '</span>'],
-    ['ไฟล์แนบ',         d.fileId ? '<a href="https://drive.google.com/file/d/'+esc(d.fileId)+'/view" target="_blank" style="color:var(--accent);">📎 ดูไฟล์</a>' : '—']
+    ['เลขที่รับ',          '<strong style="font-family:IBM Plex Mono,monospace;color:var(--navy);">'+esc(d.recvNo||'—')+'</strong>'],
+    ['ที่ / เลขอ้างอิง',   esc(d.refNum||'—')],
+    ['วันที่ลงรับ',         dateRecvDisplay],
+    ['วันที่หนังสือ',       fmtDate(d.dateDoc) || '—'],
+    ['รับจาก',              esc(d.fromOrg||'—')],
+    ['เรื่อง',              '<strong>'+esc(d.subject||'—')+'</strong>'],
+    ['ความเร่งด่วน',        urgBadge(d.urgency||'ปกติ')],
+    ['มอบหมาย / เสนอ',     esc(d.assignTo||'—')],
+    ['ผ่าน ผอก.',           esc(d.passThru||'—')],
+    ['ว/ด/ป คืนธุรการ 1',   d.dateReturn1 || '—'],
+    ['ผ่านรองแพทย์',        esc(d.passDoc||'—')],
+    ['ว/ด/ป คืนธุรการ 2',   d.dateReturn2 || '—'],
+    ['ผ่านรองพรส.',         esc(d.passDoc2||'—')],
+    ['ว/ด/ป คืนธุรการ 3',   d.dateReturn3 || '—'],
+    ['ผ่านรองบริหาร',       esc(d.passDoc3||'—')],
+    ['ว/ด/ป คืนธุรการ 4',   d.dateReturn4 || '—'],
+    ['⏱ เวลาบันทึก',        d.recordTime ? esc(d.recordTime) : '—'],
+    ['Sheet ที่เก็บ',        '<span class="badge b-progress">'+esc(d.sheetName||'—')+'</span>'],
+    ['ไฟล์แนบ',             fileDisplay]
   ];
+
   var html = '<table style="width:100%;font-size:13px;border-collapse:collapse;">' +
     rows.map(function(r) {
       return '<tr style="border-bottom:1px solid var(--gray100);">' +
-        '<td style="padding:8px 12px;font-weight:600;color:var(--gray500);font-size:11px;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;width:160px;">' + r[0] + '</td>' +
-        '<td style="padding:8px 12px;color:var(--gray700);">' + r[1] + '</td>' +
+        '<td style="padding:8px 12px 8px 16px;font-weight:600;color:var(--gray500);font-size:11px;text-transform:uppercase;letter-spacing:.3px;white-space:nowrap;width:170px;">'+r[0]+'</td>'+
+        '<td style="padding:8px 16px;color:var(--gray700);">'+r[1]+'</td>'+
         '</tr>';
     }).join('') + '</table>';
+
   document.getElementById('h-detail-body').innerHTML = html;
   document.getElementById('h-detail-overlay').style.display = 'flex';
 }
+
 
 function closeHistoryDetail() {
   document.getElementById('h-detail-overlay').style.display = 'none';
