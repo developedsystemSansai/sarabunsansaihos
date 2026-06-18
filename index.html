@@ -4606,7 +4606,7 @@ function doExportReport() {
       var el=document.getElementById('rp-export-links');
       if (el) el.innerHTML=
         '<a href="'+r.exportUrl+'" target="_blank" style="display:inline-flex;align-items:center;gap:5px;background:var(--green);color:white;border-radius:4px;padding:6px 14px;font-size:13px;font-weight:700;text-decoration:none;margin-right:8px;">📥 ดาวน์โหลด .xlsx</a>' +
-        (r.exportPdfUrl ? '<a href="'+r.exportPdfUrl+'" target="_blank" style="display:inline-flex;align-items:center;gap:5px;background:#b91c1c;color:white;border-radius:4px;padding:6px 14px;font-size:13px;font-weight:700;text-decoration:none;margin-right:8px;">🖨️ PDF (ขอบราชการ)</a>' : '') +
+        (r.exportPdfUrl ? '<a href="'+r.exportPdfUrl+'" target="_blank" style="display:inline-flex;align-items:center;gap:5px;background:#b91c1c;color:white;border-radius:4px;padding:6px 14px;font-size:13px;font-weight:700;text-decoration:none;margin-right:8px;">🖨️ ดาวน์โหลด PDF (แนวนอน)</a>' : '') +
         '<a href="'+r.viewUrl+'" target="_blank" style="display:inline-flex;align-items:center;gap:5px;background:var(--accent);color:white;border-radius:4px;padding:6px 14px;font-size:13px;font-weight:700;text-decoration:none;">🔗 Google Sheets</a>';
       show('rp-export-ok');
       toast('✅ Export สำเร็จ — '+(r.total||0)+' รายการ','ok',5000);
