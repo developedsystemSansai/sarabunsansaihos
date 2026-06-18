@@ -1095,48 +1095,49 @@ tbody tr:hover td { background: #f4f7fc; }
             </div>
             <div class="card-body">
               <p style="font-size:11.5px;color:var(--gray500);margin-bottom:12px;">งานเลขาแต่ละภารกิจเป็นผู้บันทึก — เลือกได้หลายท่าน พร้อมระบุ ว/ด/ป ที่ผ่าน</p>
-              <div class="dir-grid" style="grid-template-columns:1fr 1fr;">
-                <div class="dir-row c-dir">
-                  <label><input type="checkbox" id="r-chk-dir"> ผู้อำนวยการ</label>
-                  <input type="text" id="r-date-dir" class="dir-date" placeholder="ว/ด/ป" disabled>
-                </div>
-                <div class="dir-row c-ret">
-                  <label style="min-width:120px;cursor:default;">ว/ด/ป คืนธุรการ</label>
-                  <input type="text" id="r-date-return" class="dir-date" placeholder="ว/ด/ป">
-                </div>
-                <div class="dir-row c-med">
-                  <label><input type="checkbox" id="r-chk-med"> รองแพทย์</label>
-                  <input type="text" id="r-date-med" class="dir-date" placeholder="ว/ด/ป" disabled>
-                </div>
-                <div class="dir-row c-prs">
-                  <label><input type="checkbox" id="r-chk-prs"> รองพรส.</label>
-                  <input type="text" id="r-date-prs" class="dir-date" placeholder="ว/ด/ป" disabled>
-                </div>
-                <div class="dir-row c-adm">
-                  <label><input type="checkbox" id="r-chk-adm"> รองบริหาร</label>
-                  <input type="text" id="r-date-adm" class="dir-date" placeholder="ว/ด/ป" disabled>
-                </div>
-                <div class="dir-row c-dig">
-                  <label><input type="checkbox" id="r-chk-dig"> รองดิจิทัล</label>
-                  <input type="text" id="r-date-dig" class="dir-date" placeholder="ว/ด/ป" disabled>
-                </div>
-                <div class="dir-row c-pri">
-                  <label><input type="checkbox" id="r-chk-pri"> รองปฐมภูมิ</label>
-                  <input type="text" id="r-date-pri" class="dir-date" placeholder="ว/ด/ป" disabled>
-                </div>
-                <div class="dir-row c-nur">
-                  <label><input type="checkbox" id="r-chk-nur"> รองฝ่ายการพยาบาล</label>
-                  <input type="text" id="r-date-nur" class="dir-date" placeholder="ว/ด/ป" disabled>
-                </div>
-                <div class="dir-row c-qa">
-                  <label><input type="checkbox" id="r-chk-qa"> ผช.พัฒนาคุณภาพ</label>
-                  <input type="text" id="r-date-qa" class="dir-date" placeholder="ว/ด/ป" disabled>
-                </div>
-                <div class="dir-row c-cfo">
-                  <label><input type="checkbox" id="r-chk-cfo"> ผช.CFO</label>
-                  <input type="text" id="r-date-cfo" class="dir-date" placeholder="ว/ด/ป" disabled>
-                </div>
-              </div>
+<div class="dir-grid" style="grid-template-columns:1fr 1fr;">
+  <div class="dir-row c-dir">
+    <label><input type="checkbox" id="r-chk-dir"> ผู้อำนวยการ</label>
+    <input type="text" id="r-date-dir" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-med">
+    <label><input type="checkbox" id="r-chk-med"> รองแพทย์</label>
+    <input type="text" id="r-date-med" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-prs">
+    <label><input type="checkbox" id="r-chk-prs"> รองพรส.</label>
+    <input type="text" id="r-date-prs" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-adm">
+    <label><input type="checkbox" id="r-chk-adm"> รองบริหาร</label>
+    <input type="text" id="r-date-adm" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-dig">
+    <label><input type="checkbox" id="r-chk-dig"> รองดิจิทัล</label>
+    <input type="text" id="r-date-dig" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-pri">
+    <label><input type="checkbox" id="r-chk-pri"> รองปฐมภูมิ</label>
+    <input type="text" id="r-date-pri" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-nur">
+    <label><input type="checkbox" id="r-chk-nur"> รองฝ่ายการพยาบาล</label>
+    <input type="text" id="r-date-nur" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-qa">
+    <label><input type="checkbox" id="r-chk-qa"> ผช.พัฒนาคุณภาพ</label>
+    <input type="text" id="r-date-qa" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-cfo">
+    <label><input type="checkbox" id="r-chk-cfo"> ผช.CFO</label>
+    <input type="text" id="r-date-cfo" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <!-- ▼▼▼ ย้ายมาไว้ท้ายสุด ▼▼▼ -->
+  <div class="dir-row c-ret" style="grid-column:1/-1;">
+    <label style="min-width:130px;cursor:default;">📋 ว/ด/ป คืนธุรการ</label>
+    <input type="text" id="r-date-return" class="dir-date" placeholder="ว/ด/ป">
+  </div>
+</div>
             </div>
 <!-- ═══ จบกลุ่มงานย่อย ═══ -->
           </div>
@@ -1593,8 +1594,22 @@ tbody tr:hover td { background: #f4f7fc; }
 
           <!-- กลุ่มงาน / สถานะการรับทราบ -->
           <div class="card">
-            <div class="card-head"><span class="card-head-icon">🏢</span><h3>กลุ่มงานที่ส่งถึง / สถานะรับทราบ</h3></div>
-            <div class="card-body" style="padding:0;">
+  <div class="card-head" style="justify-content:space-between;">
+    <div style="display:flex;align-items:center;gap:9px;">
+      <span class="card-head-icon">🏢</span>
+      <h3>กลุ่มงานที่ส่งถึง / สถานะรับทราบ</h3>
+    </div>
+    <button onclick="resetGroupTable()" title="ล้างสถานะทั้งหมด"
+      style="background:var(--white);border:1px solid var(--gray300);border-radius:var(--r);
+             padding:4px 12px;font-size:12px;cursor:pointer;font-family:inherit;
+             color:var(--gray600);display:flex;align-items:center;gap:5px;
+             transition:all .15s;"
+      onmouseover="this.style.background='var(--gray100)';this.style.color='var(--navy)'"
+      onmouseout="this.style.background='var(--white)';this.style.color='var(--gray600)'">
+       ล้าง
+    </button>
+  </div>
+  <div class="card-body" style="padding:0;">
               <table class="grp-tbl">
                 <thead>
                   <tr>
@@ -3497,6 +3512,40 @@ document.addEventListener('DOMContentLoaded',function(){
   });
   // สร้างตารางกลุ่มงาน
   buildGroupTable();
+  // สร้างตารางกลุ่มงาน
+buildGroupTable();
+
+// ── ฟังก์ชันล้างสถานะกลุ่มงาน ──
+window.resetGroupTable = function() {
+  if (!confirm('ต้องการล้างสถานะการรับทราบทั้งหมดใช่หรือไม่?')) return;
+  _MISSIONS.forEach(function(m, i) {
+    var p = 'rgrp' + i;
+    var okEl = document.getElementById(p + '_ok');
+    var noEl = document.getElementById(p + '_no');
+    if (okEl) okEl.checked = false;
+    if (noEl) noEl.checked = false;
+    // ล้าง dropdown กลุ่มงานย่อย (ถ้ามี)
+    var subEl = document.getElementById(p + '_sub');
+    if (subEl) subEl.value = '';
+    // ล้างข้อความอื่นๆ (ถ้ามี)
+    var othEl = document.getElementById(p + '_othertxt');
+    if (othEl) othEl.value = '';
+    // รีเซ็ต badge
+    var badge = document.getElementById(p + '_badge');
+    if (badge) {
+      badge.className = 'st-badge st-na';
+      badge.textContent = '—';
+    }
+  });
+  // รีเซ็ต notify bar
+  var ns = document.getElementById('r-notify-status');
+  if (ns) {
+    ns.className = 'st-badge st-pending';
+    ns.textContent = ' ยังไม่รับทราบ';
+  }
+  toast('🔄 ล้างสถานะกลุ่มงานแล้ว', 'info', 2000);
+};
+});
 });
 
 // ============================================================
