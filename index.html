@@ -4540,27 +4540,34 @@ function renderReport(rpt) {
 
   var rows = rpt.rows||[];
   setText('rp-rows-count', rows.length + (rpt.total>1000?' (แสดง 1000 แรก)':''));
-  var tb2 = document.getElementById('rp-rows-tbody');
+   var tb2 = document.getElementById('rp-rows-tbody');
   if (!tb2) return;
+  
   if (!rows.length) {
-    tb2.innerHTML='<tr class="tbl-empty"><td colspan="7">ไม่มีรายการในช่วงเวลานี้</td></tr>';
+    tb2.innerHTML = '<tr class="tbl-empty"><td colspan="10">ไม่มีรายการในช่วงเวลานี้</td></tr>';
     return;
   }
+  
   tb2.innerHTML = rows.map(function(row) {
-    var bg = row.urgency==='ด่วนที่สุด'?'background:#fef2f2;':
-             row.urgency==='ด่วนมาก'   ?'background:#fff7ed;':
-             row.urgency==='ด่วน'       ?'background:#fefce8;':'';
-    var fLink = row.fileId && row.fileId.length>10
-      ? '<a href="https://drive.google.com/file/d/'+esc(row.fileId)+'/view?usp=drive_link" target="_blank" style="color:var(--accent);font-size:17px;text-decoration:none;" title="เปิดไฟล์แนบ">📎</a>'
+    var bg = row.urgency === 'ด่วนที่สุด' ? 'background:#fef2f2;' :
+             row.urgency === 'ด่วนมาก'    ? 'background:#fff7ed;' :
+             row.urgency === 'ด่วน'       ? 'background:#fefce8;' : '';
+    
+    var fLink = row.fileId && row.fileId.length > 10
+      ? '<a href="https://drive.google.com/file/d/' + esc(row.fileId) + '/view?usp=drive_link" target="_blank" style="color:var(--accent);font-size:17px;text-decoration:none;" title="เปิดไฟล์แนบ">📎</a>'
       : '<span style="color:var(--gray200);">—</span>';
-    return '<tr style="'+bg+'">' +
-      '<td style="font-family:IBM Plex Mono,monospace;font-size:12px;font-weight:700;">'+esc(row.docNumber)+'</td>' +
-      '<td style="font-size:12px;white-space:nowrap;">'+esc(row.date)+'</td>' +
-      '<td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;" title="'+esc(row.from)+'">'+esc(row.from)+'</td>' +
-      '<td style="max-width:280px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(row.subject)+'</td>' +
-      '<td>'+(row.urgency&&row.urgency!=='ปกติ'?urgBadge(row.urgency):'<span style="font-size:11px;color:var(--gray400);">ปกติ</span>')+'</td>' +
-      '<td><span class="badge '+(row.sheetType==='รับเข้า'?'b-in':'b-out')+'" style="font-size:10px;">'+esc(row.sheetType)+'</span></td>' +
-      '<td style="text-align:center;">'+fLink+'</td>' +
+    
+    return '<tr style="' + bg + '">' +
+      '<td style="font-family:IBM Plex Mono,monospace;font-size:12px;font-weight:700;">' + esc(row.docNumber) + '</td>' +
+      '<td style="font-size:12px;white-space:nowrap;">' + esc(row.date) + '</td>' +
+      '<td style="max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;" title="' + esc(row.from) + '">' + esc(row.from) + '</td>' +
+      '<td style="max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + esc(row.subject) + '</td>' +
+      '<td style="font-size:11.5px;color:var(--navy);font-weight:600;">' + esc(row.taskStored || '—') + '</td>' +
+      '<td style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:12px;">' + esc(row.action || '—') + '</td>' +
+      '<td style="max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11.5px;">' + esc(row.assignTo || '—') + '</td>' +
+      '<td>' + (row.urgency && row.urgency !== 'ปกติ' ? urgBadge(row.urgency) : '<span style="font-size:11px;color:var(--gray400);">ปกติ</span>') + '</td>' +
+      '<td><span class="badge ' + (row.sheetType === 'รับเข้า' ? 'b-in' : 'b-out') + '" style="font-size:10px;">' + esc(row.sheetType) + '</span></td>' +
+      '<td style="text-align:center;">' + fLink + '</td>' +
       '</tr>';
   }).join('');
 }
