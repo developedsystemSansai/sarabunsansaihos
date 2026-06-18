@@ -1138,6 +1138,199 @@ tbody tr:hover td { background: #f4f7fc; }
                 </div>
               </div>
             </div>
+            <!-- ══ เพิ่มกลุ่มงานย่อยทั้ง 6 ภารกิจ ═══ -->
+<div class="dir-grid" style="grid-template-columns:1fr 1fr; margin-top:14px;">
+  <!-- ภารกิจด้านบริการปฐมภูมิ -->
+  <div class="dir-row c-med">
+    <label><input type="checkbox" id="r-chk-opd"> กลุ่มงานผู้ป่วยนอก</label>
+    <input type="text" id="r-date-opd" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-med">
+    <label><input type="checkbox" id="r-chk-thai"> กลุ่มงานการแพทย์แผนไทยฯ</label>
+    <input type="text" id="r-date-thai" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-med">
+    <label><input type="checkbox" id="r-chk-social"> กลุ่มงานเวชกรรมสังคม</label>
+    <input type="text" id="r-date-social" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-med">
+    <label><input type="checkbox" id="r-chk-family"> งานเวชปฏิบัติครอบครัวและชุมชน</label>
+    <input type="text" id="r-date-family" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-med">
+    <label><input type="checkbox" id="r-chk-prevent"> งานป้องกันควบคุมโรคและระบาดวิทยา</label>
+    <input type="text" id="r-date-prevent" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-med">
+    <label><input type="checkbox" id="r-chk-promote"> งานส่งเสริมสุขภาพและฟื้นฟู</label>
+    <input type="text" id="r-date-promote" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-med">
+    <label><input type="checkbox" id="r-chk-occu"> กลุ่มงานอาชีวเวชกรรม</label>
+    <input type="text" id="r-date-occu" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-med">
+    <label><input type="checkbox" id="r-chk-nurcom"> กลุ่มงานการพยาบาลชุมชน</label>
+    <input type="text" id="r-date-nurcom" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-med">
+    <label><input type="checkbox" id="r-chk-consumer"> กลุ่มงานคุ้มครองผู้บริโภค</label>
+    <input type="text" id="r-date-consumer" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+
+  <!-- ภารกิจด้านพัฒนาระบบบริการ -->
+  <div class="dir-row c-prs">
+    <label><input type="checkbox" id="r-chk-insure"> กลุ่มงานประกันสุขภาพ</label>
+    <input type="text" id="r-date-insure" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-prs">
+    <label><input type="checkbox" id="r-chk-strategy"> กลุ่มงานยุทธศาสตร์และแผนงานโครงการ</label>
+    <input type="text" id="r-date-strategy" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-prs">
+    <label><input type="checkbox" id="r-chk-quality"> กลุ่มงานพัฒนาคุณภาพบริการและมาตรฐาน</label>
+    <input type="text" id="r-date-quality" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+
+  <!-- ภารกิจด้านสุขภาพดิจิทัล -->
+  <div class="dir-row c-dig">
+    <label><input type="checkbox" id="r-chk-it"> กลุ่มงานเทคโนโลยีสารสนเทศ</label>
+    <input type="text" id="r-date-it" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-dig">
+    <label><input type="checkbox" id="r-chk-dh"> กลุ่มงานสุขภาพดิจิทัล</label>
+    <input type="text" id="r-date-dh" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-dig">
+    <label><input type="checkbox" id="r-chk-mr"> กลุ่มงานเวชระเบียนและข้อมูลทางการแพทย์</label>
+    <input type="text" id="r-date-mr" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+
+  <!-- ภารกิจด้านบริการทุติยภูมิและตติยภูมิ -->
+  <div class="dir-row c-pri">
+    <label><input type="checkbox" id="r-chk-er"> กลุ่มงานเวชศาสตร์ฉุกเฉิน</label>
+    <input type="text" id="r-date-er" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-pri">
+    <label><input type="checkbox" id="r-chk-med2"> กลุ่มงานอายุรกรรม</label>
+    <input type="text" id="r-date-med2" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-pri">
+    <label><input type="checkbox" id="r-chk-surg"> กลุ่มงานศัลยกรรม</label>
+    <input type="text" id="r-date-surg" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-pri">
+    <label><input type="checkbox" id="r-chk-ortho"> กลุ่มงานศัลยกรรมออร์โธปิดิกส์</label>
+    <input type="text" id="r-date-ortho" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-pri">
+    <label><input type="checkbox" id="r-chk-ped"> กลุ่มงานกุมารเวชกรรม</label>
+    <input type="text" id="r-date-ped" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-pri">
+    <label><input type="checkbox" id="r-chk-eye"> กลุ่มงานจักษุวิทยา</label>
+    <input type="text" id="r-date-eye" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-pri">
+    <label><input type="checkbox" id="r-chk-ent"> กลุ่มงานโสต ศอ นาสิก</label>
+    <input type="text" id="r-date-ent" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-pri">
+    <label><input type="checkbox" id="r-chk-obg"> กลุ่มงานสูติ-นรีเวชกรรม</label>
+    <input type="text" id="r-date-obg" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-pri">
+    <label><input type="checkbox" id="r-chk-anes"> กลุ่มงานวิสัญญีวิทยา</label>
+    <input type="text" id="r-date-anes" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-pri">
+    <label><input type="checkbox" id="r-chk-nutri"> กลุ่มงานโภชนศาสตร์</label>
+    <input type="text" id="r-date-nutri" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-pri">
+    <label><input type="checkbox" id="r-chk-psy"> กลุ่มงานจิตเวชและยาเสพติด</label>
+    <input type="text" id="r-date-psy" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-pri">
+    <label><input type="checkbox" id="r-chk-dental"> กลุ่มงานทันตกรรม</label>
+    <input type="text" id="r-date-dental" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-pri">
+    <label><input type="checkbox" id="r-chk-radio"> กลุ่มงานรังสีวิทยา</label>
+    <input type="text" id="r-date-radio" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-pri">
+    <label><input type="checkbox" id="r-chk-lab"> กลุ่มงานเทคนิคการแพทย์และพยาธิวิทยา</label>
+    <input type="text" id="r-date-lab" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-pri">
+    <label><input type="checkbox" id="r-chk-rehab"> กลุ่มงานเวชกรรมฟื้นฟู</label>
+    <input type="text" id="r-date-rehab" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-pri">
+    <label><input type="checkbox" id="r-chk-pharm"> กลุ่มงานเภสัชกรรม</label>
+    <input type="text" id="r-date-pharm" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+
+  <!-- ภารกิจด้านการพยาบาล -->
+  <div class="dir-row c-nur">
+    <label><input type="checkbox" id="r-chk-ner"> กลุ่มงานการพยาบาลผู้ป่วยอุบัติเหตุและฉุกเฉิน</label>
+    <input type="text" id="r-date-ner" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-nur">
+    <label><input type="checkbox" id="r-chk-nopd"> กลุ่มงานการพยาบาลผู้ป่วยนอก</label>
+    <input type="text" id="r-date-nopd" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-nur">
+    <label><input type="checkbox" id="r-chk-nicu"> กลุ่มงานการพยาบาลผู้ป่วยหนัก</label>
+    <input type="text" id="r-date-nicu" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-nur">
+    <label><input type="checkbox" id="r-chk-labor"> กลุ่มงานการพยาบาลผู้คลอด</label>
+    <input type="text" id="r-date-labor" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-nur">
+    <label><input type="checkbox" id="r-chk-or"> กลุ่มงานการพยาบาลผู้ป่วยห้องผ่าตัด</label>
+    <input type="text" id="r-date-or" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-nur">
+    <label><input type="checkbox" id="r-chk-nanes"> กลุ่มงานการพยาบาลวิสัญญี</label>
+    <input type="text" id="r-date-nanes" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-nur">
+    <label><input type="checkbox" id="r-chk-nmed"> กลุ่มงานการพยาบาลผู้ป่วยอายุรกรรม</label>
+    <input type="text" id="r-date-nmed" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-nur">
+    <label><input type="checkbox" id="r-chk-nsurg"> กลุ่มงานการพยาบาลผู้ป่วยศัลยกรรม</label>
+    <input type="text" id="r-date-nsurg" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-nur">
+    <label><input type="checkbox" id="r-chk-nobg"> กลุ่มงานการพยาบาลผู้ป่วยสูติ-นรีเวช</label>
+    <input type="text" id="r-date-nobg" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-nur">
+    <label><input type="checkbox" id="r-chk-npsy"> กลุ่มงานการพยาบาลจิตเวช</label>
+    <input type="text" id="r-date-npsy" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-nur">
+    <label><input type="checkbox" id="r-chk-nped"> กลุ่มงานการพยาบาลผู้ป่วยกุมารเวชกรรม</label>
+    <input type="text" id="r-date-nped" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-nur">
+    <label><input type="checkbox" id="r-chk-northo"> กลุ่มงานการพยาบาลผู้ป่วยออร์โธปิดิกส์</label>
+    <input type="text" id="r-date-northo" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-nur">
+    <label><input type="checkbox" id="r-chk-nent"> กลุ่มงานการพยาบาลผู้ป่วย โสต ศอ นาสิก จักษุ</label>
+    <input type="text" id="r-date-nent" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+  <div class="dir-row c-nur">
+    <label><input type="checkbox" id="r-chk-nic"> กลุ่มงานการพยาบาลด้านการควบคุมและป้องกันการติดเชื้อ</label>
+    <input type="text" id="r-date-nic" class="dir-date" placeholder="ว/ด/ป" disabled>
+  </div>
+</div>
+<!-- ═══ จบกลุ่มงานย่อย ═══ -->
           </div>
 
           <!-- ข้อสั่งการ + การปฏิบัติ -->
@@ -3479,13 +3672,70 @@ function removeRecvFile() {
   hide('r-alert-ok'); hide('r-alert-info');
 }
 
-// ── checkbox: enable/disable date field when checked ──
 document.addEventListener('DOMContentLoaded',function(){
-  [['r-chk-dir','r-date-dir'],['r-chk-med','r-date-med'],
-   ['r-chk-prs','r-date-prs'],['r-chk-adm','r-date-adm'],
-   ['r-chk-dig','r-date-dig'],['r-chk-pri','r-date-pri'],
-   ['r-chk-qa','r-date-qa'],
-   ['r-chk-cfo','r-date-cfo'],['r-chk-nur','r-date-nur']].forEach(function(pair){
+  var _DIR_PAIRS = [
+    // ผู้บริหารระดับสูง (เดิม)
+    ['r-chk-dir','r-date-dir'],
+    ['r-chk-med','r-date-med'],
+    ['r-chk-prs','r-date-prs'],
+    ['r-chk-adm','r-date-adm'],
+    ['r-chk-dig','r-date-dig'],
+    ['r-chk-pri','r-date-pri'],
+    ['r-chk-qa','r-date-qa'],
+    ['r-chk-cfo','r-date-cfo'],
+    ['r-chk-nur','r-date-nur'],
+    // ภารกิจด้านบริการปฐมภูมิ
+    ['r-chk-opd','r-date-opd'],
+    ['r-chk-thai','r-date-thai'],
+    ['r-chk-social','r-date-social'],
+    ['r-chk-family','r-date-family'],
+    ['r-chk-prevent','r-date-prevent'],
+    ['r-chk-promote','r-date-promote'],
+    ['r-chk-occu','r-date-occu'],
+    ['r-chk-nurcom','r-date-nurcom'],
+    ['r-chk-consumer','r-date-consumer'],
+    // ภารกิจด้านพัฒนาระบบบริการ
+    ['r-chk-insure','r-date-insure'],
+    ['r-chk-strategy','r-date-strategy'],
+    ['r-chk-quality','r-date-quality'],
+    // ภารกิจด้านสุขภาพดิจิทัล
+    ['r-chk-it','r-date-it'],
+    ['r-chk-dh','r-date-dh'],
+    ['r-chk-mr','r-date-mr'],
+    // ภารกิจด้านบริการทุติยภูมิและตติยภูมิ
+    ['r-chk-er','r-date-er'],
+    ['r-chk-med2','r-date-med2'],
+    ['r-chk-surg','r-date-surg'],
+    ['r-chk-ortho','r-date-ortho'],
+    ['r-chk-ped','r-date-ped'],
+    ['r-chk-eye','r-date-eye'],
+    ['r-chk-ent','r-date-ent'],
+    ['r-chk-obg','r-date-obg'],
+    ['r-chk-anes','r-date-anes'],
+    ['r-chk-nutri','r-date-nutri'],
+    ['r-chk-psy','r-date-psy'],
+    ['r-chk-dental','r-date-dental'],
+    ['r-chk-radio','r-date-radio'],
+    ['r-chk-lab','r-date-lab'],
+    ['r-chk-rehab','r-date-rehab'],
+    ['r-chk-pharm','r-date-pharm'],
+    // ภารกิจด้านการพยาบาล
+    ['r-chk-ner','r-date-ner'],
+    ['r-chk-nopd','r-date-nopd'],
+    ['r-chk-nicu','r-date-nicu'],
+    ['r-chk-labor','r-date-labor'],
+    ['r-chk-or','r-date-or'],
+    ['r-chk-nanes','r-date-nanes'],
+    ['r-chk-nmed','r-date-nmed'],
+    ['r-chk-nsurg','r-date-nsurg'],
+    ['r-chk-nobg','r-date-nobg'],
+    ['r-chk-npsy','r-date-npsy'],
+    ['r-chk-nped','r-date-nped'],
+    ['r-chk-northo','r-date-northo'],
+    ['r-chk-nent','r-date-nent'],
+    ['r-chk-nic','r-date-nic']
+  ];
+  _DIR_PAIRS.forEach(function(pair){
     var chk=document.getElementById(pair[0]);
     var inp=document.getElementById(pair[1]);
     if(!chk||!inp) return;
@@ -3941,10 +4191,41 @@ function resetRecv() {
   setVal('r-conf','ไม่มีชั้น'); setVal('r-assign','');
   setText('r-subj-cnt','0'); setText('r-detail-cnt','0');
   // reset checkboxes + disable date inputs
-  ['r-chk-dir','r-chk-med','r-chk-prs','r-chk-adm',
-   'r-chk-dig','r-chk-pri','r-chk-qa','r-chk-mr','r-chk-cfo','r-chk-nur'].forEach(function(id){
-    var el=document.getElementById(id); if(el) el.checked=false;
-  });
+  // ล้าง checkbox ผู้บริหาร + กลุ่มงานย่อยทั้งหมด
+var _ALL_CHK_IDS = [
+  'r-chk-dir','r-chk-med','r-chk-prs','r-chk-adm','r-chk-dig',
+  'r-chk-pri','r-chk-qa','r-chk-cfo','r-chk-nur',
+  'r-chk-opd','r-chk-thai','r-chk-social','r-chk-family',
+  'r-chk-prevent','r-chk-promote','r-chk-occu','r-chk-nurcom','r-chk-consumer',
+  'r-chk-insure','r-chk-strategy','r-chk-quality',
+  'r-chk-it','r-chk-dh','r-chk-mr',
+  'r-chk-er','r-chk-med2','r-chk-surg','r-chk-ortho','r-chk-ped',
+  'r-chk-eye','r-chk-ent','r-chk-obg','r-chk-anes','r-chk-nutri',
+  'r-chk-psy','r-chk-dental','r-chk-radio','r-chk-lab','r-chk-rehab','r-chk-pharm',
+  'r-chk-ner','r-chk-nopd','r-chk-nicu','r-chk-labor','r-chk-or',
+  'r-chk-nanes','r-chk-nmed','r-chk-nsurg','r-chk-nobg','r-chk-npsy',
+  'r-chk-nped','r-chk-northo','r-chk-nent','r-chk-nic'
+];
+_ALL_CHK_IDS.forEach(function(id){
+  var el=document.getElementById(id); if(el) el.checked=false;
+});
+var _ALL_DATE_IDS = [
+  'r-date-dir','r-date-med','r-date-prs','r-date-adm','r-date-dig',
+  'r-date-pri','r-date-qa','r-date-cfo','r-date-nur',
+  'r-date-opd','r-date-thai','r-date-social','r-date-family',
+  'r-date-prevent','r-date-promote','r-date-occu','r-date-nurcom','r-date-consumer',
+  'r-date-insure','r-date-strategy','r-date-quality',
+  'r-date-it','r-date-dh','r-date-mr',
+  'r-date-er','r-date-med2','r-date-surg','r-date-ortho','r-date-ped',
+  'r-date-eye','r-date-ent','r-date-obg','r-date-anes','r-date-nutri',
+  'r-date-psy','r-date-dental','r-date-radio','r-date-lab','r-date-rehab','r-date-pharm',
+  'r-date-ner','r-date-nopd','r-date-nicu','r-date-labor','r-date-or',
+  'r-date-nanes','r-date-nmed','r-date-nsurg','r-date-nobg','r-date-npsy',
+  'r-date-nped','r-date-northo','r-date-nent','r-date-nic'
+];
+_ALL_DATE_IDS.forEach(function(id){
+  var el=document.getElementById(id); if(el) { el.disabled=true; el.value=''; }
+});
   ['r-date-dir','r-date-med','r-date-prs','r-date-adm',
    'r-date-dig','r-date-pri','r-date-qa','r-date-mr','r-date-cfo','r-date-nur','r-date-nur'].forEach(function(id){
     var el=document.getElementById(id); if(el) el.disabled=true;
