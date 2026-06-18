@@ -1685,8 +1685,15 @@ tbody tr:hover td { background: #f4f7fc; }
       <div class="card-head" style="background:linear-gradient(135deg,var(--navy),var(--navy2));border-bottom:2px solid var(--gold);">
         <span class="card-head-icon" style="color:var(--gold);">📋</span>
         <h3 style="color:white;">ข้อมูลหนังสือส่งออก</h3>
-        <div id="send-no-preview" style="margin-left:auto;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:4px;padding:4px 12px;font-size:12px;font-family:'IBM Plex Mono',monospace;color:var(--gold);font-weight:700;white-space:nowrap;"></div>
-      </div>
+        <div class="f-group">
+  <label class="f-label">เลขที่หนังสือส่ง <span class="req">*</span></label>
+  <div style="display:flex;align-items:center;gap:0;">
+    <span style="background:var(--gray100);border:1px solid var(--gray300);border-right:none;border-radius:var(--r) 0 0 var(--r);padding:9px 12px;font-size:13px;color:var(--gray600);white-space:nowrap;font-weight:600;">ชม 0033.301/</span>
+    <input type="text" id="s-docno" class="f-input" placeholder="กรอกเฉพาะเลขลำดับ เช่น 0002" style="border-radius:0 var(--r) var(--r) 0;border-left:none;" oninput="sendUpdateDocNoPreview()">
+  </div>
+  <div class="f-hint" id="s-docno-preview" style="color:var(--navy);font-weight:600;font-family:'IBM Plex Mono',monospace;"></div>
+  <div class="f-hint" style="margin-top:2px;">กรอกเฉพาะตัวเลขหลังเครื่องหมาย / ระบบจะเติม "ชม 0033.301/" ให้เอง</div>
+</div>
       <div class="card-body">
 
         <!-- แถว 1: วันที่ลงเลขหนังสือส่ง — เต็มแถว -->
@@ -2343,8 +2350,15 @@ tbody tr:hover td { background: #f4f7fc; }
         <div class="card-head" style="background:linear-gradient(135deg,var(--navy),var(--navy2));border-bottom:2px solid var(--gold);">
           <span class="card-head-icon" style="color:var(--gold);font-size:18px;">&#9670;</span>
           <h3 style="color:white;">บันทึกหนังสือรับรองใหม่</h3>
-          <div id="cert-no-preview" style="margin-left:auto;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.25);border-radius:4px;padding:4px 12px;font-size:12px;font-family:'IBM Plex Mono',monospace;color:var(--gold);font-weight:700;white-space:nowrap;"></div>
-        </div>
+          <div class="f-group">
+  <label class="f-label">เลขที่หนังสือส่ง <span class="req">*</span></label>
+  <div style="display:flex;align-items:center;gap:0;">
+    <span style="background:var(--gray100);border:1px solid var(--gray300);border-right:none;border-radius:var(--r) 0 0 var(--r);padding:9px 12px;font-size:13px;color:var(--gray600);white-space:nowrap;font-weight:600;">ชม 0033.301/</span>
+    <input type="text" id="cert-docno" class="f-input" placeholder="กรอกเฉพาะเลขลำดับ เช่น 0002" style="border-radius:0 var(--r) var(--r) 0;border-left:none;" oninput="certUpdateDocNoPreview()">
+  </div>
+  <div class="f-hint" id="cert-docno-preview" style="color:var(--navy);font-weight:600;font-family:'IBM Plex Mono',monospace;"></div>
+  <div class="f-hint" style="margin-top:2px;">กรอกเฉพาะตัวเลขหลังเครื่องหมาย / ระบบจะเติม "ชม 0033.301/" ให้เอง</div>
+</div>
         <div class="card-body">
 
           <!-- แถว 1: วันที่ลงเลขหนังสือส่ง — เต็มแถว -->
@@ -2966,13 +2980,11 @@ function gotoPage(page) {
   if (!_missionsLoaded) loadMissionGroups();
   setDefaultDate('s-date-assigned');  // เปลี่ยนเป็น s-date-assigned
   setDefaultDate('s-docdate');         // เพิ่มบรรทัดนี้
-  loadNextSendSeq();                   // เพิ่มบรรทัดนี้
 }
   if (page === 'report')  setReportDates();
   if (page === 'history') loadHistoryYears();
   if (page === 'import')  loadHistoryYears();
   if (page === 'cert')    {
-    loadNextCertSeq();
     loadRecentCerts();
     if (!_missionsLoaded) loadMissionGroups();
     setDefaultDate('cert-date-assigned');
@@ -3005,9 +3017,9 @@ function loadNextSendSeq() {
     .call();
 }
 
-function sendUpdateDocNoPreview() {
-  var docno = v('s-docno').trim();
-  var el = document.getElementById('s-docno-preview');
+function certUpdateDocNoPreview() {
+  var docno = v('cert-docno').trim();
+  var el = document.getElementById('cert-docno-preview');
   if (el) {
     el.textContent = docno ? ('ชม 0033.301/' + docno) : '';
   }
@@ -3057,15 +3069,20 @@ function submitSend() {
   var subject  = v('s-subj');
   var toOrg    = v('s-to');
   var sender   = v('s-sentby');
-
+  
+  // เติม prefix "ชม 0033.301/" ถ้าผู้ใช้กรอกแค่เลขหลัง /
+  if (docno && docno.indexOf('/') === -1 && docno.indexOf('ชม') === -1) {
+    docno = 'ชม 0033.301/' + docno;
+  }
+  
   if (!dateAsgn) { showA('s-alert-err','❌ กรุณากรอก วันที่ลงเลขหนังสือส่ง'); return; }
   if (!docDate)  { showA('s-alert-err','❌ กรุณากรอก วันที่หนังสือส่ง'); return; }
   if (!sender)   { showA('s-alert-err','❌ กรุณาเลือก ผู้ส่ง/หน่วยงาน'); return; }
   if (!subject)  { showA('s-alert-err','❌ กรุณากรอก เรื่อง'); return; }
-  if (!toOrg)    { showA('s-alert-err',' กรุณากรอก ส่งถึง/หน่วยงาน'); return; }
-
+  if (!toOrg)    { showA('s-alert-err','❌ กรุณากรอก ส่งถึง/หน่วยงาน'); return; }
+  
   setLoad('s-btn', true, '⏳ กำลังบันทึก...');
-
+  
   function doSave(fileId) {
     var data = {
       docNumber:    docno,
@@ -3099,7 +3116,7 @@ function submitSend() {
       })
       .call(data);
   }
-
+  
   if (_sendPendingFile) {
     var pf = _sendPendingFile;
     setLoad('s-btn', true, '⏳ กำลังอัพโหลดไฟล์...');
@@ -5126,7 +5143,6 @@ function certResetForm() {
 
 function submitCert() {
   hideAlerts(['cert-alert-err','cert-alert-ok']);
-
   var subject  = v('cert-subject');
   var toOrg    = v('cert-to-org');
   var reqDept  = v('cert-req-dept');
@@ -5134,16 +5150,21 @@ function submitCert() {
   var docno    = v('cert-docno');
   var dateAsgn = v('cert-date-assigned');
   var docDate  = v('cert-docdate');
-
+  
+  // เติม prefix "ชม 0033.301/" ถ้าผู้ใช้กรอกแค่เลขหลัง /
+  if (docno && docno.indexOf('/') === -1 && docno.indexOf('ชม') === -1) {
+    docno = 'ชม 0033.301/' + docno;
+  }
+  
   if (!reqDept)  { showA('cert-alert-err','❌ กรุณาเลือก หน่วยงานที่ขอ'); return; }
   if (!subject)  { showA('cert-alert-err','❌ กรุณากรอก เรื่อง'); return; }
   if (!toOrg)    { showA('cert-alert-err','❌ กรุณากรอก ส่งถึง / หน่วยงาน'); return; }
   if (!purpose)  { showA('cert-alert-err','❌ กรุณากรอก วัตถุประสงค์การขอ'); return; }
   if (!dateAsgn) { showA('cert-alert-err','❌ กรุณากรอก วันที่ลงเลขหนังสือส่ง'); return; }
   if (!docDate)  { showA('cert-alert-err','❌ กรุณากรอก วันที่หนังสือ'); return; }
-
+  
   setLoad('cert-save-btn', true, '⏳ กำลังบันทึก...');
-
+  
   function doSave(fileId) {
     var data = {
       docNumber:    docno,
@@ -5175,8 +5196,7 @@ function submitCert() {
       })
       .call(data);
   }
-
-  // ถ้ามีไฟล์ → upload ก่อน แล้วค่อย save
+  
   if (_certPendingFile) {
     var pf = _certPendingFile;
     setLoad('cert-save-btn', true, '⏳ กำลังอัพโหลดไฟล์...');
