@@ -3527,30 +3527,23 @@ else if(!chk.checked) inp.value='';
 buildGroupTable();
 // ─ ฟังก์ชันล้างสถานะกลุ่มงาน ──
 window.resetGroupTable = function() {
-  if (!confirm('ต้องการล้างสถานะการรับทราบทั้งหมดใช่หรือไม่?')) return;
-  _MISSIONS.forEach(function(m, i) {
-    var p = 'rgrp' + i;
-    var okEl = document.getElementById(p + '_ok');
-    var noEl = document.getElementById(p + '_no');
-    if (okEl) okEl.checked = false;
-    if (noEl) noEl.checked = false;
-    var subEl = document.getElementById(p + '_sub');
-    if (subEl) subEl.value = '';
-    var othEl = document.getElementById(p + '_othertxt');
-    if (othEl) othEl.value = '';
-    var badge = document.getElementById(p + '_badge');
-    if (badge) {
-      badge.className = 'st-badge st-na';
-      badge.textContent = '—';
-    }
-  });
-  var ns = document.getElementById('r-notify-status');
-  if (ns) {
-    ns.className = 'st-badge st-pending';
-    ns.textContent = '⏳ ยังไม่รับทราบ';
-  }
-  toast('🔄 ล้างสถานะกลุ่มงานแล้ว', 'info', 2000);
-};
+if (!confirm('ต้องการล้างสถานะการรับทราบทั้งหมดใช่หรือไม่?')) return;
+_MISSIONS.forEach(function(m, i) {
+var p = 'rgrp' + i;
+var okEl = document.getElementById(p + '_ok');
+var noEl = document.getElementById(p + '_no');
+if (okEl) okEl.checked = false;
+if (noEl) noEl.checked = false;
+var subEl = document.getElementById(p + '_sub');
+if (subEl) subEl.value = '';
+var othEl = document.getElementById(p + '_othertxt');
+if (othEl) othEl.value = '';
+var badge = document.getElementById(p + '_badge');
+if (badge) {
+badge.className = 'st-badge st-na';
+badge.textContent = '—';
+}
+});
 var ns = document.getElementById('r-notify-status');
 if (ns) {
 ns.className = 'st-badge st-pending';
@@ -3559,6 +3552,9 @@ ns.textContent = '⏳ ยังไม่รับทราบ';
 toast('🔄 ล้างสถานะกลุ่มงานแล้ว', 'info', 2000);
 };
 });
+// ============================================================
+// RECEIVE — ORG AUTOCOMPLETE
+// ============================================================
 
 window.resetGroupTable = function() {
   if (!confirm('ต้องการล้างสถานะการรับทราบทั้งหมดใช่หรือไม่?')) return;
