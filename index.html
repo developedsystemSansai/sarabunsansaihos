@@ -709,7 +709,7 @@ tbody tr:hover td { background: #f4f7fc; }
 ============================================================ -->
 <div class="top-header">
   <div class="top-header-inner">
-    <div class="header-logo">
+    <div class="header-logo" onclick="gotoPage('home')" title="กลับหน้าหลัก" style="cursor:pointer;">
       <img src="https://drive.google.com/uc?export=view&id=1qIREbhnqt9n4xWbdqe5V8lnypb4DKtVS"
            alt="Logo" onerror="this.parentElement.innerHTML='<span class=\'header-logo-txt\'>🏥</span>'">
     </div>
@@ -1784,8 +1784,10 @@ tbody tr:hover td { background: #f4f7fc; }
               <label class="f-label">ประเภท</label>
               <select id="q-type" class="f-select">
                 <option value="">ทั้งหมด</option>
-                <option value="incoming">รับเข้า</option>
-                <option value="outgoing">ส่งออก</option>
+                <option value="incoming">หนังสือรับเข้า</option>
+                <option value="outgoing">หนังสือส่งออก</option>
+                <option value="certificate">หนังสือรับรอง</option>
+                <option value="order">หนังสือคำสั่ง</option>
               </select>
             </div>
             <button class="btn btn-search" id="q-btn" onclick="doSearch()">ค้นหา</button>
@@ -1998,7 +2000,25 @@ tbody tr:hover td { background: #f4f7fc; }
             </div>
             <div class="f-group">
               <label class="f-label">เสนอ / มอบหมาย</label>
-              <input type="text" id="h-assign" class="f-input" placeholder="เช่น รองแพทย์, ผอก.">
+              <select id="h-assign" class="f-select">
+                <option value="">— ทั้งหมด —</option>
+                <optgroup label="ผู้อำนวยการ">
+                  <option value="ผอก.">ผอก. (ผู้อำนวยการ)</option>
+                </optgroup>
+                <optgroup label="รองผู้อำนวยการ">
+                  <option value="รองแพทย์">รองแพทย์</option>
+                  <option value="รองพรส.">รองพรส.</option>
+                  <option value="รองบริหาร">รองบริหาร</option>
+                  <option value="รองดิจิทัล">รองดิจิทัล</option>
+                  <option value="รองปฐมภูมิ">รองปฐมภูมิ</option>
+                  <option value="รองฝ่ายการพยาบาล">รองฝ่ายการพยาบาล</option>
+                </optgroup>
+                <optgroup label="ผู้ช่วยผู้อำนวยการ">
+                  <option value="ผช.พัฒนาคุณภาพ">ผช.พัฒนาคุณภาพ</option>
+                  <option value="ผช.เวชระเบียน">ผช.เวชระเบียน</option>
+                  <option value="ผช.CFO">ผช.CFO</option>
+                </optgroup>
+              </select>
             </div>
           </div>
           <div style="text-align:right;margin-top:4px;">
@@ -4010,7 +4030,7 @@ function doSearch() {
           '<td style="white-space:nowrap;">'+fmtDate(d.date)+'</td>'+
           '<td style="max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(d.from)+'</td>'+
           '<td style="max-width:260px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">'+esc(d.subject)+'</td>'+
-          '<td><span class="badge b-in">'+esc(d.sheetType||d.type||'—')+'</span></td>'+
+          '<td><span class="badge b-in">'+esc(typeLabel(d.sheetType||d.type||''))+'</span></td>'+
           '<td>'+urgBadge(d.urgency)+'</td>'+
           '<td>'+fileLink+'</td>'+
           '</tr>';
@@ -4811,6 +4831,10 @@ function statusBadge(s) {
 function urgBadge(u) {
   if (!u||u==='ปกติ') return '<span class="badge b-normal">ปกติ</span>';
   return '<span class="badge b-urgent">'+esc(u)+'</span>';
+}
+function typeLabel(t) {
+  var m = { 'incoming':'หนังสือรับเข้า', 'outgoing':'หนังสือส่งออก', 'order':'หนังสือคำสั่ง', 'certificate':'หนังสือรับรอง' };
+  return m[t] || t || '—';
 }
 
 
