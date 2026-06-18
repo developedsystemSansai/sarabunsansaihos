@@ -4500,7 +4500,10 @@ function doReport() {
         }
         return;
       }
-      renderReport(r);
+      setText('rp-period-txt', label);
+      setText('rp-type-txt', _rpParams.type === 'both' ? 'ทั้งหมด' : _rpParams.type);
+      show('rp-results');
+      renderReport(r.report);
     })
     .withFailureHandler(function(e) {
       setLoad('rp-btn', false, '📊 ดึงข้อมูล');
