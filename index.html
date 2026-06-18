@@ -4450,79 +4450,62 @@ function doReport() {
   hide('rp-results');
   hide('rp-export-ok');
   hide('rp-export-err');
-  
   _rpParams = null;
-  
   var s, e, label;
-  
   if (_rpMode === 'day') {
     var d = v('rp-day');
     if (!d) return showA('rp-alert','❌ กรุณาระบุวันที่');
-    
-    // ✅ แก้: Normalize วันที่ (รองรับทั้ง 16/6/2569 และ 16/06/2569)
     s = normalizeDate(d);
     e = s;
     label = 'วัน ' + d;
-    
   } else {
     var m = v('rp-month');
     var y = v('rp-year');
     if (!m || !y) return showA('rp-alert','❌ กรุณาระบุเดือน/ปี');
-    
-    // ✅ แก้: คำนวณวันแรกและวันสุดท้ายของเดือน
     var daysInMonth = new Date(parseInt(y) - 543, parseInt(m), 0).getDate();
     s = '01/' + m + '/' + y;
     e = String(daysInMonth).padStart(2, '0') + '/' + m + '/' + y;
     label = 'เดือน ' + getMonthName(m) + ' ' + y;
   }
-  
   _rpParams = { start: s, end: e, label: label, type: v('rp-type') };
-  
-  // ✅ เพิ่ม: Debug log
   console.log('Report params:', _rpParams);
-  
   setLoad('rp-btn', true, '⏳ กำลังดึงข้อมูล...');
-  
-  google.script.run
+
+  // ✅ ใช้ gasRun แทน google.script.run (เพราะโฮสต์บน GitHub Pages)
+  gasRun('generateReport')
     .withSuccessHandler(function(r) {
       setLoad('rp-btn', false, '📊 ดึงข้อมูล');
-      
-      // ✅ เพิ่ม: Debug log
       console.log('Report result:', r);
-      
       if (!r || !r.success) {
         showA('rp-alert', '❌ ' + ((r && r.message) || 'เกิดข้อผิดพลาด'));
         return;
       }
-      
-      // ✅ แก้: ตรวจสอบว่ามีข้อมูลหรือไม่
+      // ✅ กรณีไม่มีข้อมูล — แสดง header พร้อมข้อความว่าง
       if (!r.report || r.report.total === 0) {
         showA('rp-alert', '⚠️ ไม่พบข้อมูลในช่วง ' + label);
-        
-        // ✅ เพิ่ม: แสดงแถบหัวข้อแต่ไม่มีตาราง
         show('rp-results');
-        document.getElementById('rp-period').textContent = label;
-        document.getElementById('rp-type-badge').textContent = 
-          _rpParams.type === 'both' ? 'ทั้งหมด' : _rpParams.type;
-        
-        // ✅ เพิ่ม: แสดงข้อความในตาราง
+        // ✅ ใช้ ID ที่ตรงกับ HTML จริง
+        setText('rp-period-txt', label);
+        setText('rp-type-txt', _rpParams.type === 'both' ? 'ทั้งหมด' : _rpParams.type);
+        // เคลียร์ stat cards
+        setText('rp-total', '0');
+        setText('rp-in', '0');
+        setText('rp-out', '0');
+        setText('rp-urg1', '0');
+        setText('rp-urg2', '0');
+        setText('rp-norm', '0');
+        setText('rp-rows-count', '0');
         var tbody = document.getElementById('rp-rows-tbody');
         if (tbody) {
           tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:24px;color:var(--gray400);">ไม่พบข้อมูลในช่วงเวลานี้</td></tr>';
         }
         return;
       }
-      
-      // มีข้อมูล → แสดงผล
       renderReport(r);
-      
     })
     .withFailureHandler(function(e) {
       setLoad('rp-btn', false, '📊 ดึงข้อมูล');
-      showA('rp-alert', '❌ ' + e.message);
-    })
-    .generateReport(s, e, _rpParams.type);
-}
+      showA('rp-alert', '
 
 // ✅ เพิ่ม: ฟังก์ชัน Normalize วันที่
 function normalizeDate(dateStr) {
@@ -4628,7 +4611,7 @@ function doExportReport() {
       var el=document.getElementById('rp-export-err');
       if(el){el.textContent='❌ เชื่อมต่อล้มเหลว: '+err;el.style.display='block';}
     })
-    .call(_rpParams.s, _rpParams.e, _rpParams.type);
+.call(_rpParams.start, _rpParams.end, _rpParams.type);
 }
 // ============================================================
 // HISTORY SEARCH
