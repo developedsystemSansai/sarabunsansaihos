@@ -1652,6 +1652,60 @@ tbody tr:hover td { background: #f4f7fc; }
             </div>
           </div>
 
+          <!-- ✅ หนังสือราชการผ่านผู้บริหาร -->
+          <div class="card">
+            <div class="card-head" style="background:linear-gradient(90deg,#1e3a5f 0%,#2d5a8e 100%);border-bottom:none;">
+              <span class="card-head-icon" style="color:#ffd700;">✅</span>
+              <h3 style="color:white;">หนังสือราชการผ่านผู้บริหาร</h3>
+            </div>
+            <div class="card-body">
+              <p style="font-size:11.5px;color:var(--gray500);margin-bottom:12px;">งานเลขาแต่ละภารกิจเป็นผู้บันทึก — เลือกได้หลายท่าน พร้อมระบุ ว/ด/ป ที่ผ่าน</p>
+              <div class="dir-grid" style="grid-template-columns:1fr 1fr;">
+                <div class="dir-row c-dir">
+                  <label><input type="checkbox" id="r-chk-dir"> ผู้อำนวยการ</label>
+                  <input type="text" id="r-date-dir" class="dir-date" placeholder="ว/ด/ป" disabled>
+                </div>
+                <div class="dir-row c-med">
+                  <label><input type="checkbox" id="r-chk-med"> รองแพทย์</label>
+                  <input type="text" id="r-date-med" class="dir-date" placeholder="ว/ด/ป" disabled>
+                </div>
+                <div class="dir-row c-prs">
+                  <label><input type="checkbox" id="r-chk-prs"> รองพรส.</label>
+                  <input type="text" id="r-date-prs" class="dir-date" placeholder="ว/ด/ป" disabled>
+                </div>
+                <div class="dir-row c-adm">
+                  <label><input type="checkbox" id="r-chk-adm"> รองบริหาร</label>
+                  <input type="text" id="r-date-adm" class="dir-date" placeholder="ว/ด/ป" disabled>
+                </div>
+                <div class="dir-row c-dig">
+                  <label><input type="checkbox" id="r-chk-dig"> รองดิจิทัล</label>
+                  <input type="text" id="r-date-dig" class="dir-date" placeholder="ว/ด/ป" disabled>
+                </div>
+                <div class="dir-row c-pri">
+                  <label><input type="checkbox" id="r-chk-pri"> รองปฐมภูมิ</label>
+                  <input type="text" id="r-date-pri" class="dir-date" placeholder="ว/ด/ป" disabled>
+                </div>
+                <div class="dir-row c-nur">
+                  <label><input type="checkbox" id="r-chk-nur"> รองฝ่ายการพยาบาล</label>
+                  <input type="text" id="r-date-nur" class="dir-date" placeholder="ว/ด/ป" disabled>
+                </div>
+                <div class="dir-row c-qa">
+                  <label><input type="checkbox" id="r-chk-qa"> ผช.พัฒนาคุณภาพ</label>
+                  <input type="text" id="r-date-qa" class="dir-date" placeholder="ว/ด/ป" disabled>
+                </div>
+                <div class="dir-row c-cfo">
+                  <label><input type="checkbox" id="r-chk-cfo"> ผช.CFO</label>
+                  <input type="text" id="r-date-cfo" class="dir-date" placeholder="ว/ด/ป" disabled>
+                </div>
+                <!-- ว/ด/ป คืนธุรการ — เต็มแถว -->
+                <div class="dir-row c-ret" style="grid-column:1/-1;">
+                  <label style="min-width:130px;cursor:default;">📋 ว/ด/ป คืนธุรการ</label>
+                  <input type="text" id="r-date-return" class="dir-date" placeholder="ว/ด/ป">
+                </div>
+              </div>
+            </div>
+          </div>
+
         </div><!-- /right col -->
 
       </div><!-- /recv-layout -->
