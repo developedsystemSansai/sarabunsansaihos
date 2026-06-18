@@ -4496,8 +4496,8 @@ function showHistoryDetail(idx) {
   var dateRecvDisplay = fmtDate(d.dateReceive || d.dateDoc);
   var recvTimeStr = d.recvTime || extractTime(d.recordTime || '');
   if (recvTimeStr) {
-    dateRecvDisplay += ' &nbsp;<span style="background:var(--gray100);color:var(--navy);font-family:'IBM Plex Mono',monospace;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:4px;border:1px solid var(--gray200);">🕐 '+esc(recvTimeStr)+' น.</span>';
-  }
+dateRecvDisplay += ' &nbsp;<span style="background:var(--gray100);color:var(--navy);font-family:\'IBM Plex Mono\',monospace;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:4px;border:1px solid var(--gray200);">🕐 '+esc(recvTimeStr)+' น.</span>';
+}
 
   var fileDisplay = d.fileId
     ? '<a href="https://drive.google.com/file/d/'+esc(d.fileId)+'/view" target="_blank" style="display:inline-flex;align-items:center;gap:5px;background:var(--green-bg);color:var(--green);border:1px solid #86efac;border-radius:4px;padding:4px 10px;font-weight:700;text-decoration:none;font-size:12px;">📎 ดูไฟล์</a>'
