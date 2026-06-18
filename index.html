@@ -3496,20 +3496,49 @@ function removeRecvFile() {
 }
 
 document.addEventListener('DOMContentLoaded',function(){
-  [['r-chk-dir','r-date-dir'],['r-chk-med','r-date-med'],
-  ['r-chk-prs','r-date-prs'],['r-chk-adm','r-date-adm'],
-  ['r-chk-dig','r-date-dig'],['r-chk-pri','r-date-pri'],
-  ['r-chk-qa','r-date-qa'],
-  ['r-chk-cfo','r-date-cfo'],['r-chk-nur','r-date-nur']].forEach(function(pair){
-    var chk=document.getElementById(pair[0]);
-    var inp=document.getElementById(pair[1]);
-    if(!chk||!inp) return;
-    chk.addEventListener('change',function(){
-      inp.disabled=!chk.checked;
-      if(chk.checked && !inp.value) inp.value=toThaiDate(new Date());
-      else if(!chk.checked) inp.value='';
-    });
-  });
+[['r-chk-dir','r-date-dir'],['r-chk-med','r-date-med'],
+['r-chk-prs','r-date-prs'],['r-chk-adm','r-date-adm'],
+['r-chk-dig','r-date-dig'],['r-chk-pri','r-date-pri'],
+['r-chk-qa','r-date-qa'],
+['r-chk-cfo','r-date-cfo'],['r-chk-nur','r-date-nur']].forEach(function(pair){
+var chk=document.getElementById(pair[0]);
+var inp=document.getElementById(pair[1]);
+if(!chk||!inp) return;
+chk.addEventListener('change',function(){
+inp.disabled=!chk.checked;
+if(chk.checked && !inp.value) inp.value=toThaiDate(new Date());
+else if(!chk.checked) inp.value='';
+});
+});
+// สร้างตารางกลุ่มงาน
+buildGroupTable();
+// ─ ฟังก์ชันล้างสถานะกลุ่มงาน ──
+window.resetGroupTable = function() {
+if (!confirm('ต้องการล้างสถานะการรับทราบทั้งหมดใช่หรือไม่?')) return;
+_MISSIONS.forEach(function(m, i) {
+var p = 'rgrp' + i;
+var okEl = document.getElementById(p + '_ok');
+var noEl = document.getElementById(p + '_no');
+if (okEl) okEl.checked = false;
+if (noEl) noEl.checked = false;
+var subEl = document.getElementById(p + '_sub');
+if (subEl) subEl.value = '';
+var othEl = document.getElementById(p + '_othertxt');
+if (othEl) othEl.value = '';
+var badge = document.getElementById(p + '_badge');
+if (badge) {
+badge.className = 'st-badge st-na';
+badge.textContent = '—';
+}
+});
+var ns = document.getElementById('r-notify-status');
+if (ns) {
+ns.className = 'st-badge st-pending';
+ns.textContent = '⏳ ยังไม่รับทราบ';
+}
+toast('🔄 ล้างสถานะกลุ่มงานแล้ว', 'info', 2000);
+};
+});
   // สร้างตารางกลุ่มงาน
   buildGroupTable();
   // สร้างตารางกลุ่มงาน
@@ -4004,30 +4033,30 @@ function resetRecv() {
   setText('r-subj-cnt','0'); setText('r-detail-cnt','0');
   // reset checkboxes + disable date inputs
   // ล้าง checkbox ผู้บริหาร + กลุ่มงานย่อยทั้งหมด
-['r-chk-dir','r-chk-med','r-chk-prs','r-chk-adm',
-'r-chk-dig','r-chk-pri','r-chk-qa','r-chk-mr','r-chk-cfo','r-chk-nur'].forEach(function(id){
-  var el=document.getElementById(id); if(el) el.checked=false;
-});
-['r-date-dir','r-date-med','r-date-prs','r-date-adm',
-'r-date-dig','r-date-pri','r-date-qa','r-date-mr','r-date-cfo','r-date-nur','r-date-nur'].forEach(function(id){
-  var el=document.getElementById(id); if(el) el.disabled=true;
+// reset checkboxes + disable date inputs
+var _ALL_CHK_IDS = [
+'r-chk-dir','r-chk-med','r-chk-prs','r-chk-adm',
+'r-chk-dig','r-chk-pri','r-chk-qa','r-chk-mr','r-chk-cfo','r-chk-nur'
+];
+_ALL_CHK_IDS.forEach(function(id){
+var el=document.getElementById(id); if(el) el.checked=false;
 });
 var _ALL_DATE_IDS = [
-  'r-date-dir','r-date-med','r-date-prs','r-date-adm','r-date-dig',
-  'r-date-pri','r-date-qa','r-date-cfo','r-date-nur',
-  'r-date-opd','r-date-thai','r-date-social','r-date-family',
-  'r-date-prevent','r-date-promote','r-date-occu','r-date-nurcom','r-date-consumer',
-  'r-date-insure','r-date-strategy','r-date-quality',
-  'r-date-it','r-date-dh','r-date-mr',
-  'r-date-er','r-date-med2','r-date-surg','r-date-ortho','r-date-ped',
-  'r-date-eye','r-date-ent','r-date-obg','r-date-anes','r-date-nutri',
-  'r-date-psy','r-date-dental','r-date-radio','r-date-lab','r-date-rehab','r-date-pharm',
-  'r-date-ner','r-date-nopd','r-date-nicu','r-date-labor','r-date-or',
-  'r-date-nanes','r-date-nmed','r-date-nsurg','r-date-nobg','r-date-npsy',
-  'r-date-nped','r-date-northo','r-date-nent','r-date-nic'
+'r-date-dir','r-date-med','r-date-prs','r-date-adm','r-date-dig',
+'r-date-pri','r-date-qa','r-date-cfo','r-date-nur',
+'r-date-opd','r-date-thai','r-date-social','r-date-family',
+'r-date-prevent','r-date-promote','r-date-occu','r-date-nurcom','r-date-consumer',
+'r-date-insure','r-date-strategy','r-date-quality',
+'r-date-it','r-date-dh','r-date-mr',
+'r-date-er','r-date-med2','r-date-surg','r-date-ortho','r-date-ped',
+'r-date-eye','r-date-ent','r-date-obg','r-date-anes','r-date-nutri',
+'r-date-psy','r-date-dental','r-date-radio','r-date-lab','r-date-rehab','r-date-pharm',
+'r-date-ner','r-date-nopd','r-date-nicu','r-date-labor','r-date-or',
+'r-date-nanes','r-date-nmed','r-date-nsurg','r-date-nobg','r-date-npsy',
+'r-date-nped','r-date-northo','r-date-nent','r-date-nic'
 ];
 _ALL_DATE_IDS.forEach(function(id){
-  var el=document.getElementById(id); if(el) { el.disabled=true; el.value=''; }
+var el=document.getElementById(id); if(el) { el.disabled=true; el.value=''; }
 });
   ['r-date-dir','r-date-med','r-date-prs','r-date-adm',
    'r-date-dig','r-date-pri','r-date-qa','r-date-mr','r-date-cfo','r-date-nur','r-date-nur'].forEach(function(id){
