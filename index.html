@@ -1594,11 +1594,21 @@ tbody tr:hover td { background: #f4f7fc; }
 
           <!-- กลุ่มงาน / สถานะการรับทราบ -->
           <div class="card">
-  <div class="card-head" style="justify-content:space-between;">
-    <div style="display:flex;align-items:center;gap:9px;">
-      <span class="card-head-icon">🏢</span>
-      <h3>กลุ่มงานที่ส่งถึง / สถานะรับทราบ</h3>
-    </div>
+<div class="card-head" style="justify-content:space-between;">
+  <div style="display:flex;align-items:center;gap:9px;">
+    <span class="card-head-icon"></span>
+    <h3>กลุ่มงานที่ส่งถึง / สถานะรับทราบ</h3>
+  </div>
+  <div style="display:flex;gap:6px;">
+    <button onclick="selectAllGroups()" title="เลือก ✔ ทั้งหมด (ไม่รวมอื่นๆ)"
+      style="background:var(--green-bg);border:1px solid #86efac;border-radius:var(--r);
+             padding:4px 12px;font-size:12px;cursor:pointer;font-family:inherit;
+             color:var(--green);display:flex;align-items:center;gap:5px;font-weight:600;
+             transition:all .15s;"
+      onmouseover="this.style.background='#dcfce7'"
+      onmouseout="this.style.background='var(--green-bg)'">
+       เลือกทั้งหมด
+    </button>
     <button onclick="resetGroupTable()" title="ล้างสถานะทั้งหมด"
       style="background:var(--white);border:1px solid var(--gray300);border-radius:var(--r);
              padding:4px 12px;font-size:12px;cursor:pointer;font-family:inherit;
@@ -1609,6 +1619,8 @@ tbody tr:hover td { background: #f4f7fc; }
        ล้าง
     </button>
   </div>
+</div>
+            
   <div class="card-body" style="padding:0;">
               <table class="grp-tbl">
                 <thead>
@@ -1625,6 +1637,7 @@ tbody tr:hover td { background: #f4f7fc; }
               </table>
             </div>
           </div>
+          
 
           <!-- แจ้งเวียน -->
           <div class="card">
@@ -3514,23 +3527,30 @@ else if(!chk.checked) inp.value='';
 buildGroupTable();
 // ─ ฟังก์ชันล้างสถานะกลุ่มงาน ──
 window.resetGroupTable = function() {
-if (!confirm('ต้องการล้างสถานะการรับทราบทั้งหมดใช่หรือไม่?')) return;
-_MISSIONS.forEach(function(m, i) {
-var p = 'rgrp' + i;
-var okEl = document.getElementById(p + '_ok');
-var noEl = document.getElementById(p + '_no');
-if (okEl) okEl.checked = false;
-if (noEl) noEl.checked = false;
-var subEl = document.getElementById(p + '_sub');
-if (subEl) subEl.value = '';
-var othEl = document.getElementById(p + '_othertxt');
-if (othEl) othEl.value = '';
-var badge = document.getElementById(p + '_badge');
-if (badge) {
-badge.className = 'st-badge st-na';
-badge.textContent = '—';
-}
-});
+  if (!confirm('ต้องการล้างสถานะการรับทราบทั้งหมดใช่หรือไม่?')) return;
+  _MISSIONS.forEach(function(m, i) {
+    var p = 'rgrp' + i;
+    var okEl = document.getElementById(p + '_ok');
+    var noEl = document.getElementById(p + '_no');
+    if (okEl) okEl.checked = false;
+    if (noEl) noEl.checked = false;
+    var subEl = document.getElementById(p + '_sub');
+    if (subEl) subEl.value = '';
+    var othEl = document.getElementById(p + '_othertxt');
+    if (othEl) othEl.value = '';
+    var badge = document.getElementById(p + '_badge');
+    if (badge) {
+      badge.className = 'st-badge st-na';
+      badge.textContent = '—';
+    }
+  });
+  var ns = document.getElementById('r-notify-status');
+  if (ns) {
+    ns.className = 'st-badge st-pending';
+    ns.textContent = '⏳ ยังไม่รับทราบ';
+  }
+  toast('🔄 ล้างสถานะกลุ่มงานแล้ว', 'info', 2000);
+};
 var ns = document.getElementById('r-notify-status');
 if (ns) {
 ns.className = 'st-badge st-pending';
@@ -3568,6 +3588,25 @@ window.resetGroupTable = function() {
     ns.textContent = ' ยังไม่รับทราบ';
   }
   toast('🔄 ล้างสถานะกลุ่มงานแล้ว', 'info', 2000);
+};
+              /**
+* selectAllGroups() — กด ✔ ทั้งหมดทุกภารกิจ (ยกเว้น "อื่นๆ" ที่ต้องกรอกข้อความเอง)
+*/
+window.selectAllGroups = function() {
+  var count = 0;
+  _MISSIONS.forEach(function(m, i) {
+    if (m.isOther) return; // ข้าม "อื่นๆ"
+    var p    = 'rgrp' + i;
+    var okEl = document.getElementById(p + '_ok');
+    var noEl = document.getElementById(p + '_no');
+    if (okEl) {
+      okEl.checked = true;
+      if (noEl) noEl.checked = false;
+      count++;
+    }
+    updateGroupStatus(i);
+  });
+  toast('✅ เลือก ✔ ทั้งหมด ' + count + ' ภารกิจ (ไม่รวม "อื่นๆ")', 'ok', 2500);
 };
 
 // ============================================================
@@ -3689,33 +3728,31 @@ function buildGroupTable() {
   var tbody = document.getElementById('r-grp-tbody');
   if (!tbody) return;
   tbody.innerHTML = '';
-
   _MISSIONS.forEach(function(m, i) {
     var p  = 'rgrp' + i;
     var tr = document.createElement('tr');
-
     if (m.isOther) {
       // แถวอื่นๆ — ชื่อคอลัมน์เป็น input กรอกได้
       tr.innerHTML =
         '<td class="grp-name">' +
-          '<input type="text" id="' + p + '_othertxt" class="grp-other-input" ' +
-            'placeholder="อื่นๆ — ระบุภารกิจ/กลุ่มงาน..." ' +
-            'oninput="updateGroupStatus(' + i + ')">' +
+        '<input type="text" id="' + p + '_othertxt" class="grp-other-input" ' +
+        'placeholder="อื่นๆ — ระบุภารกิจ/กลุ่มงาน..." ' +
+        'oninput="updateGroupStatus(' + i + ')">' +
         '</td>' +
         '<td class="grp-chk">' +
-          '<input type="radio" name="' + p + '" id="' + p + '_ok" value="ok" ' +
-            'style="accent-color:var(--green);width:15px;height:15px;cursor:pointer;" ' +
-            'onchange="updateGroupStatus(' + i + ')">' +
-          '<label for="' + p + '_ok" style="cursor:pointer;font-size:11px;color:var(--green);font-weight:700;margin-left:2px;">✔</label>' +
+        '<input type="checkbox" id="' + p + '_ok" value="ok" ' +
+        'style="accent-color:var(--green);width:15px;height:15px;cursor:pointer;" ' +
+        'onclick="handleGroupCheck(' + i + ',\'ok\')">' +
+        '<label for="' + p + '_ok" style="cursor:pointer;font-size:11px;color:var(--green);font-weight:700;margin-left:2px;">✔</label>' +
         '</td>' +
         '<td class="grp-chk">' +
-          '<input type="radio" name="' + p + '" id="' + p + '_no" value="no" ' +
-            'style="accent-color:#856404;width:15px;height:15px;cursor:pointer;" ' +
-            'onchange="updateGroupStatus(' + i + ')">' +
-          '<label for="' + p + '_no" style="cursor:pointer;font-size:11px;color:#856404;font-weight:700;margin-left:2px;">✘</label>' +
+        '<input type="checkbox" id="' + p + '_no" value="no" ' +
+        'style="accent-color:#856404;width:15px;height:15px;cursor:pointer;" ' +
+        'onclick="handleGroupCheck(' + i + ',\'no\')">' +
+        '<label for="' + p + '_no" style="cursor:pointer;font-size:11px;color:#856404;font-weight:700;margin-left:2px;">✘</label>' +
         '</td>' +
         '<td class="grp-st">' +
-          '<span id="' + p + '_badge" class="st-badge st-na" style="font-size:10.5px;">—</span>' +
+        '<span id="' + p + '_badge" class="st-badge st-na" style="font-size:10.5px;">—</span>' +
         '</td>';
     } else {
       // แถวภารกิจปกติ (อาจมี dropdown เลือกกลุ่มงานย่อยในภารกิจด้วย)
@@ -3731,19 +3768,19 @@ function buildGroupTable() {
       tr.innerHTML =
         '<td class="grp-name">' + m.name + subHtml + '</td>' +
         '<td class="grp-chk">' +
-          '<input type="radio" name="' + p + '" id="' + p + '_ok" value="ok" ' +
-            'style="accent-color:var(--green);width:15px;height:15px;cursor:pointer;" ' +
-            'onchange="updateGroupStatus(' + i + ')">' +
-          '<label for="' + p + '_ok" style="cursor:pointer;font-size:11px;color:var(--green);font-weight:700;margin-left:2px;">✔</label>' +
+        '<input type="checkbox" id="' + p + '_ok" value="ok" ' +
+        'style="accent-color:var(--green);width:15px;height:15px;cursor:pointer;" ' +
+        'onclick="handleGroupCheck(' + i + ',\'ok\')">' +
+        '<label for="' + p + '_ok" style="cursor:pointer;font-size:11px;color:var(--green);font-weight:700;margin-left:2px;">✔</label>' +
         '</td>' +
         '<td class="grp-chk">' +
-          '<input type="radio" name="' + p + '" id="' + p + '_no" value="no" ' +
-            'style="accent-color:#856404;width:15px;height:15px;cursor:pointer;" ' +
-            'onchange="updateGroupStatus(' + i + ')">' +
-          '<label for="' + p + '_no" style="cursor:pointer;font-size:11px;color:#856404;font-weight:700;margin-left:2px;">✘</label>' +
+        '<input type="checkbox" id="' + p + '_no" value="no" ' +
+        'style="accent-color:#856404;width:15px;height:15px;cursor:pointer;" ' +
+        'onclick="handleGroupCheck(' + i + ',\'no\')">' +
+        '<label for="' + p + '_no" style="cursor:pointer;font-size:11px;color:#856404;font-weight:700;margin-left:2px;">✘</label>' +
         '</td>' +
         '<td class="grp-st">' +
-          '<span id="' + p + '_badge" class="st-badge st-pending" style="font-size:10.5px;">ยังไม่รับทราบ</span>' +
+        '<span id="' + p + '_badge" class="st-badge st-pending" style="font-size:10.5px;">ยังไม่รับทราบ</span>' +
         '</td>';
     }
     tbody.appendChild(tr);
@@ -3758,7 +3795,6 @@ function updateGroupStatus(i) {
   var okEl  = document.getElementById(p + '_ok');
   var noEl  = document.getElementById(p + '_no');
   if (!badge) return;
-
   if (m.isOther) {
     var txtEl = document.getElementById(p + '_othertxt');
     var txt   = txtEl ? txtEl.value.trim() : '';
@@ -3785,8 +3821,35 @@ function updateGroupStatus(i) {
     } else if (noEl && noEl.checked) {
       badge.className = 'st-badge st-pending';
       badge.textContent = '⏳ ยังไม่รับทราบ' + subTag;
+    } else {
+      badge.className = 'st-badge st-na';
+      badge.textContent = '—';
     }
   }
+  // อัปเดต notify bar
+  var totalAnswered = _MISSIONS.filter(function(_, j) {
+    var ok = document.getElementById('rgrp' + j + '_ok');
+    var no = document.getElementById('rgrp' + j + '_no');
+    return (ok && ok.checked) || (no && no.checked);
+  }).length;
+  var totalOk = _MISSIONS.filter(function(_, j) {
+    var ok = document.getElementById('rgrp' + j + '_ok');
+    return ok && ok.checked;
+  }).length;
+  var ns = document.getElementById('r-notify-status');
+  if (ns) {
+    if (totalAnswered === _MISSIONS.length && totalOk === _MISSIONS.length) {
+      ns.className = 'st-badge st-ok';
+      ns.textContent = '✅ รับทราบครบแล้ว';
+    } else if (totalOk > 0) {
+      ns.className = 'st-badge st-pending';
+      ns.textContent = '⏳ รับทราบ ' + totalOk + '/' + _MISSIONS.length;
+    } else {
+      ns.className = 'st-badge st-pending';
+      ns.textContent = '⏳ ยังไม่รับทราบ';
+    }
+  }
+}
 
   // อัปเดต notify bar — ถือว่าครบเมื่อทุกแถวที่ถูกแตะแล้วกด ✔ ทั้งหมด
   var totalAnswered = _MISSIONS.filter(function(_, j) {
@@ -4067,6 +4130,44 @@ var el=document.getElementById(id); if(el) { el.disabled=true; el.value=''; }
   setDefaultDate('r-date');
   // โหลดเลขที่รับถัดไปใหม่
   loadNextRecvSeq();
+}
+  /**
+* handleGroupCheck(i, which) — จัดการ checkbox แบบ toggle + mutually exclusive
+* - กด ✔ ซ้ำ → เอา ✔ ออก (unchecked)
+* - กด ✘ ซ้ำ → เอา ✘ ออก (unchecked)
+* - กด ✔ ขณะ ✘ checked → เอา  ออก แล้ว ✔ checked
+* - กด ✘ ขณะ ✔ checked → เอา ✔ ออก แล้ว  checked
+*/
+function handleGroupCheck(i, which) {
+  var p    = 'rgrp' + i;
+  var okEl = document.getElementById(p + '_ok');
+  var noEl = document.getElementById(p + '_no');
+  if (!okEl || !noEl) return;
+  
+  if (which === 'ok') {
+    // กำลังกด ✔
+    if (okEl.checked) {
+      // ✔ ถูก check แล้ว → toggle off
+      okEl.checked = false;
+      noEl.checked = false;
+    } else {
+      // ✔ ยังไม่ check → check ✔ และเอา ✘ ออก
+      okEl.checked = true;
+      noEl.checked = false;
+    }
+  } else {
+    // กำลังกด ✘
+    if (noEl.checked) {
+      // ✘ ถูก check แล้ว → toggle off
+      noEl.checked = false;
+      okEl.checked = false;
+    } else {
+      //  ยังไม่ check → check ✘ และเอา ✔ ออก
+      noEl.checked = true;
+      okEl.checked = false;
+    }
+  }
+  updateGroupStatus(i);
 }
 
 // ============================================================
