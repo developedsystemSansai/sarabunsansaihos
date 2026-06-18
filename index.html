@@ -3539,12 +3539,7 @@ ns.textContent = '⏳ ยังไม่รับทราบ';
 toast('🔄 ล้างสถานะกลุ่มงานแล้ว', 'info', 2000);
 };
 });
-  // สร้างตารางกลุ่มงาน
-  buildGroupTable();
-  // สร้างตารางกลุ่มงาน
-buildGroupTable();
 
-// ── ฟังก์ชันล้างสถานะกลุ่มงาน ──
 window.resetGroupTable = function() {
   if (!confirm('ต้องการล้างสถานะการรับทราบทั้งหมดใช่หรือไม่?')) return;
   _MISSIONS.forEach(function(m, i) {
@@ -3574,8 +3569,6 @@ window.resetGroupTable = function() {
   }
   toast('🔄 ล้างสถานะกลุ่มงานแล้ว', 'info', 2000);
 };
-});
-});
 
 // ============================================================
 // RECEIVE — ORG AUTOCOMPLETE
