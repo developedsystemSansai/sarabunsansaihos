@@ -7,6 +7,16 @@
   <title>ระบบสารบรรณอิเล็กทรอนิกส์ โรงพยาบาลสันทราย</title>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+  /* สีพื้นหลัง option ใน dropdown ความเร่งด่วน/ชั้นความลับ */
+#r-urgency option[value="ด่วนที่สุด"] { background: #fee2e2; color: #991b1b; font-weight: 700; }
+#r-urgency option[value="ด่วนมาก"]   { background: #ffedd5; color: #9a3412; font-weight: 600; }
+#r-urgency option[value="ด่วน"]      { background: #fef9c3; color: #854d0e; }
+#r-urgency option[value="ปกติ"]      { background: #f1f5f9; color: #475569; }
+
+#r-conf option[value="ลับที่สุด"] { background: #fee2e2; color: #991b1b; font-weight: 700; }
+#r-conf option[value="ลับมาก"]   { background: #ffedd5; color: #9a3412; font-weight: 600; }
+#r-conf option[value="ลับ"]      { background: #fef9c3; color: #854d0e; }
+#r-conf option[value="ไม่มีชั้น"] { background: #f1f5f9; color: #475569; }
 /* ============================================================
    RESET & ROOT
 ============================================================ */
@@ -1000,26 +1010,26 @@ tbody tr:hover td { background: #f4f7fc; }
                 </div>
               </div>
 
-              <!-- แถว 2: ความเร่งด่วน + ชั้นความลับ -->
-              <div class="form-grid" style="grid-template-columns:1fr 1fr;">
-                <div class="f-group">
-                  <label class="f-label" style="color:var(--red);font-size:12px;">⚡ ความเร่งด่วน <span class="req">*</span></label>
-                  <select id="r-urgency" class="f-select" style="font-weight:600;">
-                    <option value="ปกติ" selected>–ปกติ–</option>
-                    <option value="ด่วน">ด่วน</option>
-                    <option value="ด่วนมาก">ด่วนมาก</option>
-                    <option value="ด่วนที่สุด">ด่วนที่สุด</option>
-                  </select>
-                </div>
-                <div class="f-group">
-                  <label class="f-label">ชั้นความลับ <span class="req">*</span></label>
-                  <select id="r-conf" class="f-select">
-                    <option value="ไม่มีชั้น" selected>–ปกติ–</option>
-                    <option value="ลับ">ลับ</option>
-                    <option value="ลับมาก">ลับมาก</option>
-                    <option value="ลับที่สุด">ลับที่สุด</option>
-                  </select>
-                </div>
+              <div class="f-group">
+  <label class="f-label" style="color:var(--red);font-size:12px;">⚡ ความเร่งด่วน <span class="req">*</span></label>
+  <select id="r-urgency" class="f-select" style="font-weight:600;">
+    <option value="" disabled selected>– เลือกระดับความเร่งด่วน –</option>
+    <option value="ด่วนที่สุด">🔴 ด่วนที่สุด — ให้ปฏิบัติทันทีที่ได้รับหนังสือ</option>
+    <option value="ด่วนมาก">🟠 ด่วนมาก — ให้ปฏิบัติโดยเร็ว</option>
+    <option value="ด่วน">🟡 ด่วน — ให้ปฏิบัติเร็วกว่าปกติเท่าที่จะทำได้</option>
+    <option value="ปกติ">⚪ ปกติ</option>
+  </select>
+</div>
+<div class="f-group">
+  <label class="f-label">ชั้นความลับ <span class="req">*</span></label>
+  <select id="r-conf" class="f-select">
+    <option value="" disabled selected>– เลือกระดับชั้นความลับ –</option>
+    <option value="ลับที่สุด">🔴 ลับที่สุด — เปิดเผยไม่ได้เด็ดขาด</option>
+    <option value="ลับมาก">🟠 ลับมาก — เปิดเผยเฉพาะผู้จำเป็น</option>
+    <option value="ลับ">🟡 ลับ — เปิดเผยเฉพาะผู้เกี่ยวข้อง</option>
+    <option value="ไม่มีชั้น">⚪ ไม่มีชั้นความลับ</option>
+  </select>
+</div>
               </div>
 
               <!-- แถว 3: เลขที่หนังสือ + วันที่หนังสือรับ -->
@@ -1707,20 +1717,23 @@ tbody tr:hover td { background: #f4f7fc; }
           <div class="f-group">
             <label class="f-label" style="color:var(--red);font-size:12px;">⚡ ความเร่งด่วน <span class="req">*</span></label>
             <select id="s-urgency" class="f-select" style="font-weight:600;">
-              <option value="ปกติ" selected>–ปกติ–</option>
-              <option value="ด่วน">ด่วน</option>
-              <option value="ด่วนมาก">ด่วนมาก</option>
-              <option value="ด่วนที่สุด">ด่วนที่สุด</option>
+  <option value="" disabled selected>– เลือกระดับความเร่งด่วน –</option>
+  <option value="ด่วนที่สุด">🔴 ด่วนที่สุด — ให้ปฏิบัติทันทีที่ได้รับหนังสือ</option>
+  <option value="ด่วนมาก">🟠 ด่วนมาก — ให้ปฏิบัติโดยเร็ว</option>
+  <option value="ด่วน">🟡 ด่วน — ให้ปฏิบัติเร็วกว่าปกติเท่าที่จะทำได้</option>
+  <option value="ปกติ">⚪ ปกติ</option>
+</select>
             </select>
           </div>
           <div class="f-group">
             <label class="f-label">ชั้นความลับ <span class="req">*</span></label>
             <select id="s-conf" class="f-select">
-              <option value="ไม่มีชั้น" selected>–ไม่มีชั้น–</option>
-              <option value="ลับ">ลับ</option>
-              <option value="ลับมาก">ลับมาก</option>
-              <option value="ลับที่สุด">ลับที่สุด</option>
-            </select>
+  <option value="" disabled selected>– เลือกระดับชั้นความลับ –</option>
+  <option value="ลับที่สุด">🔴 ลับที่สุด — เปิดเผยไม่ได้เด็ดขาด</option>
+  <option value="ลับมาก">🟠 ลับมาก — เปิดเผยเฉพาะผู้จำเป็น</option>
+  <option value="ลับ">🟡 ลับ — เปิดเผยเฉพาะผู้เกี่ยวข้อง</option>
+  <option value="ไม่มีชั้น">⚪ ไม่มีชั้นความลับ</option>
+</select>
           </div>
         </div>
 
@@ -3143,7 +3156,7 @@ function submitSend() {
 function resetSend() {
   _sendPendingFile = null;
   ['s-docno','s-date-assigned','s-docdate','s-to','s-subj','s-detail','s-note'].forEach(clr);
-  setVal('s-sentby',''); setVal('s-urgency','ปกติ'); setVal('s-conf','ไม่มีชั้น');
+ setVal('s-sentby',''); setVal('s-urgency',''); setVal('s-conf','');
   setText('s-subj-cnt','0'); setText('s-detail-cnt','0');
   document.getElementById('s-file-box').style.display = 'none';
   document.getElementById('s-file').value = '';
@@ -4023,10 +4036,12 @@ function submitRecv() {
     groupData:     collectGroupData()
   };
 
-  if (!data.fromOrg)  return showA('r-alert-err','❌ กรุณากรอก จากหน่วยงาน');
-  if (!data.subject)  return showA('r-alert-err','❌ กรุณากรอก เรื่อง');
-  if (!data.category) return showA('r-alert-err','❌ กรุณาเลือก ประเภท');
-  if (!data.assignTo) return showA('r-alert-err','❌ กรุณาเลือก มอบหมายให้');
+if (!data.fromOrg)  return showA('r-alert-err','❌ กรุณากรอก จากหน่วยงาน');
+if (!data.subject)  return showA('r-alert-err','❌ กรุณากรอก เรื่อง');
+if (!data.category) return showA('r-alert-err','❌ กรุณาเลือก ประเภท');
+if (!data.assignTo) return showA('r-alert-err','❌ กรุณาเลือก มอบหมายให้');
+if (!data.urgency || data.urgency === '') return showA('r-alert-err','❌ กรุณาเลือกระดับความเร่งด่วน');
+if (!data.confidential || data.confidential === '') return showA('r-alert-err','❌ กรุณาเลือกระดับชั้นความลับ');
 
   setLoad('r-btn', true, '💾 กำลังบันทึก...');
 
@@ -4091,8 +4106,8 @@ function resetRecv() {
    'r-date-dir','r-date-med','r-date-prs','r-date-adm',
    'r-date-dig','r-date-pri','r-date-qa','r-date-mr','r-date-cfo','r-date-nur',
    'r-date-return','r-notify-date','r-recvno-main'].forEach(clr);
-  setVal('r-by',''); setVal('r-cat',''); setVal('r-urgency','ปกติ');
-  setVal('r-conf','ไม่มีชั้น'); setVal('r-assign','');
+setVal('r-by',''); setVal('r-cat',''); setVal('r-urgency','');
+setVal('r-conf',''); setVal('r-assign','');
   setText('r-subj-cnt','0'); setText('r-detail-cnt','0');
   // reset checkboxes + disable date inputs
   // ล้าง checkbox ผู้บริหาร + กลุ่มงานย่อยทั้งหมด
