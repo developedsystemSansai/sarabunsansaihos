@@ -4471,7 +4471,7 @@ function doReport() {
   console.log('Report params:', _rpParams);
   setLoad('rp-btn', true, '⏳ กำลังดึงข้อมูล...');
 
-  // ✅ ใช้ gasRun แทน google.script.run (เพราะโฮสต์บน GitHub Pages)
+  // ✅ ใช้ gasRun แทน google.script.run
   gasRun('generateReport')
     .withSuccessHandler(function(r) {
       setLoad('rp-btn', false, '📊 ดึงข้อมูล');
@@ -4480,11 +4480,10 @@ function doReport() {
         showA('rp-alert', '❌ ' + ((r && r.message) || 'เกิดข้อผิดพลาด'));
         return;
       }
-      // ✅ กรณีไม่มีข้อมูล — แสดง header พร้อมข้อความว่าง
       if (!r.report || r.report.total === 0) {
         showA('rp-alert', '⚠️ ไม่พบข้อมูลในช่วง ' + label);
         show('rp-results');
-        // ✅ ใช้ ID ที่ตรงกับ HTML จริง
+        // ✅ ใช้ ID ที่ถูกต้อง
         setText('rp-period-txt', label);
         setText('rp-type-txt', _rpParams.type === 'both' ? 'ทั้งหมด' : _rpParams.type);
         // เคลียร์ stat cards
@@ -4505,8 +4504,10 @@ function doReport() {
     })
     .withFailureHandler(function(e) {
       setLoad('rp-btn', false, '📊 ดึงข้อมูล');
-      showA('rp-alert', '
-
+      showA('rp-alert', '❌ เชื่อมต่อล้มเหลว: ' + e);
+    })
+    .call(s, e, _rpParams.type);
+}
 // ✅ เพิ่ม: ฟังก์ชัน Normalize วันที่
 function normalizeDate(dateStr) {
   var parts = dateStr.split('/');
