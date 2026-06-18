@@ -4447,69 +4447,100 @@ function rpSetMode(mode) {
 
 function doReport() {
   hideAlerts(['rp-alert']);
-  hide('rp-results'); hide('rp-export-ok'); hide('rp-export-err');
+  hide('rp-results');
+  hide('rp-export-ok');
+  hide('rp-export-err');
+  
   _rpParams = null;
-
+  
   var s, e, label;
+  
   if (_rpMode === 'day') {
     var d = v('rp-day');
     if (!d) return showA('rp-alert','❌ กรุณาระบุวันที่');
-    s = d; e = d;
+    
+    // ✅ แก้: Normalize วันที่ (รองรับทั้ง 16/6/2569 และ 16/06/2569)
+    s = normalizeDate(d);
+    e = s;
     label = 'วัน ' + d;
+    
   } else {
-    var mon = v('rp-month'), yr = v('rp-year');
-    if (!mon || !yr) return showA('rp-alert','❌ กรุณาเลือกเดือนและปี');
-    if (!/^\d{4}$/.test(yr)) return showA('rp-alert','❌ ปีต้องเป็นตัวเลข 4 หลัก พ.ศ. เช่น 2569');
-    // สร้างช่วงต้นเดือน-ปลายเดือน
-    var yrInt = parseInt(yr, 10);
-    var monInt = parseInt(mon, 10);
-    // ปลายเดือน — ใช้ 28/30/31 ตามเดือน
-    var lastDays = [0,31,28,31,30,31,30,31,31,30,31,30,31];
-    // leap year (ค.ศ.)
-    var adYr = yrInt - 543;
-    if (adYr % 4 === 0 && (adYr % 100 !== 0 || adYr % 400 === 0)) lastDays[2] = 29;
-    s = '01/' + mon + '/' + yr;
-    e = lastDays[monInt] + '/' + mon + '/' + yr;
-    var monthNames = ['','มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
-                      'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
-    label = 'เดือน ' + monthNames[monInt] + ' ' + yr;
+    var m = v('rp-month');
+    var y = v('rp-year');
+    if (!m || !y) return showA('rp-alert','❌ กรุณาระบุเดือน/ปี');
+    
+    // ✅ แก้: คำนวณวันแรกและวันสุดท้ายของเดือน
+    var daysInMonth = new Date(parseInt(y) - 543, parseInt(m), 0).getDate();
+    s = '01/' + m + '/' + y;
+    e = String(daysInMonth).padStart(2, '0') + '/' + m + '/' + y;
+    label = 'เดือน ' + getMonthName(m) + ' ' + y;
   }
-
-  var tp = v('rp-type');
-  setLoad('rp-btn', true, '⏳ กำลังโหลด...');
-
-  gasRun('generateReport')
+  
+  _rpParams = { start: s, end: e, label: label, type: v('rp-type') };
+  
+  // ✅ เพิ่ม: Debug log
+  console.log('Report params:', _rpParams);
+  
+  setLoad('rp-btn', true, '⏳ กำลังดึงข้อมูล...');
+  
+  google.script.run
     .withSuccessHandler(function(r) {
       setLoad('rp-btn', false, '📊 ดึงข้อมูล');
+      
+      // ✅ เพิ่ม: Debug log
+      console.log('Report result:', r);
+      
       if (!r || !r.success) {
-        showA('rp-alert','❌ ' + ((r&&r.message)||'เกิดข้อผิดพลาด'));
+        showA('rp-alert', '❌ ' + ((r && r.message) || 'เกิดข้อผิดพลาด'));
         return;
       }
-      _rpParams = { s:s, e:e, type:tp, label:label };
-      setText('rp-period-txt', label);
-      var typeLabel = { both:'ทั้งรับและส่ง', incoming:'รับเข้า', outgoing:'ส่งออก',
-                         certificate:'หนังสือรับรอง', order:'หนังสือคำสั่ง' };
-      setText('rp-type-txt', typeLabel[tp] || '');
-
-      // ── การ์ด "รับเข้า"/"ส่งออก" มีความหมายเฉพาะตอนดูแบบ รับ/ส่ง เท่านั้น ──
-      // เมื่อเลือก หนังสือรับรอง/หนังสือคำสั่ง ซ่อนการ์ดทั้งสองนี้ (ดูยอดรวมที่การ์ด "รวม" แทน)
-      var showInOut = (tp !== 'certificate' && tp !== 'order');
-      document.getElementById('rp-in-card').style.display  = showInOut ? '' : 'none';
-      document.getElementById('rp-out-card').style.display = showInOut ? '' : 'none';
-
-      renderReport(r.report||{});
-      show('rp-results');
+      
+      // ✅ แก้: ตรวจสอบว่ามีข้อมูลหรือไม่
       if (!r.report || r.report.total === 0) {
-        showA('rp-alert','⚠️ ไม่พบข้อมูลในช่วงวันที่นี้');
+        showA('rp-alert', '⚠️ ไม่พบข้อมูลในช่วง ' + label);
+        
+        // ✅ เพิ่ม: แสดงแถบหัวข้อแต่ไม่มีตาราง
+        show('rp-results');
+        document.getElementById('rp-period').textContent = label;
+        document.getElementById('rp-type-badge').textContent = 
+          _rpParams.type === 'both' ? 'ทั้งหมด' : _rpParams.type;
+        
+        // ✅ เพิ่ม: แสดงข้อความในตาราง
+        var tbody = document.getElementById('rp-rows-tbody');
+        if (tbody) {
+          tbody.innerHTML = '<tr><td colspan="10" style="text-align:center;padding:24px;color:var(--gray400);">ไม่พบข้อมูลในช่วงเวลานี้</td></tr>';
+        }
+        return;
       }
+      
+      // มีข้อมูล → แสดงผล
+      renderReport(r);
+      
     })
-    .withFailureHandler(function(err) {
+    .withFailureHandler(function(e) {
       setLoad('rp-btn', false, '📊 ดึงข้อมูล');
-      showA('rp-alert','❌ เชื่อมต่อล้มเหลว: ' + err);
+      showA('rp-alert', '❌ ' + e.message);
     })
-    .call(s, e, tp);
+    .generateReport(s, e, _rpParams.type);
 }
 
+// ✅ เพิ่ม: ฟังก์ชัน Normalize วันที่
+function normalizeDate(dateStr) {
+  var parts = dateStr.split('/');
+  if (parts.length === 3) {
+    var day = String(parseInt(parts[0])).padStart(2, '0');
+    var month = String(parseInt(parts[1])).padStart(2, '0');
+    var year = parts[2];
+    return day + '/' + month + '/' + year;
+  }
+  return dateStr;
+}
+
+function getMonthName(m) {
+  var months = ['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน',
+                'กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+  return months[parseInt(m) - 1];
+}
 function renderReport(rpt) {
   setText('rp-total', rpt.total||0);
   setText('rp-in',    rpt.inTotal||0);
