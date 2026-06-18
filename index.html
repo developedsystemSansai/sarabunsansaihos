@@ -3585,9 +3585,7 @@ window.resetGroupTable = function() {
   }
   toast('🔄 ล้างสถานะกลุ่มงานแล้ว', 'info', 2000);
 };
-              /**
-* selectAllGroups() — กด ✔ ทั้งหมดทุกภารกิจ (ยกเว้น "อื่นๆ" ที่ต้องกรอกข้อความเอง)
-*/
+
 window.selectAllGroups = function() {
   var count = 0;
   _MISSIONS.forEach(function(m, i) {
@@ -3605,9 +3603,6 @@ window.selectAllGroups = function() {
   toast('✅ เลือก ✔ ทั้งหมด ' + count + ' ภารกิจ (ไม่รวม "อื่นๆ")', 'ok', 2500);
 };
 
-// ============================================================
-// RECEIVE — ORG AUTOCOMPLETE
-// ============================================================
 // รายชื่อหน่วยงานที่พบบ่อย (จากการวิเคราะห์เอกสารในระบบ)
 var _ORG_LIST = [
   // กระทรวง / กรม / สำนักงาน ส่วนกลาง
@@ -3845,7 +3840,6 @@ function updateGroupStatus(i) {
       ns.textContent = '⏳ ยังไม่รับทราบ';
     }
   }
-}
 
   // อัปเดต notify bar — ถือว่าครบเมื่อทุกแถวที่ถูกแตะแล้วกด ✔ ทั้งหมด
   var totalAnswered = _MISSIONS.filter(function(_, j) {
